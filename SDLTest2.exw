@@ -1,0 +1,45 @@
+without warning
+
+include std/machine.e
+
+include EuSDL2.ew
+include flags.e
+
+atom sdl = SDL_Init(SDL_INIT_EVERYTHING)
+
+if sdl = -1 then
+	puts(1,"Failed to initialized SDL!\n")
+	abort(0)
+end if
+
+atom win = SDL_CreateWindow("My Window - Press ESC to close",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,640,480,SDL_WINDOW_SHOWN)
+
+atom surf = SDL_GetWindowSurface(win)
+
+integer running = 1
+
+atom key = 0
+
+while running = 1 do
+	
+	SDL_PumpEvents()
+	
+	key = SDL_GetKeyboardState(key)
+	
+	if (peek(key+SDL_SCANCODE_ESCAPE) > 0) then
+	
+		running = 0
+		
+	end if
+	
+	SDL_UpdateWindowSurface(win)
+	
+end while
+
+SDL_DestroyWindow(win)
+SDL_FreeSurface(surf)
+
+free(key)
+
+SDL_Quit()
+­15.59

@@ -1,0 +1,71 @@
+without warning
+
+include std/machine.e
+include std/get.e
+
+include EuSDL2.ew
+include flags.e
+
+--Check CPU features
+--1 means true or yes, 0 means false or no
+--this program is all run from the command line
+--press esc to exit
+
+integer run = 1
+integer key
+
+atom cpus = SDL_GetCPUCount()
+
+position(1,1)
+printf(1,"CPUS: %d",{cpus})
+
+atom ram = SDL_GetSystemRAM()
+
+position(2,1)
+printf(1,"RAM: %d MB",{ram})
+
+atom has3d = SDL_Has3DNow()
+
+position(3,1)
+printf(1,"Has3DNow: %d",{has3d})
+
+atom has_sse = SDL_HasSSE()
+
+position(4,1)
+printf(1,"Has SSE: %d",{has_sse})
+
+atom has_sse2 = SDL_HasSSE2()
+
+position(5,1)
+printf(1,"Has SSE2: %d",{has_sse2})
+
+atom has_sse3 = SDL_HasSSE3()
+
+position(6,1)
+printf(1,"Has SSE3: %d",{has_sse3})
+
+atom has_sse41 = SDL_HasSSE41()
+
+position(7,1)
+printf(1,"Has SSE41: %d",{has_sse41})
+
+atom has_sse42 = SDL_HasSSE42()
+
+position(8,1)
+printf(1,"Has SSE42: %d",{has_sse42})
+
+position(10,1)
+puts(1,"Press ESC to close")
+
+while run = 1 do
+
+	key = get_key()
+	
+	if key = 27 then
+		run = 0
+		clear_screen()
+		exit
+	end if
+	
+end while
+­57.11
