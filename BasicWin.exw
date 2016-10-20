@@ -1,0 +1,29 @@
+--EuSDL2 Basic Window Example
+
+include std/machine.e
+include EuSDL2.ew
+include flags.e
+
+atom width = 640, height = 480
+
+--Init SDL2
+if SDL_Init(SDL_INIT_EVERYTHING) = -1 then
+	puts(1,"Could not init SDL2!\n")
+	abort(0)
+end if
+
+--Window creation
+atom win = SDL_CreateWindow("Basic Window - Will close after 3 Seconds",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,width,height,SDL_WINDOW_SHOWN)
+
+if win = -1 then
+	puts(1,"Failed to create window!\n")
+	abort(0)
+end if
+
+SDL_Delay(3000) -- make the window appear for three seconds
+
+--Cleanup
+SDL_DestroyWindow(win) 
+
+SDL_Quit()
+­16.70

@@ -1,18 +1,31 @@
+-------------------------------------
+--EuSDL2						   --	
+--Wrapper of SDL2 for Euphoria     --
+--Author: Andy Patterson		   --
+--SDL Version Wrapped: 2.0.5	   --
+--Euphoria Version: 4.0.5		   --
+--Date Started: 1/2/16			   --
+--Date Finished: 1/12/16           --
+-------------------------------------
+
 without warning
+without type_check
 
 include std/machine.e
+include std/math.e
 include std/dll.e
-
-include flags.e
 
 atom sdl2 = open_dll("SDL2.dll")
 
 if sdl2 = -1 then
-	puts(1,"Could not open SDL2.dll!\n")
+	puts(1,"Failed to load SDL2.dll!\n")
 	abort(0)
 end if
 
---SDL Init functions
+--all flag constants declared in here
+include flags.e
+
+--SDL Init Functions
 
 public constant xSDL_Init = define_c_func(sdl2,"SDL_Init",{C_UINT},C_INT),
 				xSDL_InitSubSystem = define_c_func(sdl2,"SDL_InitSubSystem",{C_UINT},C_INT),
@@ -40,7 +53,7 @@ public procedure SDL_Quit()
 	
 end procedure
 
-public procedure SDL_QuitSubSystem(atom flags)
+public procedure SDL_QuitSubsystem(atom flags)
 
  c_proc(xSDL_QuitSubSystem,{flags})
 	
@@ -58,24 +71,27 @@ public function SDL_WasInit(atom flags)
 	
 end function
 
-public function SDL_WinRTRunApp(atom main,atom res)
+public function SDL_WinRTRunApp(atom func,atom res)
 
- return c_func(xSDL_WinRTRunApp,{main,res})
+ return c_func(xSDL_WinRTRunApp,{func,res})
 	
 end function
 
---SDL Config variables/hints
+--SDL Hint Functions
 
 public constant xSDL_AddHintCallback = define_c_proc(sdl2,"SDL_AddHintCallback",{C_POINTER,C_POINTER,C_POINTER}),
 				xSDL_ClearHints = define_c_proc(sdl2,"SDL_ClearHints",{}),
 				xSDL_DelHintCallback = define_c_proc(sdl2,"SDL_DelHintCallback",{C_POINTER,C_POINTER,C_POINTER}),
 				xSDL_GetHint = define_c_func(sdl2,"SDL_GetHint",{C_POINTER},C_POINTER),
 				xSDL_SetHint = define_c_func(sdl2,"SDL_SetHint",{C_POINTER,C_POINTER},C_BOOL),
-				xSDL_SetHintWithPriority = define_c_func(sdl2,"SDL_SetHintWithPriority",{C_POINTER,C_POINTER,C_POINTER},C_BOOL)
+				xSDL_SetHintWithPriority = define_c_func(sdl2,"SDL_SetHintWithPriority",{C_POINTER,C_POINTER,C_POINTER},C_BOOL),
+				xSDL_GetHintBoolean = define_c_func(sdl2,"SDL_GetHintBoolean",{C_POINTER,C_BOOL},C_BOOL)
 				
 public procedure SDL_AddHintCallback(sequence name,atom cb,atom dat)
 
- c_proc(xSDL_AddHintCallback,{allocate_string(name,1),cb,dat})
+ atom str = allocate_string(name,1)
+ 
+ c_proc(xSDL_AddHintCallback,{str,cb,dat})
 	
 end procedure
 
@@ -85,31 +101,56 @@ public procedure SDL_ClearHints()
 	
 end procedure
 
-public procedure SDL_DelHintCallback(sequence name,atom cb,atom dat)
+public function SDL_DelHintCallback(sequence name,atom cb,atom dat)
 
- c_proc(xSDL_DelHintCallback,{allocate_string(name,1),cb,dat})
+ atom str = allocate_string(name,1)
+ atom ret
+ 
+ ret = c_func(xSDL_DelHintCallback,{str,cb,dat})
+ 
+ return ret
 	
-end procedure
+end function
 
 public function SDL_GetHint(sequence name)
 
- return c_func(xSDL_GetHint,{allocate_string(name,1)})
+ atom str = allocate_string(name,1)
+ atom ret = c_func(xSDL_GetHint,{str})
+ 
+ return ret
 	
 end function
 
 public function SDL_SetHint(sequence name,sequence val)
 
- return c_func(xSDL_SetHint,{allocate_string(name,1),allocate_string(val,1)})
+ atom str = allocate_string(name,1)
+ atom str2 = allocate_string(val)
+ atom ret = c_func(xSDL_SetHint,{str,str2})
+ 
+ return ret
 	
 end function
 
-public function SDL_SetHintWithPriority(sequence name,sequence val,SDL_HINTPRIORITY hint)
+public function SDL_SetHintWithPriority(sequence name,sequence val,SDL_HINTPRIORITY Pri)
 
- return c_func(xSDL_SetHintWithPriority,{allocate_string(name,1),allocate_string(val,1),hint})
+ atom str = allocate_string(name,1)
+ atom str2 = allocate_string(val)
+ atom ret = c_func(xSDL_SetHintWithPriority,{str,str2,Pri})
+ 
+ return ret
 	
 end function
 
---SDL Error
+public function SDL_GetHintBoolean(sequence name,integer val)
+
+ atom str = allocate_string(name,1)
+ atom ret = c_func(xSDL_GetHintBoolean,{str,val})
+ 
+ return ret
+	
+end function
+
+--SDL Error Functions
 
 public constant xSDL_ClearError = define_c_proc(sdl2,"SDL_ClearError",{}),
 				xSDL_GetError = define_c_func(sdl2,"SDL_GetError",{},C_POINTER),
@@ -127,13 +168,16 @@ public function SDL_GetError()
 	
 end function
 
-public function SDL_SetError(sequence fmt,SDL_ERRORCODE ext)
+public function SDL_SetError(sequence fmt,atom x)
 
- return c_func(xSDL_SetError,{allocate_string(fmt,1),ext})
+ atom str = allocate_string(fmt,1)
+ atom ret = c_func(xSDL_SetError,{str,x})
+ 
+ return ret
 	
 end function
 
---SDL Log
+--SDL Log Functions
 
 public constant xSDL_Log = define_c_proc(sdl2,"SDL_Log",{C_POINTER,C_POINTER}),
 				xSDL_LogCritical = define_c_proc(sdl2,"SDL_LogCritical",{C_INT,C_POINTER,C_POINTER}),
@@ -151,33 +195,37 @@ public constant xSDL_Log = define_c_proc(sdl2,"SDL_Log",{C_POINTER,C_POINTER}),
 				xSDL_LogVerbose = define_c_proc(sdl2,"SDL_LogVerbose",{C_INT,C_POINTER,C_POINTER}),
 				xSDL_LogWarn = define_c_proc(sdl2,"SDL_LogWarn",{C_INT,C_POINTER,C_POINTER})
 				
-public procedure SDL_Log(sequence fmt,atom ext)
+public procedure SDL_Log(sequence fmt,atom x)
 
- c_proc(xSDL_Log,{allocate_string(fmt,1),ext})
+ atom str = allocate_string(fmt,1)
+ c_proc(xSDL_Log,{str,x})
 	
 end procedure
 
-public procedure SDL_LogCritical(atom cat,sequence fmt,atom ext)
+public procedure SDL_LogCritical(integer cat,sequence fmt,atom x)
 
- c_proc(xSDL_LogCritical,{cat,allocate_string(fmt,1),ext})
+ atom str = allocate_string(fmt,1)
+ c_proc(xSDL_LogCritical,{cat,str,x})
 	
 end procedure
 
-public procedure SDL_LogDebug(atom cat,sequence fmt,atom ext)
+public procedure SDL_LogDebug(integer cat,sequence fmt,atom x)
 
- c_proc(xSDL_LogDebug,{cat,allocate_string(fmt,1),ext})
+ atom str = allocate_string(fmt,1)
+ c_proc(xSDL_LogDebug,{cat,str,x})
 	
 end procedure
 
-public procedure SDL_LogError(atom cat,sequence fmt,atom ext)
+public procedure SDL_LogError(integer cat,sequence fmt,atom x)
 
- c_proc(xSDL_LogError,{cat,allocate_string(fmt,1),ext})
+ atom str = allocate_string(fmt,1)
+ c_proc(xSDL_LogError,{cat,str,x})
 	
 end procedure
 
-public procedure SDL_LogGetOutputFunction(atom cb,atom v)
+public procedure SDL_LogGetOutputFunction(atom cb,atom dat)
 
- c_proc(xSDL_LogGetOutputFunction,{cb,v})
+ c_proc(xSDL_LogGetOutputFunction,{cb,dat})
 	
 end procedure
 
@@ -187,21 +235,24 @@ public function SDL_LogGetPriority(integer cat)
 	
 end function
 
-public procedure SDL_LogInfo(integer cat,sequence fmt,atom ext)
+public procedure SDL_LogInfo(integer cat,sequence fmt,atom x)
 
- c_proc(xSDL_LogInfo,{cat,allocate_string(fmt,1),ext})
+ atom str = allocate_string(fmt,1)
+ c_proc(xSDL_LogInfo,{cat,str,x})
 	
 end procedure
 
-public procedure SDL_LogMessage(integer cat,atom prio,sequence fmt)
+public procedure SDL_LogMessage(integer cat,atom pri,sequence fmt,atom x)
 
- c_proc(xSDL_LogMessage,{cat,prio,allocate_string(fmt,1)})
+ atom str = allocate_string(fmt,1)
+ c_proc(xSDL_LogMessage,{cat,pri,str,x})
 	
 end procedure
 
-public procedure SDL_LogMessageV(integer cat,atom prio,sequence fmt,atom ap)
+public procedure SDL_LogMessageV(integer cat,atom pri,sequence fmt,atom ap)
 
- c_proc(xSDL_LogMessageV,{cat,prio,allocate_string(fmt,1),ap})
+ atom str = allocate_string(fmt,1)
+ c_proc(xSDL_LogMessageV,{cat,pri,str,ap})
 	
 end procedure
 
@@ -211,37 +262,39 @@ public procedure SDL_LogResetPriorities()
 	
 end procedure
 
-public procedure SDL_LogSetAllPriority(atom prio)
+public procedure SDL_LogSetAllPriority(atom pri)
 
- c_proc(xSDL_LogSetAllPriority,{prio})
+ c_proc(xSDL_LogSetAllPriority,{pri})
 	
 end procedure
 
-public procedure SDL_LogSetOutputFunction(atom cb,atom v)
+public function SDL_LogSetOutputFunction(atom cb,atom dat)
 
- c_proc(xSDL_LogSetOutputFunction,{cb,v})
+ return c_func(xSDL_LogSetOutputFunction,{cb,dat})
+	
+end function
+
+public procedure SDL_LogSetPriority(integer cat,atom pri)
+
+ c_proc(xSDL_LogSetPriority,{cat,pri})
 	
 end procedure
 
-public procedure SDL_LogSetPriority(integer cat,atom prio)
+public procedure SDL_LogVerbose(integer cat, sequence fmt,atom x)
 
- c_proc(xSDL_LogSetPriority,{cat,prio})
+ atom str = allocate_string(fmt,1)
+ c_proc(xSDL_LogVerbose,{cat,str,x})
 	
 end procedure
 
-public procedure SDL_LogVerbose(integer cat,sequence fmt,atom ext)
+public procedure SDL_LogWarn(integer cat,sequence fmt,atom x)
 
- c_proc(xSDL_LogVerbose,{cat,allocate_string(fmt,1),ext})
+ atom str = allocate_string(fmt,1)
+ c_proc(xSDL_LogWarn,{cat,str,x})
 	
 end procedure
 
-public procedure SDL_LogWarn(integer cat,sequence fmt,atom ext)
-
- c_proc(xSDL_LogWarn,{cat,allocate_string(fmt,1),ext})
-	
-end procedure
-
---SDL Assert
+--SDL Assertion Functions
 
 public constant xSDL_GetAssertionHandler = define_c_func(sdl2,"SDL_GetAssertionHandler",{C_POINTER},C_POINTER),
 				xSDL_GetAssertionReport = define_c_func(sdl2,"SDL_GetAssertionReport",{},C_POINTER),
@@ -249,11 +302,11 @@ public constant xSDL_GetAssertionHandler = define_c_func(sdl2,"SDL_GetAssertionH
 				xSDL_ResetAssertionReport = define_c_proc(sdl2,"SDL_ResetAssertionReport",{}),
 				xSDL_SetAssertionHandler = define_c_proc(sdl2,"SDL_SetAssertionHandler",{C_POINTER,C_POINTER}),
 				xSDL_TriggerBreakpoint = define_c_proc(sdl2,"SDL_TriggerBreakpoint",{}),
-				xSDL_assert = define_c_proc(sdl2,"SDL_assert",{}),
-				xSDL_assert_paranoid = define_c_proc(sdl2,"SDL_assert_paranoid",{}),
-				xSDL_assert_release = define_c_proc(sdl2,"SDL_assert_release",{})
+				xSDL_assert = define_c_proc(sdl2,"SDL_assert",{C_POINTER}),
+				xSDL_assert_paranoid = define_c_proc(sdl2,"SDL_assert_paranoid",{C_POINTER}),
+				xSDL_assert_release = define_c_proc(sdl2,"SDL_assert_release",{C_POINTER})
 				
-public function SDL_GetAssertionHandler(object dat)
+public function SDL_GetAssertionHandler(atom dat)
 
  return c_func(xSDL_GetAssertionHandler,{dat})
 	
@@ -271,7 +324,13 @@ public function SDL_GetDefaultAssertionHandler()
 	
 end function
 
-public procedure SDL_SetAssertionHandler(SDL_ASSERT_STATE hand,object dat)
+public procedure SDL_ResetAssertionReport()
+
+ c_proc(xSDL_ResetAssertionReport,{})
+	
+end procedure
+
+public procedure SDL_SetAssertionHandler(atom hand,atom dat)
 
  c_proc(xSDL_SetAssertionHandler,{hand,dat})
 	
@@ -283,25 +342,25 @@ public procedure SDL_TriggerBreakpoint()
 	
 end procedure
 
-public procedure SDL_assert(atom x)
+public procedure SDL_assert(atom cond)
 
- c_proc(xSDL_assert,{x})
+ c_proc(xSDL_assert,{cond})
 	
 end procedure
 
-public procedure SDL_assert_paranoid(atom x)
+public procedure SDL_assert_paranoid(atom cond)
 
- c_proc(xSDL_assert_paranoid,{x})
+ c_proc(xSDL_assert_paranoid,{cond})
 	
 end procedure
 
-public procedure SDL_assert_release(atom x)
+public procedure SDL_assert_release(atom cond)
 
- c_proc(xSDL_assert_release,{x})
+ c_proc(xSDL_assert_release,{cond})
 	
 end procedure
 
---SDL Version
+--SDL Version Functions
 
 public constant xSDL_GetRevision = define_c_func(sdl2,"SDL_GetRevision",{},C_POINTER),
 				xSDL_GetRevisionNumber = define_c_func(sdl2,"SDL_GetRevisionNumber",{},C_INT),
@@ -319,13 +378,13 @@ public function SDL_GetRevisionNumber()
 	
 end function
 
-public procedure SDL_GetVersion(atom ver)
+public procedure SDL_GetVersion(atom var)
 
- c_proc(xSDL_GetVersion,{ver})
+ c_proc(xSDL_GetVersion,{var})
 	
 end procedure
 
---Window Management functions
+--SDL Window Functions
 
 public constant xSDL_CreateWindow = define_c_func(sdl2,"SDL_CreateWindow",{C_POINTER,C_INT,C_INT,C_INT,C_INT,C_UINT},C_POINTER),
 				xSDL_CreateWindowAndRenderer = define_c_func(sdl2,"SDL_CreateWindowAndRenderer",{C_INT,C_INT,C_UINT,C_POINTER,C_POINTER},C_INT),
@@ -336,11 +395,11 @@ public constant xSDL_CreateWindow = define_c_func(sdl2,"SDL_CreateWindow",{C_POI
 				xSDL_GL_CreateContext = define_c_func(sdl2,"SDL_GL_CreateContext",{C_POINTER},C_POINTER),
 				xSDL_GL_DeleteContext = define_c_proc(sdl2,"SDL_GL_DeleteContext",{C_POINTER}),
 				xSDL_GL_ExtensionSupported = define_c_func(sdl2,"SDL_GL_ExtensionSupported",{C_POINTER},C_BOOL),
-				xSDL_GL_GetAttribute = define_c_func(sdl2,"SDL_GL_GetAttribute",{C_POINTER,C_INT},C_INT),
+				xSDL_GL_GetAttribute = define_c_func(sdl2,"SDL_GL_GetAttribute",{C_POINTER,C_POINTER},C_INT),
 				xSDL_GL_GetCurrentContext = define_c_func(sdl2,"SDL_GL_GetCurrentContext",{},C_POINTER),
 				xSDL_GL_GetCurrentWindow = define_c_func(sdl2,"SDL_GL_GetCurrentWindow",{},C_POINTER),
 				xSDL_GL_GetDrawableSize = define_c_proc(sdl2,"SDL_GL_GetDrawableSize",{C_POINTER,C_POINTER,C_POINTER}),
-				xSDL_GL_GetProcAddress = define_c_func(sdl2,"SDL_GL_GetProcAddress",{C_POINTER},C_POINTER),
+				xSDL_GL_GetProcAddress = define_c_proc(sdl2,"SDL_GL_GetProcAddress",{C_POINTER}),
 				xSDL_GL_GetSwapInterval = define_c_func(sdl2,"SDL_GL_GetSwapInterval",{},C_INT),
 				xSDL_GL_LoadLibrary = define_c_func(sdl2,"SDL_GL_LoadLibrary",{C_POINTER},C_INT),
 				xSDL_GL_MakeCurrent = define_c_func(sdl2,"SDL_GL_MakeCurrent",{C_POINTER,C_POINTER},C_INT),
@@ -354,6 +413,7 @@ public constant xSDL_CreateWindow = define_c_func(sdl2,"SDL_CreateWindow",{C_POI
 				xSDL_GetCurrentVideoDriver = define_c_func(sdl2,"SDL_GetCurrentVideoDriver",{},C_POINTER),
 				xSDL_GetDesktopDisplayMode = define_c_func(sdl2,"SDL_GetDesktopDisplayMode",{C_INT,C_POINTER},C_INT),
 				xSDL_GetDisplayBounds = define_c_func(sdl2,"SDL_GetDisplayBounds",{C_INT,C_POINTER},C_INT),
+				xSDL_GetDisplayDPI = define_c_func(sdl2,"SDL_GetDisplayDPI",{C_INT,C_POINTER,C_POINTER,C_POINTER},C_INT),
 				xSDL_GetDisplayMode = define_c_func(sdl2,"SDL_GetDisplayMode",{C_INT,C_INT,C_POINTER},C_INT),
 				xSDL_GetDisplayName = define_c_func(sdl2,"SDL_GetDisplayName",{C_INT},C_POINTER),
 				xSDL_GetGrabbedWindow = define_c_func(sdl2,"SDL_GetGrabbedWindow",{},C_POINTER),
@@ -362,7 +422,7 @@ public constant xSDL_CreateWindow = define_c_func(sdl2,"SDL_CreateWindow",{C_POI
 				xSDL_GetNumVideoDrivers = define_c_func(sdl2,"SDL_GetNumVideoDrivers",{},C_INT),
 				xSDL_GetVideoDriver = define_c_func(sdl2,"SDL_GetVideoDriver",{C_INT},C_POINTER),
 				xSDL_GetWindowBrightness = define_c_func(sdl2,"SDL_GetWindowBrightness",{C_POINTER},C_FLOAT),
-				xSDL_GetWindowData = define_c_func(sdl2,"SDL_GetWindowData",{C_POINTER,C_POINTER},C_POINTER),
+				xSDL_GetWindowData = define_c_proc(sdl2,"SDL_GetWindowData",{C_POINTER,C_POINTER}),
 				xSDL_GetWindowDisplayIndex = define_c_func(sdl2,"SDL_GetWindowDisplayIndex",{C_POINTER},C_INT),
 				xSDL_GetWindowDisplayMode = define_c_func(sdl2,"SDL_GetWindowDisplayMode",{C_POINTER,C_POINTER},C_INT),
 				xSDL_GetWindowFlags = define_c_func(sdl2,"SDL_GetWindowFlags",{C_POINTER},C_UINT),
@@ -386,7 +446,7 @@ public constant xSDL_CreateWindow = define_c_func(sdl2,"SDL_CreateWindow",{C_POI
 				xSDL_RestoreWindow = define_c_proc(sdl2,"SDL_RestoreWindow",{C_POINTER}),
 				xSDL_SetWindowBordered = define_c_proc(sdl2,"SDL_SetWindowBordered",{C_POINTER,C_BOOL}),
 				xSDL_SetWindowBrightness = define_c_func(sdl2,"SDL_SetWindowBrightness",{C_POINTER,C_FLOAT},C_INT),
-				xSDL_SetWindowData = define_c_func(sdl2,"SDL_SetWindowData",{C_POINTER,C_POINTER,C_POINTER},C_POINTER),
+				xSDL_SetWindowData = define_c_proc(sdl2,"SDL_SetWindowData",{C_POINTER,C_POINTER,C_POINTER}),
 				xSDL_SetWindowDisplayMode = define_c_func(sdl2,"SDL_SetWindowDisplayMode",{C_POINTER,C_POINTER},C_INT),
 				xSDL_SetWindowFullscreen = define_c_func(sdl2,"SDL_SetWindowFullscreen",{C_POINTER,C_UINT},C_INT),
 				xSDL_SetWindowGammaRamp = define_c_func(sdl2,"SDL_SetWindowGammaRamp",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
@@ -404,21 +464,29 @@ public constant xSDL_CreateWindow = define_c_func(sdl2,"SDL_CreateWindow",{C_POI
 				xSDL_UpdateWindowSurface = define_c_func(sdl2,"SDL_UpdateWindowSurface",{C_POINTER},C_INT),
 				xSDL_UpdateWindowSurfaceRects = define_c_func(sdl2,"SDL_UpdateWindowSurfaceRects",{C_POINTER,C_POINTER,C_INT},C_INT),
 				xSDL_VideoInit = define_c_func(sdl2,"SDL_VideoInit",{C_POINTER},C_INT),
-				xSDL_VideoQuit = define_c_proc(sdl2,"SDL_VideoQuit",{})
+				xSDL_VideoQuit = define_c_proc(sdl2,"SDL_VideoQuit",{}),
+				xSDL_GetDisplayUsableBounds = define_c_func(sdl2,"SDL_GetDisplayUsableBounds",{C_INT,C_POINTER},C_INT),
+				xSDL_GetWindowBordersSize = define_c_func(sdl2,"SDL_GetWindowBordersSize",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xSDL_SetWindowResizable = define_c_proc(sdl2,"SDL_SetWindowResizable",{C_POINTER,C_BOOL}),
+				xSDL_SetWindowOpacity = define_c_func(sdl2,"SDL_SetWindowOpacity",{C_POINTER,C_FLOAT},C_INT),
+				xSDL_SetWindowModalFor = define_c_func(sdl2,"SDL_SetWindowModalFor",{C_POINTER,C_POINTER},C_INT)
 				
 public function SDL_CreateWindow(sequence title,integer x,integer y,integer w,integer h,atom flags)
 
- return c_func(xSDL_CreateWindow,{allocate_string(title,1),x,y,w,h,flags})
+ atom str = allocate_string(title,1)
+ atom ret = c_func(xSDL_CreateWindow,{str,x,y,w,h,flags})
+ 
+ return ret
 	
 end function
 
-public function SDL_CreateWindowAndRenderer(integer w,integer h,atom flags,atom win,atom rend)
+public function SDL_CreateWindowAndRenderer(integer w,integer h,atom flags,atom win,atom ren)
 
- return c_func(xSDL_CreateWindowAndRenderer,{w,h,flags,win,rend})
+ return c_func(xSDL_CreateWindowAndRenderer,{w,h,flags,win,ren})
 	
 end function
 
-public function SDL_CreateWindowFrom(object dat)
+public function SDL_CreateWindowFrom(atom dat)
 
  return c_func(xSDL_CreateWindowFrom,{dat})
 	
@@ -448,7 +516,7 @@ public function SDL_GL_CreateContext(atom win)
 	
 end function
 
-public procedure SDL_GL_DeleteContext(SDL_GLCONTEXTFLAG ctx)
+public procedure SDL_GL_DeleteContext(atom ctx)
 
  c_proc(xSDL_GL_DeleteContext,{ctx})
 	
@@ -456,7 +524,10 @@ end procedure
 
 public function SDL_GL_ExtensionSupported(sequence ext)
 
- return c_func(xSDL_GL_ExtensionSupported,{allocate_string(ext,1)})
+ atom str = allocate_string(ext,1)
+ atom ret = c_func(xSDL_GL_ExtensionSupported,{str})
+ 
+ return ret
 	
 end function
 
@@ -484,11 +555,12 @@ public procedure SDL_GL_GetDrawableSize(atom win,atom w,atom h)
 	
 end procedure
 
-public function SDL_GL_GetProcAddress(sequence proc)
+public procedure SDL_GL_GetProcAddress(sequence proc)
 
- return c_func(xSDL_GL_GetProcAddress,{allocate_string(proc,1)})
+ atom str = allocate_string(proc,1)
+ c_proc(xSDL_GL_GetProcAddress,{str})
 	
-end function
+end procedure
 
 public function SDL_GL_GetSwapInterval()
 
@@ -498,13 +570,16 @@ end function
 
 public function SDL_GL_LoadLibrary(sequence path)
 
- return c_func(xSDL_GL_LoadLibrary,{allocate_string(path,1)})
+ atom str = allocate_string(path,1)
+ atom ret = c_func(xSDL_GL_LoadLibrary,{str})
+ 
+ return ret
 	
 end function
 
-public function SDL_GL_MakeCurrent(atom win,SDL_GLCONTEXTFLAG ctx)
+public function SDL_GL_MakeCurrent(atom win,SDL_GLATTR attr)
 
- return c_func(xSDL_GL_MakeCurrent,{win,ctx})
+ return c_func(xSDL_GL_MakeCurrent,{win,attr})
 	
 end function
 
@@ -520,9 +595,9 @@ public function SDL_GL_SetAttribute(SDL_GLATTR attr,integer val)
 	
 end function
 
-public function SDL_GL_SetSwapInterval(integer xint)
+public function SDL_GL_SetSwapInterval(integer val)
 
- return c_func(xSDL_GL_SetSwapInterval,{xint})
+ return c_func(xSDL_GL_SetSwapInterval,{val})
 	
 end function
 
@@ -538,15 +613,15 @@ public procedure SDL_GL_UnloadLibrary()
 	
 end procedure
 
-public function SDL_GetClosestDisplayMode(integer indx,atom mode,atom xclose)
+public function SDL_GetClosestDisplayMode(integer dis,atom mode,atom cls)
 
- return c_func(xSDL_GetClosestDisplayMode,{indx,mode,xclose})
+ return c_func(xSDL_GetClosestDisplayMode,{dis,mode,cls})
 	
 end function
 
-public function SDL_GetCurrentDisplayMode(integer indx,atom mode)
+public function SDL_GetCurrentDisplayMode(integer dis,atom mode)
 
- return c_func(xSDL_GetCurrentDisplayMode,{indx,mode})
+ return c_func(xSDL_GetCurrentDisplayMode,{dis,mode})
 	
 end function
 
@@ -556,27 +631,33 @@ public function SDL_GetCurrentVideoDriver()
 	
 end function
 
-public function SDL_GetDesktopDisplayMode(integer idx,atom mode)
+public function SDL_GetDesktopDisplayMode(integer dis,atom mode)
 
- return c_func(xSDL_GetDesktopDisplayMode,{idx,mode})
+ return c_func(xSDL_GetDesktopDisplayMode,{dis,mode})
 	
 end function
 
-public function SDL_GetDisplayBounds(integer idx,atom rect)
+public function SDL_GetDisplayBounds(atom dis,atom rect)
 
- return c_func(xSDL_GetDisplayBounds,{idx,rect})
+ return c_func(xSDL_GetDisplayBounds,{dis,rect})
 	
 end function
 
-public function SDL_GetDisplayMode(integer idx,integer idx2,atom mode)
+public function SDL_GetDisplayDPI(integer dis,atom dd,atom hd,atom vd)
 
- return c_func(xSDL_GetDisplayMode,{idx,idx2,mode})
+ return c_func(xSDL_GetDisplayDPI,{dis,dd,hd,vd})
 	
 end function
 
-public function SDL_GetDisplayName(integer idx)
+public function SDL_GetDisplayMode(integer dis,integer mode,atom mode2)
 
- return c_func(xSDL_GetDisplayName,{idx})
+ return c_func(xSDL_GetDisplayMode,{dis,mode,mode2})
+	
+end function
+
+public function SDL_GetDisplayName(integer dis)
+
+ return c_func(xSDL_GetDisplayName,{dis})
 	
 end function
 
@@ -586,9 +667,9 @@ public function SDL_GetGrabbedWindow()
 	
 end function
 
-public function SDL_GetNumDisplayModes(integer idx)
+public function SDL_GetNumDisplayModes(integer dis)
 
- return c_func(xSDL_GetNumDisplayModes,{idx})
+ return c_func(xSDL_GetNumDisplayModes,{dis})
 	
 end function
 
@@ -604,9 +685,9 @@ public function SDL_GetNumVideoDrivers()
 	
 end function
 
-public function SDL_GetVideoDriver(integer indx)
+public function SDL_GetVideoDriver(integer idx)
 
- return c_func(xSDL_GetVideoDriver,{indx})
+ return c_func(xSDL_GetVideoDriver,{idx})
 	
 end function
 
@@ -616,11 +697,12 @@ public function SDL_GetWindowBrightness(atom win)
 	
 end function
 
-public function SDL_GetWindowData(atom win,sequence name)
+public procedure SDL_GetWindowData(atom win,sequence name)
 
- return c_func(xSDL_GetWindowData,{win,allocate_string(name,1)})
+ atom str = allocate_string(name,1)
+ c_proc(xSDL_GetWindowData,{win,str})
 	
-end function
+end procedure
 
 public function SDL_GetWindowDisplayIndex(atom win)
 
@@ -703,12 +785,12 @@ end function
 public function SDL_GetWindowTitle(atom win)
 
  return c_func(xSDL_GetWindowTitle,{win})
- 
+	
 end function
 
-public function SDL_GetWindowWMInfo(atom win,SDL_SYSWM_TYPE info)
+public function SDL_GetWindowWMInfo(atom win,SDL_SYSWM_TYPE wm)
 
- return c_func(xSDL_GetWindowWMInfo,{win,info})
+ return c_func(xSDL_GetWindowWMInfo,{win,wm})
 	
 end function
 
@@ -748,23 +830,24 @@ public procedure SDL_RestoreWindow(atom win)
 	
 end procedure
 
-public procedure SDL_SetWindowBordered(atom win,integer bordered)
+public procedure SDL_SetWindowBordered(atom win,atom bord)
 
- c_proc(xSDL_SetWindowBordered,{win,bordered})
+ c_proc(xSDL_SetWindowBordered,{win,bord})
 	
 end procedure
 
-public function SDL_SetWindowBrightness(atom win,atom bright)
+public function SDL_SetWindowBrightness(atom win,atom bri)
 
- return c_func(xSDL_SetWindowBrightness,{win,bright})
+ return c_func(xSDL_SetWindowBrightness,{win,bri})
 	
 end function
 
-public function SDL_SetWindowData(atom win,sequence name,object dat)
+public procedure SDL_SetWindowData(atom win,sequence name,atom dat)
 
- return c_func(xSDL_SetWindowData,{win,allocate_string(name,1),dat})
+ atom str = allocate_string(name,1)
+ c_proc(xSDL_SetWindowData,{win,str,dat})
 	
-end function
+end procedure
 
 public function SDL_SetWindowDisplayMode(atom win,atom mode)
 
@@ -784,21 +867,21 @@ public function SDL_SetWindowGammaRamp(atom win,atom r,atom g,atom b)
 	
 end function
 
-public procedure SDL_SetWindowGrab(atom win,integer grab)
+public procedure SDL_SetWindowGrab(atom win,atom grab)
 
  c_proc(xSDL_SetWindowGrab,{win,grab})
 	
 end procedure
 
-public function SDL_SetWindowHitTest(atom win,object cb,object cb2)
+public function SDL_SetWindowHitTest(atom win,atom cb,atom dat)
 
- return c_func(xSDL_SetWindowHitTest,{win,cb,cb2})
+ return c_func(xSDL_SetWindowHitTest,{win,cb,dat})
 	
 end function
 
-public procedure SDL_SetWindowIcon(atom win,atom icon)
+public procedure SDL_SetWindowIcon(atom win,atom ic)
 
- c_proc(xSDL_SetWindowIcon,{win,icon})
+ c_proc(xSDL_SetWindowIcon,{win,ic})
 	
 end procedure
 
@@ -828,19 +911,24 @@ end procedure
 
 public procedure SDL_SetWindowTitle(atom win,sequence title)
 
- c_proc(xSDL_SetWindowTitle,{win,allocate_string(title,1)})
+ atom str = allocate_string(title,1)
+ c_proc(xSDL_SetWindowTitle,{win,str})
 	
 end procedure
 
-public function SDL_ShowMessageBox(atom mbd,atom id)
+public function SDL_ShowMessageBox(atom msg,atom id)
 
- return c_func(xSDL_ShowMessageBox,{mbd,id})
+ return c_func(xSDL_ShowMessageBox,{msg,id})
 	
 end function
 
-public function SDL_ShowSimpleMessageBox(atom flags,sequence title,sequence message,atom win)
+public function SDL_ShowSimpleMessageBox(atom flags,sequence title,sequence msg,atom win)
 
- return c_func(xSDL_ShowSimpleMessageBox,{flags,allocate_string(title,1),allocate_string(message,1),win})
+ atom str = allocate_string(title,1)
+ atom str2 = allocate_string(msg,1)
+ atom ret = c_func(xSDL_ShowSimpleMessageBox,{flags,str,str2,win})
+ 
+ return ret
 	
 end function
 
@@ -862,9 +950,12 @@ public function SDL_UpdateWindowSurfaceRects(atom win,atom rects,integer num)
 	
 end function
 
-public function SDL_VideoInit(sequence name)
+public function SDL_VideoInit(sequence drv)
 
- return c_func(xSDL_VideoInit,{allocate_string(name,1)})
+ atom str = allocate_string(drv,1)
+ atom ret = c_func(xSDL_VideoInit,{str})
+ 
+ return ret
 	
 end function
 
@@ -874,17 +965,48 @@ public procedure SDL_VideoQuit()
 	
 end procedure
 
---Render functions
+public function SDL_GetDisplayUsableBounds(integer dis,atom rect)
 
-public constant xSDL_CreateRenderer = define_c_func(sdl2,"SDL_CreateRenderer",{C_POINTER,C_INT,C_UINT},C_POINTER),
+ return c_func(xSDL_GetDisplayUsableBounds,{dis,rect})
+	
+end function
+
+public function SDL_GetWindowBordersSize(atom win,atom top,atom left,atom bottom,atom right)
+
+ return c_func(xSDL_GetWindowBordersSize,{win,top,left,bottom,right})
+	
+end function
+
+public procedure SDL_SetWindowResizable(atom win,integer resize)
+
+ c_proc(xSDL_SetWindowResizable,{win,resize})
+	
+end procedure
+
+public function SDL_SetWindowOpacity(atom win,atom opacity)
+
+ return c_func(xSDL_SetWindowOpacity,{win,opacity})
+	
+end function
+
+public function SDL_SetWindowModalFor(atom modal,atom parent)
+
+ return c_func(xSDL_SetWindowModalFor,{modal,parent})
+	
+end function
+
+--SDL Render Functions
+
+public constant xSDL_CreateRenderer = define_c_func(sdl2,"SDL_CreateRender",{C_POINTER,C_INT,C_UINT},C_POINTER),
 				xSDL_CreateSoftwareRenderer = define_c_func(sdl2,"SDL_CreateSoftwareRenderer",{C_POINTER},C_POINTER),
 				xSDL_CreateTexture = define_c_func(sdl2,"SDL_CreateTexture",{C_POINTER,C_UINT,C_INT,C_INT,C_INT},C_POINTER),
 				xSDL_CreateTextureFromSurface = define_c_func(sdl2,"SDL_CreateTextureFromSurface",{C_POINTER,C_POINTER},C_POINTER),
+				--xSDL_CreateWindowAndRenderer = define_c_func(sdl2,"SDL_CreateWindowAndRenderer",{C_INT,C_INT,C_UINT,C_POINTER,C_POINTER},C_INT),
 				xSDL_DestroyRenderer = define_c_proc(sdl2,"SDL_DestroyRenderer",{C_POINTER}),
 				xSDL_DestroyTexture = define_c_proc(sdl2,"SDL_DestroyTexture",{C_POINTER}),
 				xSDL_GL_BindTexture = define_c_func(sdl2,"SDL_GL_BindTexture",{C_POINTER,C_POINTER,C_POINTER},C_INT),
 				xSDL_GL_UnbindTexture = define_c_func(sdl2,"SDL_GL_UnbindTexture",{C_POINTER},C_INT),
-				xSDL_GetNumRenderDrivers = define_c_func(sdl2,"SDL_GetNumRenderDrives",{},C_INT),
+				xSDL_GetNumRenderDrivers = define_c_func(sdl2,"SDL_GetNumRenderDrivers",{},C_INT),
 				xSDL_GetRenderDrawBlendMode = define_c_func(sdl2,"SDL_GetRenderDrawBlendMode",{C_POINTER,C_POINTER},C_INT),
 				xSDL_GetRenderDrawColor = define_c_func(sdl2,"SDL_GetRenderDrawColor",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
 				xSDL_GetRenderDriverInfo = define_c_func(sdl2,"SDL_GetRenderDriverInfo",{C_INT,C_POINTER},C_INT),
@@ -899,7 +1021,7 @@ public constant xSDL_CreateRenderer = define_c_func(sdl2,"SDL_CreateRenderer",{C
 				xSDL_QueryTexture = define_c_func(sdl2,"SDL_QueryTexture",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
 				xSDL_RenderClear = define_c_func(sdl2,"SDL_RenderClear",{C_POINTER},C_INT),
 				xSDL_RenderCopy = define_c_func(sdl2,"SDL_RenderCopy",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
-				xSDL_RenderCopyEx = define_c_func(sdl2,"SDL_RenderCopyEx",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_DOUBLE,C_POINTER,C_POINTER},C_INT),
+				xSDL_RenderCopyEx = define_c_func(sdl2,"SDL_RendercopyEx",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_DOUBLE,C_POINTER,C_POINTER},C_INT),
 				xSDL_RenderDrawLine = define_c_func(sdl2,"SDL_RenderDrawLine",{C_POINTER,C_INT,C_INT,C_INT,C_INT},C_INT),
 				xSDL_RenderDrawLines = define_c_func(sdl2,"SDL_RenderDrawLines",{C_POINTER,C_POINTER,C_INT},C_INT),
 				xSDL_RenderDrawPoint = define_c_func(sdl2,"SDL_RenderDrawPoint",{C_POINTER,C_INT,C_INT},C_INT),
@@ -921,30 +1043,31 @@ public constant xSDL_CreateRenderer = define_c_func(sdl2,"SDL_CreateRenderer",{C
 				xSDL_RenderSetViewport = define_c_func(sdl2,"SDL_RenderSetViewport",{C_POINTER,C_POINTER},C_INT),
 				xSDL_RenderTargetSupported = define_c_func(sdl2,"SDL_RenderTargetSupported",{C_POINTER},C_BOOL),
 				xSDL_SetRenderDrawBlendMode = define_c_func(sdl2,"SDL_SetRenderDrawBlendMode",{C_POINTER,C_POINTER},C_INT),
-				xSDL_SetRenderDrawColor = define_c_func(sdl2,"SDL_SetRenderDrawColor",{C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT},C_INT),
+				xSDL_SetRenderDrawColor = define_c_func(sdl2,"SDL_SetRenderDrawcolor",{C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT},C_INT),
 				xSDL_SetRenderTarget = define_c_func(sdl2,"SDL_SetRenderTarget",{C_POINTER,C_POINTER},C_INT),
 				xSDL_SetTextureAlphaMod = define_c_func(sdl2,"SDL_SetTextureAlphaMod",{C_POINTER,C_UINT},C_INT),
 				xSDL_SetTextureBlendMode = define_c_func(sdl2,"SDL_SetTextureBlendMode",{C_POINTER,C_POINTER},C_INT),
 				xSDL_SetTextureColorMod = define_c_func(sdl2,"SDL_SetTextureColorMod",{C_POINTER,C_UINT,C_UINT,C_UINT},C_INT),
 				xSDL_UnlockTexture = define_c_proc(sdl2,"SDL_UnlockTexture",{C_POINTER}),
 				xSDL_UpdateTexture = define_c_func(sdl2,"SDL_UpdateTexture",{C_POINTER,C_POINTER,C_POINTER,C_INT},C_INT),
-				xSDL_UpdateYUVTexture = define_c_func(sdl2,"SDL_UpdateYUVTexture",{C_POINTER,C_POINTER,C_POINTER,C_INT,C_POINTER,C_INT,C_POINTER,C_INT},C_INT)
+				xSDL_UpdateYUVTexture = define_c_func(sdl2,"SDL_UpdateYUVTexture",{C_POINTER,C_POINTER,C_POINTER,C_INT,C_POINTER,C_INT,C_POINTER,C_INT},C_INT),
+				xSDL_RenderSetIntegerScale = define_c_func(sdl2,"SDL_RenderSetIntegerScale",{C_POINTER,C_BOOL},C_INT)
 				
-public function SDL_CreateRenderer(atom win,integer idx,SDL_RENDERERFLAGS flags)
+public function SDL_CreateRenderer(atom win,atom idx,SDL_RENDERERFLAGS flags)
 
  return c_func(xSDL_CreateRenderer,{win,idx,flags})
 	
 end function
 
-public function SDL_CreateSoftwareRenderer(atom surf)
+public function SDL_CreateSoftwareRenderer(atom rend)
 
- return c_func(xSDL_CreateSoftwareRenderer,{surf})
+ return c_func(xSDL_CreateSoftwareRenderer,{rend})
 	
 end function
 
-public function SDL_CreateTexture(atom rend,atom mat,SDL_TEXTUREACCESS ac,integer w,integer h)
+public function SDL_CreateTexture(atom rend,atom mat,integer acc,integer w,integer h)
 
- return c_func(xSDL_CreateTexture,{rend,mat,ac,w,h})
+ return c_func(xSDL_CreateTexture,{rend,mat,acc,w,h})
 	
 end function
 
@@ -953,6 +1076,12 @@ public function SDL_CreateTextureFromSurface(atom rend,atom surf)
  return c_func(xSDL_CreateTextureFromSurface,{rend,surf})
 	
 end function
+
+--public function SDL_CreateWindowAndRenderer(integer w,integer h,atom flag,atom win,atom rend)
+
+ --return c_func(xSDL_CreateWindowAndRenderer,{w,h,flag,win,rend})
+	
+--end function
 
 public procedure SDL_DestroyRenderer(atom rend)
 
@@ -984,9 +1113,9 @@ public function SDL_GetNumRenderDrivers()
 	
 end function
 
-public function SDL_GetRenderDrawBlendMode(atom rend,SDL_BLENDMODE mode)
+public function SDL_GetRenderDrawBlendMode(atom rend,SDL_BLENDMODE blend)
 
- return c_func(xSDL_GetRenderDrawBlendMode,{rend,mode})
+ return c_func(xSDL_GetRenderDrawBlendMode,{rend,blend})
 	
 end function
 
@@ -1032,9 +1161,9 @@ public function SDL_GetTextureAlphaMod(atom tex,atom al)
 	
 end function
 
-public function SDL_GetTextureBlendMode(atom tex,SDL_BLENDMODE mode)
+public function SDL_GetTextureBlendMode(atom tex,SDL_BLENDMODE blend)
 
- return c_func(xSDL_GetTextureBlendMode,{tex,mode})
+ return c_func(xSDL_GetTextureBlendMode,{tex,blend})
 	
 end function
 
@@ -1044,13 +1173,13 @@ public function SDL_GetTextureColorMod(atom tex,atom r,atom g,atom b)
 	
 end function
 
-public function SDL_LockTexture(atom tex,atom rect,object pix,atom pit)
+public function SDL_LockTexture(atom tex,atom rect,atom pix,atom pit)
 
  return c_func(xSDL_LockTexture,{tex,rect,pix,pit})
 	
 end function
 
-public function SDL_QueryTexture(atom tex,atom mat,SDL_TEXTUREACCESS acc,atom w,atom h)
+public function SDL_QueryTexture(atom tex,atom mat,atom acc,atom w,atom h)
 
  return c_func(xSDL_QueryTexture,{tex,mat,acc,w,h})
 	
@@ -1068,10 +1197,10 @@ public function SDL_RenderCopy(atom rend,atom tex,atom src,atom dst)
 	
 end function
 
-public function SDL_RenderCopyEx(atom rend,atom tex,atom src,atom dst,atom ang,atom cent,SDL_RENDERERFLIP flip)
-
- return c_func(xSDL_RenderCopyEx,{rend,tex,src,dst,ang,cent,flip})
+public function SDL_RenderCopyEx(atom rend,atom tex,atom src,atom dst,atom angle,atom cent,SDL_RENDERERFLIP flip)
 	
+ return c_func(xSDL_RenderCopyEx,{rend,tex,src,dst,angle,cent,flip})
+
 end function
 
 public function SDL_RenderDrawLine(atom rend,integer x1,integer y1,integer x2,integer y2)
@@ -1080,9 +1209,9 @@ public function SDL_RenderDrawLine(atom rend,integer x1,integer y1,integer x2,in
 	
 end function
 
-public function SDL_RenderDrawLines(atom rend,atom pts,integer cnt)
+public function SDL_RenderDrawLines(atom rend,atom pts,integer ct)
 
- return c_func(xSDL_RenderDrawLines,{rend,pts,cnt})
+ return c_func(xSDL_RenderDrawLines,{rend,pts,ct})
 	
 end function
 
@@ -1092,9 +1221,9 @@ public function SDL_RenderDrawPoint(atom rend,integer x,integer y)
 	
 end function
 
-public function SDL_RenderDrawPoints(atom rend,atom pts,integer cnt)
+public function SDL_RenderDrawPoints(atom rend,atom pts,integer ct)
 
- return c_func(xSDL_RenderDrawPoints,{rend,pts,cnt})
+ return c_func(xSDL_RenderDrawPoints,{rend,pts,ct})
 	
 end function
 
@@ -1104,9 +1233,9 @@ public function SDL_RenderDrawRect(atom rend,atom rect)
 	
 end function
 
-public function SDL_RenderDrawRects(atom rend,atom rects,integer cnt)
+public function SDL_RenderDrawRects(atom rend,atom rect,integer ct)
 
- return c_func(xSDL_RenderDrawRects,{rend,rects,cnt})
+ return c_func(xSDL_RenderDrawRects,{rend,rect,ct})
 	
 end function
 
@@ -1116,9 +1245,9 @@ public function SDL_RenderFillRect(atom rend,atom rect)
 	
 end function
 
-public function SDL_RenderFillRects(atom rend,atom rect,integer cnt)
+public function SDL_RenderFillRects(atom rend,atom rect,integer ct)
 
- return c_func(xSDL_RenderFillRects,{rend,rect,cnt})
+ return c_func(xSDL_RenderFillRects,{rend,rect,ct})
 	
 end function
 
@@ -1158,7 +1287,7 @@ public procedure SDL_RenderPresent(atom rend)
 	
 end procedure
 
-public function SDL_RenderReadPixels(atom rend,atom rect,atom mat,object pix,integer pit)
+public function SDL_RenderReadPixels(atom rend,atom rect,atom mat,atom pix,integer pit)
 
  return c_func(xSDL_RenderReadPixels,{rend,rect,mat,pix,pit})
 	
@@ -1194,9 +1323,9 @@ public function SDL_RenderTargetSupported(atom rend)
 	
 end function
 
-public function SDL_SetRenderDrawBlendMode(atom rend,SDL_BLENDMODE mode)
+public function SDL_SetRenderDrawBlendMode(atom rend,SDL_BLENDMODE blend)
 
- return c_func(xSDL_SetRenderDrawBlendMode,{rend,mode})
+ return c_func(xSDL_SetRenderDrawBlendMode,{rend,blend})
 	
 end function
 
@@ -1218,9 +1347,9 @@ public function SDL_SetTextureAlphaMod(atom tex,atom al)
 	
 end function
 
-public function SDL_SetTextureBlendMode(atom tex,SDL_BLENDMODE mode)
+public function SDL_SetTextureBlendMode(atom tex,SDL_BLENDMODE blend)
 
- return c_func(xSDL_SetTextureBlendMode,{tex,mode})
+ return c_func(xSDL_SetTextureBlendMode,{tex,blend})
 	
 end function
 
@@ -1236,19 +1365,25 @@ public procedure SDL_UnlockTexture(atom tex)
 	
 end procedure
 
-public function SDL_UpdateTexture(atom tex,atom rect,object pix,integer pit)
+public function SDL_UpdateTexture(atom tex,atom rect,atom pix,integer pit)
 
  return c_func(xSDL_UpdateTexture,{tex,rect,pix,pit})
 	
 end function
 
-public function SDL_UpdateYUVTexture(atom tex,atom rect,atom ypl,integer ypit,atom upl,integer upit,atom vpl,integer vpit)
+public function SDL_UpdateYUVTexture(atom tex,atom rect,atom yp,integer yp2,atom u,integer u2,atom v,integer v2)
 
- return c_func(xSDL_UpdateYUVTexture,{tex,rect,ypl,ypit,upl,upit,vpl,vpit})
+ return c_func(xSDL_UpdateYUVTexture,{tex,rect,yp,yp2,u,u2,v,v2})
 	
 end function
 
---Pixel functions
+public function SDL_RenderSetIntegerScale(atom ren,integer enable)
+
+ return c_func(xSDL_RenderSetIntegerScale,{ren,enable})
+	
+end function
+
+--SDL Pixel Functions
 
 public constant xSDL_AllocFormat = define_c_func(sdl2,"SDL_AllocFormat",{C_UINT},C_POINTER),
 				xSDL_AllocPalette = define_c_func(sdl2,"SDL_AllocPalette",{C_INT},C_POINTER),
@@ -1257,29 +1392,29 @@ public constant xSDL_AllocFormat = define_c_func(sdl2,"SDL_AllocFormat",{C_UINT}
 				xSDL_FreePalette = define_c_proc(sdl2,"SDL_FreePalette",{C_POINTER}),
 				xSDL_GetPixelFormatName = define_c_func(sdl2,"SDL_GetPixelFormatName",{C_UINT},C_POINTER),
 				xSDL_GetRGB = define_c_proc(sdl2,"SDL_GetRGB",{C_UINT,C_POINTER,C_POINTER,C_POINTER,C_POINTER}),
-				xSDL_GetRGBA = define_c_proc(sdl2,"SDL_GetRGBA",{C_UINT,C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER}),
+				xSDL_GetRGBA = define_c_proc(sdl2,"SDL_GetRBA",{C_UINT,C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER}),
 				xSDL_MapRGB = define_c_func(sdl2,"SDL_MapRGB",{C_POINTER,C_UINT,C_UINT,C_UINT},C_UINT),
-				xSDL_MapRGBA = define_c_func(sdl2,"SDL_MapRGBA",{C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT},C_UINT),
+				xSDL_MapRGBA = define_c_func(sdl2,"SDL_MapRGBA",{C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT,C_UINT},C_UINT),
 				xSDL_MasksToPixelFormatEnum = define_c_func(sdl2,"SDL_MasksToPixelFormatEnum",{C_INT,C_UINT,C_UINT,C_UINT,C_UINT},C_UINT),
 				xSDL_PixelFormatEnumToMasks = define_c_func(sdl2,"SDL_PixelFormatEnumToMasks",{C_UINT,C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_BOOL),
 				xSDL_SetPaletteColors = define_c_func(sdl2,"SDL_SetPaletteColors",{C_POINTER,C_POINTER,C_INT,C_INT},C_INT),
 				xSDL_SetPixelFormatPalette = define_c_func(sdl2,"SDL_SetPixelFormatPalette",{C_POINTER,C_POINTER},C_INT)
 				
-public function SDL_AllocFormat(atom mat)
+public function SDL_AllocFormat(atom pix)
 
- return c_func(xSDL_AllocFormat,{mat})
+ return c_func(xSDL_AllocFormat,{pix})
 	
 end function
 
-public function SDL_AllocPalette(integer ncol)
+public function SDL_AllocPalette(integer col)
 
- return c_func(xSDL_AllocPalette,{ncol})
+ return c_func(xSDL_AllocPalette,{col})
 	
 end function
 
-public procedure SDL_CalculateGammaRamp(atom gam,atom ram)
+public procedure SDL_CalculateGammaRamp(atom gamma,atom ramp)
 
- c_proc(xSDL_CalculateGammaRamp,{gam,ram})
+ c_proc(xSDL_CalculateGammaRamp,{gamma,ramp})
 	
 end procedure
 
@@ -1337,9 +1472,9 @@ public function SDL_PixelFormatEnumToMasks(atom mat,atom bpp,atom r,atom g,atom 
 	
 end function
 
-public function SDL_SetPaletteColors(atom pal,atom col,integer first,integer ncol)
+public function SDL_SetPaletteColors(atom pal,atom col,integer first,integer n)
 
- return c_func(xSDL_SetPaletteColors,{pal,col,first,ncol})
+ return c_func(xSDL_SetPaletteColors,{pal,col,first,n})
 	
 end function
 
@@ -1349,26 +1484,26 @@ public function SDL_SetPixelFormatPalette(atom mat,atom pal)
 	
 end function
 
---Rect functions
+--SDL Rect Functions
 
 public constant xSDL_EnclosePoints = define_c_func(sdl2,"SDL_EnclosePoints",{C_POINTER,C_INT,C_POINTER,C_POINTER},C_BOOL),
 				xSDL_HasIntersection = define_c_func(sdl2,"SDL_HasIntersection",{C_POINTER,C_POINTER},C_BOOL),
 				xSDL_IntersectRect = define_c_func(sdl2,"SDL_IntersectRect",{C_POINTER,C_POINTER,C_POINTER},C_BOOL),
-				xSDL_IntersectRectAndLine = define_c_func(sdl2,"SDL_IntersectRectAndLine",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_BOOL),
+				xSDL_IntersectRectAndLine = define_c_func(sdl2,"SDL_IntersectRectAndLinr",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_BOOL),
 				xSDL_PointInRect = define_c_func(sdl2,"SDL_PointInRect",{C_POINTER,C_POINTER},C_BOOL),
 				xSDL_RectEmpty = define_c_func(sdl2,"SDL_RectEmpty",{C_POINTER},C_BOOL),
 				xSDL_RectEquals = define_c_func(sdl2,"SDL_RectEquals",{C_POINTER,C_POINTER},C_BOOL),
 				xSDL_UnionRect = define_c_proc(sdl2,"SDL_UnionRect",{C_POINTER,C_POINTER,C_POINTER})
 				
-public function SDL_EnclosePoints(atom pts,integer cnt,atom clip,atom res)
+public function SDL_EnclosePoints(atom pts,integer ct,atom clip,atom res)
 
- return c_func(xSDL_EnclosePoints,{pts,cnt,clip,res})
+ return c_func(xSDL_EnclosePoints,{pts,ct,clip,res})
 	
 end function
 
-public function SDL_HasIntersection(atom rect1,atom rect2)
+public function SDL_HasIntersection(atom a,atom b)
 
- return c_func(xSDL_HasIntersection,{rect1,rect2})
+ return c_func(xSDL_HasIntersection,{a,b})
 	
 end function
 
@@ -1408,24 +1543,7 @@ public procedure SDL_UnionRect(atom a,atom b,atom res)
 	
 end procedure
 
---File System Path functions
-
-public constant xSDL_GetBasePath = define_c_func(sdl2,"SDL_GetBasePath",{},C_POINTER),
-				xSDL_GetPrefPath = define_c_func(sdl2,"SDL_GetPrefPath",{C_POINTER,C_POINTER},C_POINTER)
-				
-public function SDL_GetBasePath()
-
- return c_func(xSDL_GetBasePath,{})
-	
-end function
-
-public function SDL_GetPrefPath(sequence org,sequence app)
-
- return c_func(xSDL_GetPrefPath,{allocate_string(org,1),allocate_string(app,1)})
-	
-end function
-
---SDL RWops functions
+--SDL RWops Functions
 
 public constant xSDL_AllocRW = define_c_func(sdl2,"SDL_AllocRW",{},C_POINTER),
 				xSDL_FreeRW = define_c_proc(sdl2,"SDL_FreeRW",{C_POINTER}),
@@ -1435,9 +1553,9 @@ public constant xSDL_AllocRW = define_c_func(sdl2,"SDL_AllocRW",{},C_POINTER),
 				xSDL_RWFromMem = define_c_func(sdl2,"SDL_RWFromMem",{C_POINTER,C_INT},C_POINTER),
 				xSDL_RWclose = define_c_func(sdl2,"SDL_RWclose",{C_POINTER},C_INT),
 				xSDL_RWread = define_c_func(sdl2,"SDL_RWread",{C_POINTER,C_POINTER,C_SIZE_T,C_SIZE_T},C_SIZE_T),
-				xSDL_RWseek = define_c_func(sdl2,"SDL_RWseek",{C_POINTER,C_POINTER,C_INT},C_POINTER),
-				xSDL_RWsize = define_c_func(sdl2,"SDL_RWsize",{C_POINTER},C_POINTER),
-				xSDL_RWtell = define_c_func(sdl2,"SDL_RWtell",{C_POINTER},C_POINTER),
+				xSDL_RWseek = define_c_func(sdl2,"SDL_RWseek",{C_POINTER,C_DWORDLONG,C_INT},C_DWORDLONG),
+				xSDL_RWsize = define_c_func(sdl2,"SDL_RWsize",{C_POINTER},C_DWORDLONG),
+				xSDL_RWtell = define_c_func(sdl2,"SDL_RWtell",{C_POINTER},C_DWORDLONG),
 				xSDL_RWwrite = define_c_func(sdl2,"SDL_RWwrite",{C_POINTER,C_POINTER,C_SIZE_T,C_SIZE_T},C_SIZE_T),
 				xSDL_ReadBE16 = define_c_func(sdl2,"SDL_ReadBE16",{C_POINTER},C_UINT),
 				xSDL_ReadBE32 = define_c_func(sdl2,"SDL_ReadBE32",{C_POINTER},C_UINT),
@@ -1445,12 +1563,14 @@ public constant xSDL_AllocRW = define_c_func(sdl2,"SDL_AllocRW",{},C_POINTER),
 				xSDL_ReadLE16 = define_c_func(sdl2,"SDL_ReadLE16",{C_POINTER},C_UINT),
 				xSDL_ReadLE32 = define_c_func(sdl2,"SDL_ReadLE32",{C_POINTER},C_UINT),
 				xSDL_ReadLE64 = define_c_func(sdl2,"SDL_ReadLE64",{C_POINTER},C_UINT),
+				xSDL_ReadU8 = define_c_func(sdl2,"SDL_ReadU8",{C_POINTER},C_UINT),
 				xSDL_WriteBE16 = define_c_func(sdl2,"SDL_WriteBE16",{C_POINTER,C_UINT},C_SIZE_T),
 				xSDL_WriteBE32 = define_c_func(sdl2,"SDL_WriteBE32",{C_POINTER,C_UINT},C_SIZE_T),
 				xSDL_WriteBE64 = define_c_func(sdl2,"SDL_WriteBE64",{C_POINTER,C_UINT},C_SIZE_T),
 				xSDL_WriteLE16 = define_c_func(sdl2,"SDL_WriteLE16",{C_POINTER,C_UINT},C_SIZE_T),
-				xSDL_WriteLE32 = define_c_func(sdl2,"SDL_WriteLE32",{C_POINTER,C_UINT},C_SIZE_T),
-				xSDL_WriteLE64 = define_c_func(sdl2,"SDL_WriteLE64",{C_POINTER,C_UINT},C_SIZE_T)
+				xSDL_WriteLE32 = define_c_func(sdl2,"SDL_writeLE32",{C_POINTER,C_UINT},C_SIZE_T),
+				xSDL_WriteLE64 = define_c_func(sdl2,"SDL_WriteLE64",{C_POINTER,C_UINT},C_SIZE_T),
+				xSDL_WriteU8 = define_c_func(sdl2,"SDL_WriteU8",{C_POINTER,C_UINT},C_SIZE_T)
 				
 public function SDL_AllocRW()
 
@@ -1464,25 +1584,30 @@ public procedure SDL_FreeRW(atom area)
 	
 end procedure
 
-public function SDL_RWFromConstMem(object mem,integer size)
+public function SDL_RWFromConstMem(atom mem,integer size)
 
  return c_func(xSDL_RWFromConstMem,{mem,size})
 	
 end function
 
-public function SDL_RWFromFP(object fp,integer auto)
+public function SDL_RWFromFP(atom fp,integer auto)
 
  return c_func(xSDL_RWFromFP,{fp,auto})
 	
 end function
 
-public function SDL_RWFromFile(sequence file,sequence mode)
+public function SDL_RWFromFile(sequence fname,sequence mode)
 
- return c_func(xSDL_RWFromFile,{allocate_string(file,1),allocate_string(mode,1)})
+ atom str = allocate_string(fname,1)
+ atom str2 = allocate_string(mode,1)
+ 
+ atom ret = c_func(xSDL_RWFromFile,{str,str2})
+ 
+ return ret
 	
 end function
 
-public function SDL_RWFromMem(object mem,integer size)
+public function SDL_RWFromMem(atom mem,integer size)
 
  return c_func(xSDL_RWFromMem,{mem,size})
 	
@@ -1494,7 +1619,7 @@ public function SDL_RWclose(atom ctx)
 	
 end function
 
-public function SDL_RWread(atom ctx,object ptr,atom size,atom max)
+public function SDL_RWread(atom ctx,atom ptr,atom size,atom max)
 
  return c_func(xSDL_RWread,{ctx,ptr,size,max})
 	
@@ -1518,7 +1643,7 @@ public function SDL_RWtell(atom ctx)
 	
 end function
 
-public function SDL_RWwrite(atom ctx,object ptr,atom size,atom num)
+public function SDL_RWwrite(atom ctx,atom ptr,atom size,atom num)
 
  return c_func(xSDL_RWwrite,{ctx,ptr,size,num})
 	
@@ -1560,6 +1685,12 @@ public function SDL_ReadLE64(atom src)
 	
 end function
 
+public function SDL_ReadU8(atom src)
+
+ return c_func(xSDL_ReadU8,{src})
+	
+end function
+
 public function SDL_WriteBE16(atom dst,atom val)
 
  return c_func(xSDL_WriteBE16,{dst,val})
@@ -1596,7 +1727,35 @@ public function SDL_WriteLE64(atom dst,atom val)
 	
 end function
 
---Surface functions
+public function SDL_WriteU8(atom dst,atom val)
+
+ return c_func(xSDL_WriteU8,{dst,val})
+	
+end function
+
+--Filesystem Path Functions
+
+public constant xSDL_GetBasePath = define_c_func(sdl2,"SDL_GetBasePath",{},C_POINTER),
+				xSDL_GetPrefPath = define_c_func(sdl2,"SDL_GetPrefPath",{C_POINTER,C_POINTER},C_POINTER)
+				
+public function SDL_GetBasePath()
+
+ return c_func(xSDL_GetBasePath,{})
+	
+end function
+
+public function SDL_GetPrefPath(sequence org,sequence app)
+
+ atom str = allocate_string(org,1)
+ atom str2 = allocate_string(app,1)
+ 
+ atom ret = c_func(xSDL_GetPrefPath,{str,str2})
+ 
+ return ret
+	
+end function
+
+--SDL Surface Functions
 
 public constant xSDL_BlitScaled = define_c_func(sdl2,"SDL_BlitScaled",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
 				xSDL_BlitSurface = define_c_func(sdl2,"SDL_BlitSurface",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
@@ -1621,54 +1780,55 @@ public constant xSDL_BlitScaled = define_c_func(sdl2,"SDL_BlitScaled",{C_POINTER
 				xSDL_MUSTLOCK = define_c_func(sdl2,"SDL_MUSTLOCK",{C_POINTER},C_BOOL),
 				xSDL_SaveBMP = define_c_func(sdl2,"SDL_SaveBMP",{C_POINTER,C_POINTER},C_INT),
 				xSDL_SaveBMP_RW = define_c_func(sdl2,"SDL_SaveBMP_RW",{C_POINTER,C_POINTER,C_INT},C_INT),
-				xSDL_SetClipRect = define_c_func(sdl2,"SDL_SetClipRect",{C_POINTER,C_POINTER},C_BOOL),
+				xSDL_SetClipRect = define_c_func(sdl2,"SDL_SetClipRect",{C_POINTER,C_POINTER},C_INT),
 				xSDL_SetColorKey = define_c_func(sdl2,"SDL_SetColorKey",{C_POINTER,C_INT,C_UINT},C_INT),
 				xSDL_SetSurfaceAlphaMod = define_c_func(sdl2,"SDL_SetSurfaceAlphaMod",{C_POINTER,C_UINT},C_INT),
 				xSDL_SetSurfaceBlendMode = define_c_func(sdl2,"SDL_SetSurfaceBlendMode",{C_POINTER,C_POINTER},C_INT),
 				xSDL_SetSurfaceColorMod = define_c_func(sdl2,"SDL_SetSurfaceColorMod",{C_POINTER,C_UINT,C_UINT,C_UINT},C_INT),
 				xSDL_SetSurfacePalette = define_c_func(sdl2,"SDL_SetSurfacePalette",{C_POINTER,C_POINTER},C_INT),
 				xSDL_SetSurfaceRLE = define_c_func(sdl2,"SDL_SetSurfaceRLE",{C_POINTER,C_INT},C_INT),
-				xSDL_UnlockSurface = define_c_proc(sdl2,"SDL_UnlockSurface",{C_POINTER})
+				xSDL_UnlockSurface = define_c_proc(sdl2,"SDL_UnlockSurface",{C_POINTER}),
+				xSDL_CreateRGBSurfaceWithFormat = define_c_func(sdl2,"SDL_CreateRGBSurfaceWithFormat",{C_UINT,C_INT,C_INT,C_INT,C_UINT},C_POINTER)
 				
-public function SDL_BlitScaled(atom src,atom srcrect,atom dst,atom dstrect)
-
- return c_func(xSDL_BlitScaled,{src,srcrect,dst,dstrect})
+public function SDL_BlitScaled(atom src,atom srcr,atom dst,atom dstr)
+ 
+ return c_func(xSDL_BlitScaled,{src,srcr,dst,dstr})
 	
 end function
 
-public function SDL_BlitSurface(atom src,atom srcrect,atom dst,atom dstrect)
+public function SDL_BlitSurface(atom src,atom srcr,atom dst,atom dstr)
 
- return c_func(xSDL_BlitSurface,{src,srcrect,dst,dstrect})
+ return c_func(xSDL_BlitSurface,{src,srcr,dst,dstr})
 	
 end function
 
-public function SDL_ConvertPixels(integer w,integer h,atom mat,object src,integer srcpit,atom mat2,object dst,integer dstpit)
+public function SDL_ConvertPixels(integer w,integer h,atom mat,atom src,integer pit,atom dst,atom dst2,integer pit2)
 
- return c_func(xSDL_ConvertPixels,{w,h,mat,src,srcpit,mat2,dst,dstpit})
+ return c_func(xSDL_ConvertPixels,{w,h,mat,src,pit,dst,dst2,pit2})
 	
 end function
 
-public function SDL_ConvertSurface(atom src,object fmt,atom flags)
+public function SDL_ConvertSurface(atom src,atom fmt,atom flags)
 
  return c_func(xSDL_ConvertSurface,{src,fmt,flags})
 	
 end function
 
-public function SDL_ConvertSurfaceFormat(atom src,atom mat,atom flags)
+public function SDL_ConvertSurfaceFormat(atom src,atom pix,atom flag)
 
- return c_func(xSDL_ConvertSurfaceFormat,{src,mat,flags})
+ return c_func(xSDL_ConvertSurfaceFormat,{src,pix,flag})
 	
 end function
 
-public function SDL_CreateRGBSurface(atom flags,integer w,integer h,integer d,atom r,atom g,atom b,atom a)
+public function SDL_CreateRGBSurface(atom flag,integer w,integer h,integer d,atom r,atom g,atom b,atom a)
 
- return c_func(xSDL_CreateRGBSurface,{flags,w,h,d,r,g,b,a})
+ return c_func(xSDL_CreateRGBSurface,{flag,w,h,d,r,g,b,a})
 	
 end function
 
-public function SDL_CreateRGBSurfaceFrom(object pix,integer w,integer h,integer d,integer pit,atom r,atom g,atom b,atom a)
+public function SDL_CreateRGBSurfaceFrom(atom pix,integer w,integer h,integer d,integer p,atom r,atom g,atom b,atom a)
 
- return c_func(xSDL_CreateRGBSurfaceFrom,{pix,w,h,d,pit,r,g,b,a})
+ return c_func(xSDL_CreateRGBSurfaceFrom,{pix,w,h,d,p,r,g,b,a})
 	
 end function
 
@@ -1678,10 +1838,10 @@ public function SDL_FillRect(atom dst,atom rect,atom col)
 	
 end function
 
-public function SDL_FillRects(atom dst,atom rect,integer cnt,atom col)
-
- return c_func(xSDL_FillRects,{dst,rect,cnt,col})
+public function SDL_FillRects(atom dst,atom rect,integer ct,atom col)
 	
+	return c_func(xSDL_FillRects,{dst,rect,ct,col})
+
 end function
 
 public procedure SDL_FreeSurface(atom surf)
@@ -1708,7 +1868,7 @@ public function SDL_GetSurfaceAlphaMod(atom surf,atom al)
 	
 end function
 
-public function SDL_GetSurfaceBlendMode(atom surf,SDL_BLENDMODE mode)
+public function SDL_GetSurfaceBlendMode(atom surf,atom mode)
 
  return c_func(xSDL_GetSurfaceBlendMode,{surf,mode})
 	
@@ -1720,15 +1880,15 @@ public function SDL_GetSurfaceColorMod(atom surf,atom r,atom g,atom b)
 	
 end function
 
-public function SDL_LoadBMP_RW(atom src,integer fsrc)
+public function SDL_LoadBMP_RW(atom src,integer xfree)
 
- return c_func(xSDL_LoadBMP_RW,{src,fsrc})
+ return c_func(xSDL_LoadBMP_RW,{src,xfree})
 	
 end function
 
-public function SDL_LoadBMP(sequence file)
+public function SDL_LoadBMP(sequence fname)
 
- return SDL_LoadBMP_RW(SDL_RWFromFile(file,"rb"),1)
+ return SDL_LoadBMP_RW(SDL_RWFromFile(fname,"rb"),1)
 	
 end function
 
@@ -1738,15 +1898,15 @@ public function SDL_LockSurface(atom surf)
 	
 end function
 
-public function SDL_LowerBlit(atom src,atom srcrect,atom dst,atom dstrect)
+public function SDL_LowerBlit(atom src,atom srcr,atom dst,atom dstr)
 
- return c_func(xSDL_LowerBlit,{src,srcrect,dst,dstrect})
+ return c_func(xSDL_LowerBlit,{src,srcr,dst,dstr})
 	
 end function
 
-public function SDL_LowerBlitScaled(atom src,atom srcrect,atom dst,atom dstrect)
+public function SDL_LowerBlitScaled(atom src,atom srcr,atom dst,atom dstr)
 
- return c_func(xSDL_LowerBlitScaled,{src,srcrect,dst,dstrect})
+ return c_func(xSDL_LowerBlitScaled,{src,srcr,dst,dstr})
 	
 end function
 
@@ -1756,15 +1916,15 @@ public function SDL_MUSTLOCK(atom surf)
 	
 end function
 
-public function SDL_SaveBMP_RW(atom surf,atom dst,integer fsrc)
+public function SDL_SaveBMP_RW(atom surf,atom dst,integer xfree)
 
- return c_func(xSDL_SaveBMP_RW,{surf,dst,fsrc})
+ return c_func(xSDL_SaveBMP_RW,{surf,dst,xfree})
 	
 end function
 
-public function SDL_SaveBMP(atom surf,sequence file)
+public function SDL_SaveBMP(atom surf,sequence fname)
 
- return SDL_SaveBMP_RW(surf,SDL_RWFromFile(file,"wb"),1)
+ return SDL_SaveBMP_RW(surf,SDL_RWFromFile(fname,"wb"),1)
 	
 end function
 
@@ -1816,7 +1976,23 @@ public procedure SDL_UnlockSurface(atom surf)
 	
 end procedure
 
---Clipboard functions
+public function SDL_CreateRGBSurfaceWithFormat(atom flags,integer w,integer h,integer d,atom mat)
+
+ return c_func(xSDL_CreateRGBSurfaceWithFormat,{flags,w,h,d,mat})
+	
+end function
+
+--SDL Window Functions
+
+--public constant xSDL_GetWindowWMInfo = define_c_func(sdl2,"SDL_GetWindowWMInfo",{C_POINTER,C_POINTER},C_BOOL)
+
+--public function SDL_GetWindowWMInfo(atom win,SDL_SYSWM_TYPE wm)
+
+ --return c_func(xSDL_GetWindowWMInfo,{win,wm})
+	
+--end function
+
+--SDL Clipboard functions
 
 public constant xSDL_GetClipboardText = define_c_func(sdl2,"SDL_GetClipboardText",{},C_POINTER),
 				xSDL_HasClipboardText = define_c_func(sdl2,"SDL_HasClipboardText",{},C_BOOL),
@@ -1834,13 +2010,17 @@ public function SDL_HasClipboardText()
 	
 end function
 
-public function SDL_SetClipboardText(sequence text)
+public function SDL_SetClipboardText(sequence txt)
 
- return c_func(xSDL_SetClipboardText,{allocate_string(text,1)})
+ atom str = allocate_string(txt,1)
+ 
+ atom ret = c_func(xSDL_SetClipboardText,{str})
+ 
+ return ret
 	
 end function
 
---Event functions
+--SDL Event Functions
 
 public constant xSDL_AddEventWatch = define_c_proc(sdl2,"SDL_AddEventWatch",{C_POINTER,C_POINTER}),
 				xSDL_DelEventWatch = define_c_proc(sdl2,"SDL_DelEventWatch",{C_POINTER,C_POINTER}),
@@ -1849,8 +2029,9 @@ public constant xSDL_AddEventWatch = define_c_proc(sdl2,"SDL_AddEventWatch",{C_P
 				xSDL_FlushEvent = define_c_proc(sdl2,"SDL_FlushEvent",{C_UINT}),
 				xSDL_FlushEvents = define_c_proc(sdl2,"SDL_FlushEvents",{C_UINT,C_UINT}),
 				xSDL_GetEventFilter = define_c_func(sdl2,"SDL_GetEventFilter",{C_POINTER,C_POINTER},C_BOOL),
+				xSDL_GetEventState = define_c_func(sdl2,"SDL_GetEventState",{C_UINT},C_UINT),
 				xSDL_GetNumTouchDevices = define_c_func(sdl2,"SDL_GetNumTouchDevices",{},C_INT),
-				xSDL_GetNumTouchFingers = define_c_func(sdl2,"SDL_GetnumTouchFingers",{C_POINTER},C_INT),
+				xSDL_GetNumTouchFingers = define_c_func(sdl2,"SDL_GetNumTouchFingers",{C_POINTER},C_INT),
 				xSDL_GetTouchDevice = define_c_func(sdl2,"SDL_GetTouchDevice",{C_INT},C_POINTER),
 				xSDL_GetTouchFinger = define_c_func(sdl2,"SDL_GetTouchFinger",{C_POINTER,C_INT},C_POINTER),
 				xSDL_HasEvent = define_c_func(sdl2,"SDL_HasEvent",{C_UINT},C_BOOL),
@@ -1869,31 +2050,31 @@ public constant xSDL_AddEventWatch = define_c_proc(sdl2,"SDL_AddEventWatch",{C_P
 				xSDL_WaitEvent = define_c_func(sdl2,"SDL_WaitEvent",{C_POINTER},C_INT),
 				xSDL_WaitEventTimeout = define_c_func(sdl2,"SDL_WaitEventTimeout",{C_POINTER,C_INT},C_INT)
 				
-public procedure SDL_AddEventWatch(atom filt,object dat)
+public procedure SDL_AddEventWatch(atom filter,atom dat)
 
- c_proc(xSDL_AddEventWatch,{filt,dat})
+ c_proc(xSDL_AddEventWatch,{filter,dat})
 	
 end procedure
 
-public procedure SDL_DelEventWatch(atom filt,object dat)
+public procedure SDL_DelEventWatch(atom filter,atom dat)
 
- c_proc(xSDL_DelEventWatch,{filt,dat})
+ c_proc(xSDL_DelEventWatch,{filter,dat})
 	
 end procedure
 
-public function SDL_EventState(SDL_EVENTTYPE xtype,integer st)
+public function SDL_EventState(atom xtype,integer state)
 
- return c_func(xSDL_EventState,{xtype,st})
+ return c_func(xSDL_EventState,{xtype,state})
 	
 end function
 
-public procedure SDL_FilterEvents(atom filt,object dat)
+public procedure SDL_FilterEvents(atom filter,atom dat)
 
- c_proc(xSDL_FilterEvents,{filt,dat})
+ c_proc(xSDL_FilterEvents,{filter,dat})
 	
 end procedure
 
-public procedure SDL_FlushEvent(SDL_EVENTTYPE xtype)
+public procedure SDL_FlushEvent(atom xtype)
 
  c_proc(xSDL_FlushEvent,{xtype})
 	
@@ -1905,9 +2086,15 @@ public procedure SDL_FlushEvents(atom min,atom max)
 	
 end procedure
 
-public function SDL_GetEventFilter(atom filt,object dat)
+public function SDL_GetEventFilter(atom filter,atom dat)
 
- return c_func(xSDL_GetEventFilter,{filt,dat})
+ return c_func(xSDL_GetEventFilter,{filter,dat})
+	
+end function
+
+public function SDL_GetEventState(atom xtype)
+
+ return c_func(xSDL_GetEventState,{xtype})
 	
 end function
 
@@ -1923,9 +2110,9 @@ public function SDL_GetNumTouchFingers(atom id)
 	
 end function
 
-public function SDL_GetTouchDevice(integer indx)
+public function SDL_GetTouchDevice(integer idx)
 
- return c_func(xSDL_GetTouchDevice,{indx})
+ return c_func(xSDL_GetTouchDevice,{idx})
 	
 end function
 
@@ -1935,7 +2122,7 @@ public function SDL_GetTouchFinger(atom id,integer idx)
 	
 end function
 
-public function SDL_HasEvent(SDL_EVENTTYPE xtype)
+public function SDL_HasEvent(atom xtype)
 
  return c_func(xSDL_HasEvent,{xtype})
 	
@@ -1953,13 +2140,13 @@ public function SDL_LoadDollarTemplates(atom id,atom src)
 	
 end function
 
-public function SDL_PeepEvents(SDL_WINDOWEVENTID evt,integer num,SDL_EVENTACTION act,atom min,atom max)
+public function SDL_PeepEvents(atom evt,integer num,atom act,atom min,atom max)
 
  return c_func(xSDL_PeepEvents,{evt,num,act,min,max})
 	
 end function
 
-public function SDL_PollEvent(SDL_WINDOWEVENTID evt)
+public function SDL_PollEvent(atom evt)
 
  return c_func(xSDL_PollEvent,{evt})
 	
@@ -1971,7 +2158,7 @@ public procedure SDL_PumpEvents()
 	
 end procedure
 
-public function SDL_PushEvent(SDL_WINDOWEVENTID evt)
+public function SDL_PushEvent(atom evt)
 
  return c_func(xSDL_PushEvent,{evt})
 	
@@ -2007,25 +2194,25 @@ public function SDL_SaveDollarTemplate(atom id,atom dst)
 	
 end function
 
-public procedure SDL_SetEventFilter(atom filt,object dat)
+public procedure SDL_SetEventFilter(atom filter,atom dat)
 
- c_proc(xSDL_SetEventFilter,{filt,dat})
+ c_proc(xSDL_SetEventFilter,{filter,dat})
 	
 end procedure
 
-public function SDL_WaitEvent(SDL_WINDOWEVENTID evt)
+public function SDL_WaitEvent(atom evt)
 
  return c_func(xSDL_WaitEvent,{evt})
 	
 end function
 
-public function SDL_WaitEventTimeout(SDL_WINDOWEVENTID evt,integer xtime)
+public function SDL_WaitEventTimeout(atom evt,integer xtime)
 
  return c_func(xSDL_WaitEventTimeout,{evt,xtime})
 	
 end function
 
---Keyboard functions
+--SDL Keyboard Functions
 
 public constant xSDL_GetKeyFromName = define_c_func(sdl2,"SDL_GetKeyFromName",{C_POINTER},C_POINTER),
 				xSDL_GetKeyFromScancode = define_c_func(sdl2,"SDL_GetKeyFromScancode",{C_POINTER},C_POINTER),
@@ -2046,7 +2233,10 @@ public constant xSDL_GetKeyFromName = define_c_func(sdl2,"SDL_GetKeyFromName",{C
 				
 public function SDL_GetKeyFromName(sequence name)
 
- return c_func(xSDL_GetKeyFromName,{allocate_string(name,1)})
+ atom str = allocate_string(name,1)
+ atom ret = c_func(xSDL_GetKeyFromName,{str})
+ 
+ return ret
 	
 end function
 
@@ -2056,9 +2246,9 @@ public function SDL_GetKeyFromScancode(SDL_SCANCODE code)
 	
 end function
 
-public function SDL_GetKeyName(atom xkey)
+public function SDL_GetKeyName(atom key)
 
- return c_func(xSDL_GetKeyName,{xkey})
+ return c_func(xSDL_GetKeyName,{key})
 	
 end function
 
@@ -2088,13 +2278,16 @@ end function
 
 public function SDL_GetScancodeFromName(sequence name)
 
- return c_func(xSDL_GetScancodeFromName,{allocate_string(name,1)})
+ atom str = allocate_string(name,1)
+ atom ret = c_func(xSDL_GetScancodeFromName,{str})
+ 
+ return ret
 	
 end function
 
-public function SDL_GetScancodeName(SDL_SCANCODE scan)
+public function SDL_GetScancodeName(SDL_SCANCODE code)
 
- return c_func(xSDL_GetScancodeName,{scan})
+ return c_func(xSDL_GetScancodeName,{code})
 	
 end function
 
@@ -2116,7 +2309,7 @@ public function SDL_IsTextInputActive()
 	
 end function
 
-public procedure SDL_SetModState(SDL_KEYMOD mod)
+public procedure SDL_SetModState(atom mod)
 
  c_proc(xSDL_SetModState,{mod})
 	
@@ -2140,7 +2333,7 @@ public procedure SDL_StopTextInput()
 	
 end procedure
 
---Mouse functions
+--SDL Mouse Functions
 
 public constant xSDL_CaptureMouse = define_c_func(sdl2,"SDL_CaptureMouse",{C_BOOL},C_INT),
 				xSDL_CreateColorCursor = define_c_func(sdl2,"SDL_CreateColorCursor",{C_POINTER,C_INT,C_INT},C_POINTER),
@@ -2157,7 +2350,7 @@ public constant xSDL_CaptureMouse = define_c_func(sdl2,"SDL_CaptureMouse",{C_BOO
 				xSDL_SetCursor = define_c_proc(sdl2,"SDL_SetCursor",{C_POINTER}),
 				xSDL_SetRelativeMouseMode = define_c_func(sdl2,"SDL_SetRelativeMouseMode",{C_BOOL},C_INT),
 				xSDL_ShowCursor = define_c_func(sdl2,"SDL_ShowCursor",{C_INT},C_INT),
-				xSDL_WarpMouseGlobal = define_c_proc(sdl2,"SDL_WarpMouseGlobal",{C_INT,C_INT}),
+				xSDL_WarpMouseGlobal = define_c_func(sdl2,"SDL_WarpMouseGlobal",{C_INT,C_INT},C_INT),
 				xSDL_WarpMouseInWindow = define_c_proc(sdl2,"SDL_WarpMouseInWindow",{C_POINTER,C_INT,C_INT})
 				
 public function SDL_CaptureMouse(integer enable)
@@ -2172,9 +2365,9 @@ public function SDL_CreateColorCursor(atom surf,integer x,integer y)
 	
 end function
 
-public function SDL_CreateCursor(atom dat,atom mask,integer w,integer h,integer x,integer y)
+public function SDL_CreateCursor(atom dat,atom mas,integer w,integer h,integer x,integer y)
 
- return c_func(xSDL_CreateCursor,{dat,mask,w,h,x,y})
+ return c_func(xSDL_CreateCursor,{dat,mas,w,h,x,y})
 	
 end function
 
@@ -2250,11 +2443,11 @@ public function SDL_ShowCursor(integer toggle)
 	
 end function
 
-public procedure SDL_WarpMouseGlobal(integer x,integer y)
+public function SDL_WarpMouseGlobal(integer x,integer y)
 
- c_proc(xSDL_WarpMouseGlobal,{x,y})
+ return c_func(xSDL_WarpMouseGlobal,{x,y})
 	
-end procedure
+end function
 
 public procedure SDL_WarpMouseInWindow(atom win,integer x,integer y)
 
@@ -2262,12 +2455,14 @@ public procedure SDL_WarpMouseInWindow(atom win,integer x,integer y)
 	
 end procedure
 
---Joystick functions
+--SDL Joystick Functions
 
 public constant xSDL_JoystickClose = define_c_proc(sdl2,"SDL_JoystickClose",{C_POINTER}),
+				xSDL_JoystickCurrentPowerLevel = define_c_func(sdl2,"SDL_JoystickCurrentPowerLevel",{C_POINTER},C_POINTER),
 				xSDL_JoystickEventState = define_c_func(sdl2,"SDL_JoystickEventState",{C_INT},C_INT),
+				xSDL_JoystickFromInstanceID = define_c_func(sdl2,"SDL_JoystickFromInstanceID",{C_POINTER},C_POINTER),
 				xSDL_JoystickGetAttached = define_c_func(sdl2,"SDL_JoystickGetAttached",{C_POINTER},C_BOOL),
-				xSDL_JoystickGetAxis = define_c_func(sdl2,"SDL_JoystickGetAxis",{C_POINTER,C_INT},C_UINT),
+				xSDL_JoystickGetAxis = define_c_func(sdl2,"SDL_JoystickGetAxis",{C_POINTER,C_INT},C_INT),
 				xSDL_JoystickGetBall = define_c_func(sdl2,"SDL_JoystickGetBall",{C_POINTER,C_INT,C_POINTER,C_POINTER},C_INT),
 				xSDL_JoystickGetButton = define_c_func(sdl2,"SDL_JoystickGetButton",{C_POINTER,C_INT},C_UINT),
 				xSDL_JoystickGetDeviceGUID = define_c_func(sdl2,"SDL_JoystickGetDeviceGUID",{C_INT},C_POINTER),
@@ -2292,9 +2487,21 @@ public procedure SDL_JoystickClose(atom joy)
 	
 end procedure
 
+public function SDL_JoystickCurrentPowerLevel(atom joy)
+
+ return c_func(xSDL_JoystickCurrentPowerLevel,{joy})
+	
+end function
+
 public function SDL_JoystickEventState(integer st)
 
  return c_func(xSDL_JoystickEventState,{st})
+	
+end function
+
+public function SDL_JoystickFromInstanceID(atom joy)
+
+ return c_func(xSDL_JoystickFromInstanceID,{joy})
 	
 end function
 
@@ -2310,9 +2517,15 @@ public function SDL_JoystickGetAxis(atom joy,integer ax)
 	
 end function
 
-public function SDL_JoystickGetBall(atom joy,integer bal,atom x,atom y)
+public function SDL_JoystickGetBall(atom joy,integer ba,atom x,atom y)
 
- return c_func(xSDL_JoystickGetBall,{joy,bal,x,y})
+ return c_func(xSDL_JoystickGetBall,{joy,ba,x,y})
+	
+end function
+
+public function SDL_JoystickGetButton(atom joy,integer btn)
+
+ return c_func(xSDL_JoystickGetButton,{joy,btn})
 	
 end function
 
@@ -2328,15 +2541,19 @@ public function SDL_JoystickGetGUID(atom joy)
 	
 end function
 
-public function SDL_JoystickGetGUIDFromString(sequence guid)
+public function SDL_JoystickGetGUIDFromString(sequence p)
 
- return c_func(xSDL_JoystickGetGUIDFromString,{allocate_string(guid,1)})
+ atom str = allocate_string(p,1)
+ atom ret = c_func(xSDL_JoystickGetGUIDFromString,{str})
+ 
+ return ret
 	
 end function
 
-public procedure SDL_JoystickGetGUIDString(atom guid,sequence szguid,integer cbguid)
+public procedure SDL_JoystickGetGUIDString(atom gu,sequence p,integer cb)
 
- c_proc(xSDL_JoystickGetGUIDString,{guid,allocate_string(szguid,1),cbguid})
+ atom str = allocate_string(p,1)
+ c_proc(xSDL_JoystickGetGUIDString,{gu,str,cb})
 	
 end procedure
 
@@ -2406,15 +2623,16 @@ public function SDL_NumJoysticks()
 	
 end function
 
---GameController functions
+--SDL Gamecontroller Functions
 
 public constant xSDL_GameControllerAddMapping = define_c_func(sdl2,"SDL_GameControllerAddMapping",{C_POINTER},C_INT),
 				xSDL_GameControllerAddMappingsFromFile = define_c_func(sdl2,"SDL_GameControllerAddMappingsFromFile",{C_POINTER},C_INT),
 				xSDL_GameControllerAddMappingsFromRW = define_c_func(sdl2,"SDL_GameControllerAddMappingsFromRW",{C_POINTER,C_INT},C_INT),
 				xSDL_GameControllerClose = define_c_proc(sdl2,"SDL_GameControllerClose",{C_POINTER}),
 				xSDL_GameControllerEventState = define_c_func(sdl2,"SDL_GameControllerEventState",{C_INT},C_INT),
+				xSDL_GameControllerFromInstanceID = define_c_func(sdl2,"SDL_GameControllerFromInstanceID",{C_POINTER},C_POINTER),
 				xSDL_GameControllerGetAttached = define_c_func(sdl2,"SDL_GameControllerGetAttached",{C_POINTER},C_BOOL),
-				xSDL_GameControllerGetAxis = define_c_func(sdl2,"SDL_GameControllerGetAxis",{C_POINTER,C_POINTER},C_UINT),
+				xSDL_GameControllerGetAxis = define_c_func(sdl2,"SDL_GameControllerGetAxis",{C_POINTER,C_POINTER},C_INT),
 				xSDL_GameControllerGetAxisFromString = define_c_func(sdl2,"SDL_GameControllerGetAxisFromString",{C_POINTER},C_POINTER),
 				xSDL_GameControllerGetBindForAxis = define_c_func(sdl2,"SDL_GameControllerGetBindForAxis",{C_POINTER,C_POINTER},C_POINTER),
 				xSDL_GameControllerGetBindForButton = define_c_func(sdl2,"SDL_GameControllerGetBindForButton",{C_POINTER,C_POINTER},C_POINTER),
@@ -2431,27 +2649,33 @@ public constant xSDL_GameControllerAddMapping = define_c_func(sdl2,"SDL_GameCont
 				xSDL_GameControllerUpdate = define_c_proc(sdl2,"SDL_GameControllerUpdate",{}),
 				xSDL_IsGameController = define_c_func(sdl2,"SDL_IsGameController",{C_INT},C_BOOL)
 				
-public function SDL_GameControllerAddMapping(sequence szmap)
+public function SDL_GameControllerAddMapping(sequence xmap)
 
- return c_func(xSDL_GameControllerAddMapping,{allocate_string(szmap,1)})
+ atom str = allocate_string(xmap,1)
+ atom ret = c_func(xSDL_GameControllerAddMapping,{str})
+ 
+ return ret
 	
 end function
 
-public function SDL_GameControllerAddMappingsFromRW(atom src,integer xfree)
+public function SDL_GameControllerAddMappingsFromFile(sequence x)
 
- return c_func(xSDL_GameControllerAddMappingsFromRW,{src,xfree})
+ atom str = allocate_string(x,1)
+ atom ret = c_func(xSDL_GameControllerAddMappingsFromFile,{str})
+ 
+ return ret
 	
 end function
 
-public function SDL_GameControllerAddMappingsFromFile(sequence file)
+public function SDL_GameControllerAddMappingsFromRW(atom rw,integer xfree)
 
- return SDL_GameControllerAddMappingsFromRW(SDL_RWFromFile(file,"r"),1)
+ return c_func(xSDL_GameControllerAddMappingsFromRW,{rw,xfree})
 	
 end function
 
-public procedure SDL_GameControllerClose(atom gc)
+public procedure SDL_GameControllerClose(atom pad)
 
- c_proc(xSDL_GameControllerClose,{gc})
+ c_proc(xSDL_GameControllerClose,{pad})
 	
 end procedure
 
@@ -2461,51 +2685,63 @@ public function SDL_GameControllerEventState(integer st)
 	
 end function
 
-public function SDL_GameControllerGetAttached(atom gc)
+public function SDL_GameControllerFromInstanceID(atom id)
 
- return c_func(xSDL_GameControllerGetAttached,{gc})
+ return c_func(xSDL_GameControllerFromInstanceID,{id})
 	
 end function
 
-public function SDL_GameControllerGetAxis(atom gc, SDL_GAMECONTROLLERAXIS ax)
+public function SDL_GameControllerGetAttached(atom pad)
 
- return c_func(xSDL_GameControllerGetAxis,{gc,ax})
+ return c_func(xSDL_GameControllerGetAttached,{pad})
 	
 end function
 
-public function SDL_GameControllerGetAxisFromString(sequence str)
+public function SDL_GameControllerGetAxis(atom pad,SDL_GAMECONTROLLERAXIS ax)
 
- return c_func(xSDL_GameControllerGetAxisFromString,{allocate_string(str,1)})
+ return c_func(xSDL_GameControllerGetAxis,{pad,ax})
 	
 end function
 
-public function SDL_GameControllerGetBindForAxis(atom gc,SDL_GAMECONTROLLERAXIS ax)
+public function SDL_GameControllerGetAxisFromString(sequence ps)
 
- return c_func(xSDL_GameControllerGetBindForAxis,{gc,ax})
+ atom str = allocate_string(ps,1)
+ atom ret = c_func(xSDL_GameControllerGetAxisFromString,{str})
+ 
+ return ret
 	
 end function
 
-public function SDL_GameControllerGetBindForButton(atom gc,SDL_GAMECONTROLLERBUTTON btn)
+public function SDL_GameControllerGetBindForAxis(atom pad,SDL_GAMECONTROLLERAXIS ax)
 
- return c_func(xSDL_GameControllerGetBindForButton,{gc,btn})
+ return c_func(xSDL_GameControllerGetBindForAxis,{pad,ax})
 	
 end function
 
-public function SDL_GameControllerGetButton(atom gc,SDL_GAMECONTROLLERBUTTON btn)
+public function SDL_GameControllerGetBindForButton(atom pad,SDL_GAMECONTROLLERBUTTON btn)
 
- return c_func(xSDL_GameControllerGetButton,{gc,btn})
+ return c_func(xSDL_GameControllerGetBindForButton,{pad,btn})
 	
 end function
 
-public function SDL_GameControllerGetButtonFromString(sequence str)
+public function SDL_GameControllerGetButton(atom pad,SDL_GAMECONTROLLERBUTTON btn)
 
- return c_func(xSDL_GameControllerGetButtonFromString,{allocate_string(str,1)})
+ return c_func(xSDL_GameControllerGetButton,{pad,btn})
 	
 end function
 
-public function SDL_GameControllerGetJoystick(atom gc)
+public function SDL_GameControllerGetButtonFromString(sequence ps)
 
- return c_func(xSDL_GameControllerGetJoystick,{gc})
+ atom str = allocate_string(ps,1)
+ atom ret = c_func(xSDL_GameControllerGetButtonFromString,{str})
+ 
+ return ret
+	
+end function
+
+public function SDL_GameControllerGetJoystick(atom pad)
+
+ return c_func(xSDL_GameControllerGetJoystick,{pad})
 	
 end function
 
@@ -2521,33 +2757,33 @@ public function SDL_GameControllerGetStringForButton(SDL_GAMECONTROLLERBUTTON bt
 	
 end function
 
-public function SDL_GameControllerMapping(atom gc)
+public function SDL_GameControllerMapping(atom pad)
 
- return c_func(xSDL_GameControllerMapping,{gc})
+ return c_func(xSDL_GameControllerMapping,{pad})
 	
 end function
 
-public function SDL_GameControllerMappingForGUID(atom guid)
+public function SDL_GameControllerMappingForGUID(atom gi)
 
- return c_func(xSDL_GameControllerMappingForGUID,{guid})
+ return c_func(xSDL_GameControllerMappingForGUID,{gi})
 	
 end function
 
-public function SDL_GameControllerName(atom gc)
+public function SDL_GameControllerName(atom pad)
 
- return c_func(xSDL_GameControllerName,{gc})
+ return c_func(xSDL_GameControllerName,{pad})
 	
 end function
 
-public function SDL_GameControllerNameForIndex(integer joy)
+public function SDL_GameControllerNameForIndex(integer idx)
 
- return c_func(xSDL_GameControllerNameForIndex,{joy})
+ return c_func(xSDL_GameControllerNameForIndex,{idx})
 	
 end function
 
-public function SDL_GameControllerOpen(integer joy)
+public function SDL_GameControllerOpen(integer idx)
 
- return c_func(xSDL_GameControllerOpen,{joy})
+ return c_func(xSDL_GameControllerOpen,{idx})
 	
 end function
 
@@ -2557,13 +2793,13 @@ public procedure SDL_GameControllerUpdate()
 	
 end procedure
 
-public function SDL_IsGameController(integer joy)
+public function SDL_IsGameController(integer idx)
 
- return c_func(xSDL_IsGameController,{joy})
+ return c_func(xSDL_IsGameController,{idx})
 	
 end function
 
---Force Feedback Functions
+--SDL Forcefeedback Functions
 
 public constant xSDL_HapticClose = define_c_proc(sdl2,"SDL_HapticClose",{C_POINTER}),
 				xSDL_HapticDestroyEffect = define_c_proc(sdl2,"SDL_HapticDestroyEffect",{C_POINTER,C_INT}),
@@ -2602,7 +2838,7 @@ public procedure SDL_HapticClose(atom hap)
 	
 end procedure
 
-public procedure SDL_HapticDestroyEffect(atom hap,integer eft)
+public procedure SDL_HapticDestoryEffect(atom hap,integer eft)
 
  c_proc(xSDL_HapticDestroyEffect,{hap,eft})
 	
@@ -2626,9 +2862,9 @@ public function SDL_HapticIndex(atom hap)
 	
 end function
 
-public function SDL_HapticName(integer idx)
+public function SDL_HapticName(integer dev)
 
- return c_func(xSDL_HapticName,{idx})
+ return c_func(xSDL_HapticName,{dev})
 	
 end function
 
@@ -2656,15 +2892,15 @@ public function SDL_HapticNumEffectsPlaying(atom hap)
 	
 end function
 
-public function SDL_HapticOpen(integer idx)
+public function SDL_HapticOpen(integer dev)
 
- return c_func(xSDL_HapticOpen,{idx})
+ return c_func(xSDL_HapticOpen,{dev})
 	
 end function
 
-public function SDL_HapticOpenFromJoystick(atom joy)
+public function SDL_HapticOpenFromJoystick(atom hap)
 
- return c_func(xSDL_HapticOpenFromJoystick,{joy})
+ return c_func(xSDL_HapticOpenFromJoystick,{hap})
 	
 end function
 
@@ -2722,9 +2958,9 @@ public function SDL_HapticRunEffect(atom hap,integer eft,atom its)
 	
 end function
 
-public function SDL_HapticSetAutocenter(atom hap,integer auto)
+public function SDL_HapticSetAutocenter(atom hap,integer ct)
 
- return c_func(xSDL_HapticSetAutocenter,{hap,auto})
+ return c_func(xSDL_HapticSetAutocenter,{hap,ct})
 	
 end function
 
@@ -2776,7 +3012,7 @@ public function SDL_NumHaptics()
 	
 end function
 
---Audio functions
+--SDL Audio Functions
 
 public constant xSDL_AudioInit = define_c_func(sdl2,"SDL_AudioInit",{C_POINTER},C_INT),
 				xSDL_AudioQuit = define_c_proc(sdl2,"SDL_AudioQuit",{}),
@@ -2806,11 +3042,15 @@ public constant xSDL_AudioInit = define_c_func(sdl2,"SDL_AudioInit",{C_POINTER},
 				xSDL_PauseAudioDevice = define_c_proc(sdl2,"SDL_PauseAudioDevice",{C_POINTER,C_INT}),
 				xSDL_QueueAudio = define_c_func(sdl2,"SDL_QueueAudio",{C_POINTER,C_POINTER,C_UINT},C_INT),
 				xSDL_UnlockAudio = define_c_proc(sdl2,"SDL_UnlockAudio",{}),
-				xSDL_UnlockAudioDevice = define_c_proc(sdl2,"SDL_UnlockAudioDevice",{C_POINTER})
+				xSDL_UnlockAudioDevice = define_c_proc(sdl2,"SDL_UnlockAudioDevice",{C_POINTER}),
+				xSDL_DequeueAudio = define_c_func(sdl2,"SDL_DequeueAudio",{C_POINTER,C_POINTER,C_UINT},C_UINT)
 				
 public function SDL_AudioInit(sequence name)
 
- return c_func(xSDL_AudioInit,{allocate_string(name,1)})
+ atom str = allocate_string(name,1)
+ atom ret = c_func(xSDL_AudioInit,{str})
+ 
+ return ret
 	
 end function
 
@@ -2862,9 +3102,9 @@ public function SDL_GetAudioDeviceName(integer idx,integer cap)
 	
 end function
 
-public function SDL_GetAudioDeviceStatus(atom dev)
+public function SDL_GetAudioDeviceStatus(atom aud)
 
- return c_func(xSDL_GetAudioDeviceStatus,{dev})
+ return c_func(xSDL_GetAudioDeviceStatus,{aud})
 	
 end function
 
@@ -2948,7 +3188,10 @@ end function
 
 public function SDL_OpenAudioDevice(sequence dev,integer cap,atom des,atom obt,integer alw)
 
- return c_func(xSDL_OpenAudioDevice,{allocate_string(dev,1),cap,des,obt,alw})
+ atom str = allocate_string(dev,1)
+ atom ret = c_func(xSDL_OpenAudioDevice,{str,cap,des,obt,alw})
+ 
+ return ret
 	
 end function
 
@@ -2958,13 +3201,13 @@ public procedure SDL_PauseAudio(integer pau)
 	
 end procedure
 
-public procedure SDL_PauseAudioDevice(atom dev,integer pau)
+public procedure SDL_PauseAudioDevice(atom dev,integer on)
 
- c_proc(xSDL_PauseAudioDevice,{dev,pau})
+ c_proc(xSDL_PauseAudioDevice,{dev,on})
 	
 end procedure
 
-public function SDL_QueueAudio(atom dev,object dat,atom len)
+public function SDL_QueueAudio(atom dev,atom dat,atom len)
 
  return c_func(xSDL_QueueAudio,{dev,dat,len})
 	
@@ -2982,7 +3225,13 @@ public procedure SDL_UnlockAudioDevice(atom dev)
 	
 end procedure
 
---Thread functions
+public function SDL_DequeueAudio(atom dev,object dat,atom len)
+
+ return c_func(xSDL_DequeueAudio,{dev,dat,len})
+	
+end function
+
+--SDL Thread Functions
 
 public constant xSDL_CreateThread = define_c_func(sdl2,"SDL_CreateThread",{C_POINTER,C_POINTER,C_POINTER},C_POINTER),
 				xSDL_DetachThread = define_c_proc(sdl2,"SDL_DetachThread",{C_POINTER}),
@@ -2990,32 +3239,35 @@ public constant xSDL_CreateThread = define_c_func(sdl2,"SDL_CreateThread",{C_POI
 				xSDL_GetThreadName = define_c_func(sdl2,"SDL_GetThreadName",{C_POINTER},C_POINTER),
 				xSDL_SetThreadPriority = define_c_func(sdl2,"SDL_SetThreadPriority",{C_POINTER},C_INT),
 				xSDL_TLSCreate = define_c_func(sdl2,"SDL_TLSCreate",{},C_POINTER),
-				xSDL_TLSGet = define_c_func(sdl2,"SDL_TLSGet",{C_POINTER},C_POINTER),
+				xSDL_TLSGet = define_c_proc(sdl2,"SDL_TLSGet",{C_POINTER}),
 				xSDL_TLSSet = define_c_func(sdl2,"SDL_TLSSet",{C_POINTER,C_POINTER,C_POINTER},C_INT),
 				xSDL_ThreadID = define_c_func(sdl2,"SDL_ThreadID",{},C_POINTER),
 				xSDL_WaitThread = define_c_proc(sdl2,"SDL_WaitThread",{C_POINTER,C_POINTER})
 				
-public function SDL_CreateThread(atom fn,sequence name,object dat)
+public function SDL_CreateThread(atom fn,sequence name,atom dat)
 
- return c_func(xSDL_CreateThread,{fn,allocate_string(name,1),dat})
+ atom str = allocate_string(name,1)
+ atom ret = c_func(xSDL_CreateThread,{fn,str,dat})
+ 
+ return ret
 	
 end function
 
-public procedure SDL_DetachThread(atom thrd)
+public procedure SDL_DetachThread(atom thr)
 
- c_proc(xSDL_DetachThread,{thrd})
+ c_proc(xSDL_DetachThread,{thr})
 	
 end procedure
 
-public function SDL_GetThreadID(atom thrd)
+public function SDL_GetThreadID(atom thr)
 
- return c_func(xSDL_GetThreadID,{thrd})
+ return c_func(xSDL_GetThreadID,{thr})
 	
 end function
 
-public function SDL_GetThreadName(atom thrd)
+public function SDL_GetThreadName(atom thr)
 
- return c_func(xSDL_GetThreadName,{thrd})
+ return c_func(xSDL_GetThreadName,{thr})
 	
 end function
 
@@ -3031,17 +3283,17 @@ public function SDL_TLSCreate()
 	
 end function
 
-public function SDL_TLSGet(atom id)
+public procedure SDL_TLSGet(atom id)
 
- return c_func(xSDL_TLSGet,{id})
+ c_proc(xSDL_TLSGet,{id})
 	
-end function
+end procedure
 
-public function SDL_TLSSet(atom id,object val,object des)
+public procedure SDL_TLSSet(atom id,atom val,atom des)
 
- return c_func(xSDL_TLSSet,{id,val,des})
+ c_proc(xSDL_TLSSet,{id,val,des})
 	
-end function
+end procedure
 
 public function SDL_ThreadID()
 
@@ -3049,13 +3301,13 @@ public function SDL_ThreadID()
 	
 end function
 
-public procedure SDL_WaitThread(atom thrd,atom st)
+public procedure SDL_WaitThread(atom thr,atom st)
 
- c_proc(xSDL_WaitThread,{thrd,st})
+ c_proc(xSDL_WaitThread,{thr,st})
 	
 end procedure
 
---Mutex functions
+--SDL Mutex Functions
 
 public constant xSDL_CondBroadcast = define_c_func(sdl2,"SDL_CondBroadcast",{C_POINTER},C_INT),
 				xSDL_CondSignal = define_c_func(sdl2,"SDL_CondSignal",{C_POINTER},C_INT),
@@ -3112,9 +3364,9 @@ public function SDL_CreateMutex()
 	
 end function
 
-public function SDL_CreateSemaphore(atom iv)
+public function SDL_CreateSemaphore(atom val)
 
- return c_func(xSDL_CreateSemaphore,{iv})
+ return c_func(xSDL_CreateSemaphore,{val})
 	
 end function
 
@@ -3184,18 +3436,18 @@ public function SDL_UnlockMutex(atom mut)
 	
 end function
 
---Atomic functions
+--SDL Atomic Functions
 
 public constant xSDL_AtomicAdd = define_c_func(sdl2,"SDL_AtomicAdd",{C_POINTER,C_INT},C_INT),
 				xSDL_AtomicCAS = define_c_func(sdl2,"SDL_AtomicCAS",{C_POINTER,C_INT,C_INT},C_BOOL),
 				xSDL_AtomicCASPtr = define_c_func(sdl2,"SDL_AtomicCASPtr",{C_POINTER,C_POINTER,C_POINTER},C_BOOL),
 				xSDL_AtomicDecRef = define_c_func(sdl2,"SDL_AtomicDecRef",{C_POINTER},C_BOOL),
 				xSDL_AtomicGet = define_c_func(sdl2,"SDL_AtomicGet",{C_POINTER},C_INT),
-				xSDL_AtomicGetPtr = define_c_func(sdl2,"SDL_AtomicGetPtr",{C_POINTER},C_POINTER),
-				xSDL_AtomicIncRef = define_c_proc(sdl2,"SDL_AtomicInRef",{C_POINTER}),
+				xSDL_AtomicGetPtr = define_c_proc(sdl2,"SDL_AtomicGetPtr",{C_POINTER}),
+				xSDL_AtomicIncRef = define_c_proc(sdl2,"SDL_AtomicIncRef",{C_POINTER}),
 				xSDL_AtomicLock = define_c_proc(sdl2,"SDL_AtomicLock",{C_POINTER}),
 				xSDL_AtomicSet = define_c_func(sdl2,"SDL_AtomicSet",{C_POINTER,C_INT},C_INT),
-				xSDL_AtomicSetPtr = define_c_func(sdl2,"SDL_AtomicSetPtr",{C_POINTER,C_POINTER},C_POINTER),
+				xSDL_AtomicSetPtr = define_c_proc(sdl2,"SDL_AtomicSetPtr",{C_POINTER,C_POINTER}),
 				xSDL_AtomicTryLock = define_c_func(sdl2,"SDL_AtomicTryLock",{C_POINTER},C_BOOL),
 				xSDL_AtomicUnlock = define_c_proc(sdl2,"SDL_AtomicUnlock",{C_POINTER}),
 				xSDL_CompilerBarrier = define_c_proc(sdl2,"SDL_CompilerBarrier",{})
@@ -3212,7 +3464,7 @@ public function SDL_AtomicCAS(atom a,integer old,integer new)
 	
 end function
 
-public function SDL_AtomicCASPtr(object a,object old,object new)
+public function SDL_AtomicCASPtr(atom a,integer old,integer new)
 
  return c_func(xSDL_AtomicCASPtr,{a,old,new})
 	
@@ -3230,11 +3482,11 @@ public function SDL_AtomicGet(atom a)
 	
 end function
 
-public function SDL_AtomicGetPtr(object a)
+public procedure SDL_AtomicGetPtr(atom a)
 
- return c_func(xSDL_AtomicGetPtr,{a})
+ c_proc(xSDL_AtomicGetPtr,{a})
 	
-end function
+end procedure
 
 public procedure SDL_AtomicIncRef(atom a)
 
@@ -3254,11 +3506,11 @@ public function SDL_AtomicSet(atom a,integer v)
 	
 end function
 
-public function SDL_AtomicSetPtr(object a,object v)
+public procedure SDL_AtomicSetPtr(atom a,atom v)
 
- return c_func(xSDL_AtomicSetPtr,{a,v})
+ c_proc(xSDL_AtomicSetPtr,{a,v})
 	
-end function
+end procedure
 
 public function SDL_AtomicTryLock(atom lock)
 
@@ -3278,7 +3530,7 @@ public procedure SDL_CompilerBarrier()
 	
 end procedure
 
---Timer functions
+--SDL Timer Functions
 
 public constant xSDL_AddTimer = define_c_func(sdl2,"SDL_AddTimer",{C_UINT,C_POINTER,C_POINTER},C_POINTER),
 				xSDL_Delay = define_c_proc(sdl2,"SDL_Delay",{C_UINT}),
@@ -3286,11 +3538,11 @@ public constant xSDL_AddTimer = define_c_func(sdl2,"SDL_AddTimer",{C_UINT,C_POIN
 				xSDL_GetPerformanceFrequency = define_c_func(sdl2,"SDL_GetPerformanceFrequency",{},C_UINT),
 				xSDL_GetTicks = define_c_func(sdl2,"SDL_GetTicks",{},C_UINT),
 				xSDL_RemoveTimer = define_c_func(sdl2,"SDL_RemoveTimer",{C_POINTER},C_BOOL),
-				xSDL_SDL_TICKS_PASSED = define_c_proc(sdl2,"SDL_TICKS_PASSED",{C_INT,C_INT})
+				xSDL_TICKS_PASSED = define_c_proc(sdl2,"SDL_TICKS_PASSED",{C_POINTER,C_POINTER})
 				
-public function SDL_AddTimer(atom its,object cv,object parm)
+public function SDL_AddTimer(atom its,atom cb,sequence par)
 
- return c_func(xSDL_AddTimer,{its,cv,parm})
+ return c_func(xSDL_AddTimer,{its,cb,par})
 	
 end function
 
@@ -3326,35 +3578,37 @@ end function
 
 public procedure SDL_TICKS_PASSED(atom a,atom b)
 
- c_proc(xSDL_SDL_TICKS_PASSED,{a,b})
+ c_proc(xSDL_TICKS_PASSED,{a,b})
 	
 end procedure
 
---Shared Object functions
+--SDL Shared Object Functions
 
-public constant xSDL_LoadFunction = define_c_func(sdl2,"SDL_LoadFunction",{C_POINTER,C_POINTER},C_POINTER),
-				xSDL_LoadObject = define_c_func(sdl2,"SDL_LoadObject",{C_POINTER},C_POINTER),
+public constant xSDL_LoadFunction = define_c_proc(sdl2,"SDL_LoadFunction",{C_POINTER,C_POINTER}),
+				xSDL_LoadObject = define_c_proc(sdl2,"SDL_LoadObject",{C_POINTER}),
 				xSDL_UnloadObject = define_c_proc(sdl2,"SDL_UnloadObject",{C_POINTER})
 				
-public function SDL_LoadFunction(object hand,sequence name)
+public procedure SDL_LoadFunction(atom handle,sequence name)
 
- return c_func(xSDL_LoadFunction,{hand,SDL_RWFromFile(name,"rb"),1})
-	
-end function
-
-public function SDL_LoadObject(sequence file)
-
- return c_func(xSDL_LoadObject,{SDL_RWFromFile(file,"rb"),1})
-	
-end function
-
-public procedure SDL_UnloadObject(object hand)
-
- c_proc(xSDL_UnloadObject,{hand})
+ atom str = allocate_string(name,1)
+ c_proc(xSDL_LoadFunction,{handle,str})
 	
 end procedure
 
---Platform detection
+public procedure LoadObject(sequence file)
+
+ atom str = allocate_string(file,1)
+ c_proc(xSDL_LoadObject,{str})
+	
+end procedure
+
+public procedure SDL_UnloadObject(atom handle)
+ 
+ c_proc(xSDL_UnloadObject,{handle})
+	
+end procedure
+
+--SDL Platform Functions
 
 public constant xSDL_GetPlatform = define_c_func(sdl2,"SDL_GetPlatform",{},C_POINTER)
 
@@ -3364,7 +3618,7 @@ public function SDL_GetPlatform()
 	
 end function
 
---CPU detection functions
+--SDL CPU Functions
 
 public constant xSDL_GetCPUCacheLineSize = define_c_func(sdl2,"SDL_GetCPUCacheLineSize",{},C_INT),
 				xSDL_GetCPUCount = define_c_func(sdl2,"SDL_GetCPUCount",{},C_INT),
@@ -3465,7 +3719,7 @@ public function SDL_HasSSE42()
 	
 end function
 
---Byte/Bit order functions
+--SDL Endian Functions
 
 public constant xSDL_Swap16 = define_c_func(sdl2,"SDL_Swap16",{C_UINT},C_UINT),
 				xSDL_Swap32 = define_c_func(sdl2,"SDL_Swap32",{C_UINT},C_UINT),
@@ -3552,7 +3806,7 @@ public function SDL_SwapLE64(atom x)
 	
 end function
 
---Bit manipulation function
+--SDL Bit Manipulation Functions
 
 public constant xSDL_MostSignificantBitIndex32 = define_c_func(sdl2,"SDL_MostSignificantBitIndex32",{C_UINT},C_INT)
 
@@ -3562,7 +3816,7 @@ public function SDL_MostSignificantBitIndex32(atom x)
 	
 end function
 
---Powerstate function
+--SDL Power Functions
 
 public constant xSDL_GetPowerInfo = define_c_func(sdl2,"SDL_GetPowerInfo",{C_POINTER,C_POINTER},C_POINTER)
 
@@ -3572,25 +3826,25 @@ public function SDL_GetPowerInfo(atom secs,atom pct)
 	
 end function
 
---Platform Specific functions
+--SDL System/Platform Functions
 
-public constant xSDL_AndroidGetActivity = define_c_func(sdl2,"SDL_AndroidGetActivity",{},C_POINTER),
+public constant xSDL_AndroidGetActivity = define_c_proc(sdl2,"SDL_AndroidGetActivity",{}),
 				xSDL_AndroidGetExternalStoragePath = define_c_func(sdl2,"SDL_AndroidGetExternalStoragePath",{},C_POINTER),
 				xSDL_AndroidGetExternalStorageState = define_c_func(sdl2,"SDL_AndroidGetExternalStorageState",{},C_INT),
 				xSDL_AndroidGetInternalStoragePath = define_c_func(sdl2,"SDL_AndroidGetInternalStoragePath",{},C_POINTER),
-				xSDL_AndroidGetJNIEnv = define_c_func(sdl2,"SDL_AndroidGetJNIEnv",{},C_POINTER),
+				xSDL_AndroidGetJNIEnv = define_c_proc(sdl2,"SDL_AndroidGetJNIEnv",{}),
 				xSDL_DXGIGetOutputInfo = define_c_func(sdl2,"SDL_DXGIGetOutputInfo",{C_INT,C_POINTER,C_POINTER},C_BOOL),
 				xSDL_Direct3D9GetAdapterIndex = define_c_func(sdl2,"SDL_Direct3D9GetAdapterIndex",{C_INT},C_INT),
 				xSDL_RenderGetD3D9Device = define_c_func(sdl2,"SDL_RenderGetD3D9Device",{C_POINTER},C_POINTER),
 				xSDL_SetWindowsMessageHook = define_c_proc(sdl2,"SDL_SetWindowsMessageHook",{C_POINTER,C_POINTER}),
-				xSDL_WinRTGetFSPathUNICODE = define_c_func(sdl2,"SDL_WinRTGETFSPathUNICODE",{C_POINTER},C_POINTER),
+				xSDL_WinRTGetFSPathUNICODE = define_c_func(sdl2,"SDL_WinRTGetFSPathUNICODE",{C_POINTER},C_POINTER),
 				xSDL_WinRTGetFSPathUTF8 = define_c_func(sdl2,"SDL_WinRTGetFSPathUTF8",{C_POINTER},C_POINTER)
 				
-public function SDL_AndroidGetActivity()
+public procedure SDL_AndroidGetActivity()
 
- return c_func(xSDL_AndroidGetActivity,{})
+ c_proc(xSDL_AndroidGetActivity,{})
 	
-end function
+end procedure
 
 public function SDL_AndroidGetExternalStoragePath()
 
@@ -3610,15 +3864,15 @@ public function SDL_AndroidGetInternalStoragePath()
 	
 end function
 
-public function SDL_AndroidGetJNIEnv()
+public procedure SDL_AndroidGetJNIEnv()
 
- return c_func(xSDL_AndroidGetJNIEnv,{})
+ c_proc(xSDL_AndroidGetJNIEnv,{})
 	
-end function
+end procedure
 
-public function SDL_DXGIGetOutputInfo(integer dis,atom adt,atom out)
+public function SDL_DXGIGetOutputInfo(integer dis,atom adp,atom out)
 
- return c_func(xSDL_DXGIGetOutputInfo,{dis,adt,out})
+ return c_func(xSDL_DXGIGetOutputInfo,{dis,adp,out})
 	
 end function
 
@@ -3634,7 +3888,7 @@ public function SDL_RenderGetD3D9Device(atom rend)
 	
 end function
 
-public procedure SDL_SetWindowsMessageHook(object cb,object dat)
+public procedure SDL_SetWindowsMessageHook(atom cb,atom dat)
 
  c_proc(xSDL_SetWindowsMessageHook,{cb,dat})
 	
@@ -3652,7 +3906,7 @@ public function SDL_WinRTGetFSPathUTF8(SDL_WINRT_PATH path)
 	
 end function
 
---Other functions
+--SDL Additional Functions
 
 public constant xSDL_acos = define_c_func(sdl2,"SDL_acos",{C_DOUBLE},C_DOUBLE),
 				xSDL_asin = define_c_func(sdl2,"SDL_asin",{C_DOUBLE},C_DOUBLE),
@@ -3665,7 +3919,7 @@ public constant xSDL_acos = define_c_func(sdl2,"SDL_acos",{C_DOUBLE},C_DOUBLE),
 				xSDL_fabs = define_c_func(sdl2,"SDL_fabs",{C_DOUBLE},C_DOUBLE),
 				xSDL_floor = define_c_func(sdl2,"SDL_floor",{C_DOUBLE},C_DOUBLE),
 				xSDL_log = define_c_func(sdl2,"SDL_log",{C_DOUBLE},C_DOUBLE),
-				xSDL_pow = define_c_func(sdl2,"SDL_pow",{C_DOUBLE},C_DOUBLE),
+				xSDL_pow = define_c_func(sdl2,"SDL_pow",{C_DOUBLE,C_DOUBLE},C_DOUBLE),
 				xSDL_scalbn = define_c_func(sdl2,"SDL_scalbn",{C_DOUBLE,C_INT},C_DOUBLE),
 				xSDL_sin = define_c_func(sdl2,"SDL_sin",{C_DOUBLE},C_DOUBLE),
 				xSDL_sinf = define_c_func(sdl2,"SDL_sinf",{C_FLOAT},C_FLOAT),
@@ -3673,7 +3927,7 @@ public constant xSDL_acos = define_c_func(sdl2,"SDL_acos",{C_DOUBLE},C_DOUBLE),
 				xSDL_sqrtf = define_c_func(sdl2,"SDL_sqrtf",{C_FLOAT},C_FLOAT),
 				xSDL_tan = define_c_func(sdl2,"SDL_tan",{C_DOUBLE},C_DOUBLE),
 				xSDL_tanf = define_c_func(sdl2,"SDL_tanf",{C_FLOAT},C_FLOAT)
-
+				
 public function SDL_acos(atom x)
 
  return c_func(xSDL_acos,{x})
@@ -3787,4 +4041,4 @@ public function SDL_tanf(atom x)
  return c_func(xSDL_tanf,{x})
 	
 end function
-­242.8
+­1056.48

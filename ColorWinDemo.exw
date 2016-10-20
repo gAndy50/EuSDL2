@@ -1,0 +1,64 @@
+include std/machine.e
+
+include EuSDL2.ew
+include flags.e
+
+if SDL_Init(SDL_INIT_EVERYTHING) = -1 then
+	puts(1,"Failed to initialize SDL!\n")
+	abort(0)
+end if
+
+atom win = SDL_CreateWindow("Use WASD keys to change background color",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,640,480,SDL_WINDOW_SHOWN)
+atom ren = SDL_CreateRenderer(win,-1,SDL_RENDERER_ACCELERATED)
+
+if win = -1 then
+	puts(1,"Failed to create Window!\n")
+	abort(0)
+	elsif ren = -1 then
+		puts(1,"Failed to create Renderer!\n")
+		abort(0)
+end if
+
+atom rect = allocate(16)
+poke4(rect,{50,50,100,100})
+
+atom run = 1
+atom key = 0
+
+while run = 1 do
+	
+	SDL_PumpEvents()
+	
+	key = SDL_GetKeyboardState(key)
+	
+	if (peek(key+SDL_SCANCODE_ESCAPE) > 0) then
+		run = 0
+	end if
+	
+	if (peek(key+SDL_SCANCODE_W) > 0) then
+		SDL_SetRenderDrawColor(ren,255,0,0,0) --red
+		SDL_RenderFillRect(ren,rect)
+		elsif (peek(key+SDL_SCANCODE_S) > 0) then
+			SDL_SetRenderDrawColor(ren,0,255,0,0) --green
+			SDL_RenderFillRect(ren,rect)
+		elsif (peek(key+SDL_SCANCODE_A) > 0) then
+			SDL_SetRenderDrawColor(ren,0,0,255,0) --blue
+			SDL_RenderFillRect(ren,rect)
+		elsif (peek(key+SDL_SCANCODE_D) > 0) then
+			SDL_SetRenderDrawColor(ren,0,0,0,255) --alpha or back to blank
+			SDL_RenderFillRect(ren,rect)
+	end if
+	
+	SDL_RenderClear(ren)
+	
+	SDL_RenderPresent(ren)
+
+end while
+
+SDL_DestroyRenderer(ren)
+SDL_DestroyWindow(win)
+
+free(key)
+
+SDL_Quit()
+­12.36

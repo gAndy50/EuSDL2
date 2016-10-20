@@ -1,0 +1,61 @@
+--Demo currently not working
+include std/machine.e
+include EuSDL2.ew
+include flags.e
+
+atom width = 800, height = 600
+
+if SDL_Init(SDL_INIT_EVERYTHING) = -1 then
+	puts(1,"Failed to init SDL2!\n")
+	abort(0)
+end if
+
+atom win = SDL_CreateWindow("Window Image",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,width,height,SDL_WINDOW_SHOWN)
+
+if win = -1 then
+	puts(1,"Failed to create window!\n")
+	abort(0)
+end if
+
+atom surf = SDL_GetWindowSurface(win)
+
+atom img = SDL_LoadBMP("SDL.bmp")
+
+if img = -1 then
+	puts(1,"Failed to load image!\n")
+	abort(0)
+end if
+
+procedure calc_rect(atom rect,integer sx,integer sy,integer tx,integer ty)
+
+ poke4(rect,sx)
+ poke4(rect+2,sy)
+ poke4(rect+4,tx)
+ poke4(rect+6,ty)
+	
+end procedure
+
+atom srect = allocate(10)
+atom drect = allocate(10)
+
+calc_rect(srect,0,0,100,100)
+calc_rect(drect,10,10,100,100)
+
+atom x = SDL_BlitSurface(img,srect,surf,drect)
+
+if x = 0 then
+	puts(1,"Failed to blit image!\n")
+	abort(0)
+end if
+
+SDL_UpdateWindowSurface(win)
+
+SDL_Delay(3000)
+
+SDL_FreeSurface(img)
+SDL_FreeSurface(surf)
+
+SDL_DestroyWindow(win)
+
+SDL_Quit()
+­1.8

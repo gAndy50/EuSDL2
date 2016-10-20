@@ -1,0 +1,50 @@
+include std/get.e
+include std/io.e
+include std/machine.e
+include EuSDL2.ew
+include flags.e
+
+if SDL_Init(SDL_INIT_EVERYTHING) = -1 then
+	puts(1,"Failed to init SDL2!\n")
+	abort(0)
+end if
+
+atom win = SDL_CreateWindow("Render Demo",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,640,480,SDL_WINDOW_SHOWN)
+atom ren = SDL_CreateRenderer(win,0,SDL_RENDERER_ACCELERATED)
+
+atom gfx,tex
+
+gfx = SDL_LoadBMP("SDL.bmp")
+tex = SDL_CreateTextureFromSurface(ren,gfx)
+
+if win = -1 then
+	puts(1,"Failed to create window!\n")
+	abort(0)
+end if
+
+atom key = 0
+integer running = 1
+
+while running = 1 do
+	
+	SDL_PumpEvents()
+	
+	key = SDL_GetKeyboardState(key)
+	
+	if (peek(key+SDL_SCANCODE_ESCAPE) > 0) then
+			running = 0
+	end if
+	
+	SDL_RenderClear(ren)
+	SDL_RenderCopy(ren,tex,0,0)
+	SDL_RenderPresent(ren)
+
+end while
+
+SDL_FreeSurface(gfx)
+SDL_DestroyTexture(tex)
+SDL_DestroyRenderer(ren)
+SDL_DestroyWindow(win)
+
+SDL_Quit()
+­13.36
