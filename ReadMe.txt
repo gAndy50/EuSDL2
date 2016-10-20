@@ -2,7 +2,7 @@ Title: EuSDL2
 Written By: Andy Patterson
 Euphoria Wrapper for SDL2
 Euphoria Ver: 4.0.5
-SDL Ver: 2.0.3
+SDL Ver: 2.0.5
 Contact: g_andy <at> live.com
 
 
