@@ -52,8 +52,12 @@ atom has_sse42 = SDL_HasSSE42()
 position(8,1)
 printf(1,"Has SSE42: %d",{has_sse42})
 
-position(10,1)
+position(12,1)
 puts(1,"Press ESC to close")
+
+atom has_neon = SDL_HasNEON()
+position(10,1)
+printf(1,"Has NEON: %d",{has_neon})
 
 while run = 1 do
 
@@ -66,4 +70,4 @@ while run = 1 do
 	end if
 	
 end while
-­68.9
+­58.27

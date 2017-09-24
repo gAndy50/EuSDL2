@@ -1,11 +1,11 @@
 Title: EuSDL2 - Wrapper of SDL2 for Euphoria Programming Language
 Written by: Andy Patterson
-SDL2 Version Wrapped: 2.0.5
+SDL2 Version Wrapped: 2.0.6
 Euphoria Version: 4.0.5
 Date Started: 1/2/16
 Date Finished: 1/12/16
 
-(c) EusDL2 2016
+(c) EusDL2 2017
 
 Contact/Paypal: g_andy <at> live.com
 
@@ -19,7 +19,7 @@ per uses the 32 bit version of SDL2 as to provide for more compatibility between
 
 Updates:
 
-This wrapper has been updated for SDL 2.0.5 and has included new functions. 
+This wrapper has been updated for SDL 2.0.6 and has included new functions. 
 
 
 Note: All demos written by author of EuSDL2 unless otherwise noted.

@@ -2,7 +2,7 @@
 --EuSDL2						   --	
 --Wrapper of SDL2 for Euphoria     --
 --Author: Andy Patterson		   --
---SDL Version Wrapped: 2.0.5	   --
+--SDL Version Wrapped: 2.0.6	   --
 --Euphoria Version: 4.0.5		   --
 --Date Started: 1/2/16			   --
 --Date Finished: 1/12/16           --
@@ -14,8 +14,15 @@ without type_check
 include std/machine.e
 include std/math.e
 include std/dll.e
+include std/os.e
 
-atom sdl2 = open_dll("SDL2.dll")
+atom sdl2
+
+ifdef WIN32 then
+  sdl2 = open_dll("SDL2.dll")
+ elsifdef LINUX or FREEBSD then
+  sdl2 = open_dll("SDL2.so")
+end ifdef
 
 if sdl2 = -1 then
 	puts(1,"Failed to load SDL2.dll!\n")
@@ -24,6 +31,12 @@ end if
 
 --all flag constants declared in here
 include flags.e
+
+--For rect
+public constant RECT_LEFT = 0,
+           RECT_TOP = 4,
+           RECT_RIGHT = 8,
+           RECT_BOTTOM = 12
 
 --SDL Init Functions
 
@@ -639,6 +652,12 @@ end function
 
 public function SDL_GetDisplayBounds(atom dis,atom rect)
 
+  rect = allocate(16)
+  poke4(rect + RECT_LEFT, 10)
+  poke4(rect + RECT_TOP, 20)
+  poke4(rect + RECT_RIGHT, 90)
+  poke4(rect + RECT_BOTTOM, 100)
+
  return c_func(xSDL_GetDisplayBounds,{dis,rect})
 	
 end function
@@ -1053,7 +1072,7 @@ public constant xSDL_CreateRenderer = define_c_func(sdl2,"SDL_CreateRender",{C_P
 				xSDL_UpdateYUVTexture = define_c_func(sdl2,"SDL_UpdateYUVTexture",{C_POINTER,C_POINTER,C_POINTER,C_INT,C_POINTER,C_INT,C_POINTER,C_INT},C_INT),
 				xSDL_RenderSetIntegerScale = define_c_func(sdl2,"SDL_RenderSetIntegerScale",{C_POINTER,C_BOOL},C_INT)
 				
-public function SDL_CreateRenderer(atom win,atom idx,SDL_RENDERERFLAGS flags)
+public function SDL_CreateRenderer(atom win,integer idx,SDL_RENDERERFLAGS flags)
 
  return c_func(xSDL_CreateRenderer,{win,idx,flags})
 	
@@ -1553,9 +1572,9 @@ public constant xSDL_AllocRW = define_c_func(sdl2,"SDL_AllocRW",{},C_POINTER),
 				xSDL_RWFromMem = define_c_func(sdl2,"SDL_RWFromMem",{C_POINTER,C_INT},C_POINTER),
 				xSDL_RWclose = define_c_func(sdl2,"SDL_RWclose",{C_POINTER},C_INT),
 				xSDL_RWread = define_c_func(sdl2,"SDL_RWread",{C_POINTER,C_POINTER,C_SIZE_T,C_SIZE_T},C_SIZE_T),
-				xSDL_RWseek = define_c_func(sdl2,"SDL_RWseek",{C_POINTER,C_DWORDLONG,C_INT},C_DWORDLONG),
-				xSDL_RWsize = define_c_func(sdl2,"SDL_RWsize",{C_POINTER},C_DWORDLONG),
-				xSDL_RWtell = define_c_func(sdl2,"SDL_RWtell",{C_POINTER},C_DWORDLONG),
+				xSDL_RWseek = define_c_func(sdl2,"SDL_RWseek",{C_POINTER,C_LONG,C_INT},C_LONG),
+				xSDL_RWsize = define_c_func(sdl2,"SDL_RWsize",{C_POINTER},C_LONG),
+				xSDL_RWtell = define_c_func(sdl2,"SDL_RWtell",{C_POINTER},C_LONG),
 				xSDL_RWwrite = define_c_func(sdl2,"SDL_RWwrite",{C_POINTER,C_POINTER,C_SIZE_T,C_SIZE_T},C_SIZE_T),
 				xSDL_ReadBE16 = define_c_func(sdl2,"SDL_ReadBE16",{C_POINTER},C_UINT),
 				xSDL_ReadBE32 = define_c_func(sdl2,"SDL_ReadBE32",{C_POINTER},C_UINT),
@@ -1570,7 +1589,8 @@ public constant xSDL_AllocRW = define_c_func(sdl2,"SDL_AllocRW",{},C_POINTER),
 				xSDL_WriteLE16 = define_c_func(sdl2,"SDL_WriteLE16",{C_POINTER,C_UINT},C_SIZE_T),
 				xSDL_WriteLE32 = define_c_func(sdl2,"SDL_writeLE32",{C_POINTER,C_UINT},C_SIZE_T),
 				xSDL_WriteLE64 = define_c_func(sdl2,"SDL_WriteLE64",{C_POINTER,C_UINT},C_SIZE_T),
-				xSDL_WriteU8 = define_c_func(sdl2,"SDL_WriteU8",{C_POINTER,C_UINT},C_SIZE_T)
+				xSDL_WriteU8 = define_c_func(sdl2,"SDL_WriteU8",{C_POINTER,C_UINT},C_SIZE_T),
+				xSDL_LoadFile_RW = define_c_proc(sdl2,"SDL_LoadFile_RW",{C_POINTER,C_POINTER,C_INT})
 				
 public function SDL_AllocRW()
 
@@ -1733,6 +1753,12 @@ public function SDL_WriteU8(atom dst,atom val)
 	
 end function
 
+public procedure SDL_LoadFile_RW(atom src,atom size,integer fsrc)
+
+ c_proc(xSDL_LoadFile_RW,{src,size,fsrc})
+	
+end procedure
+
 --Filesystem Path Functions
 
 public constant xSDL_GetBasePath = define_c_func(sdl2,"SDL_GetBasePath",{},C_POINTER),
@@ -1788,7 +1814,8 @@ public constant xSDL_BlitScaled = define_c_func(sdl2,"SDL_BlitScaled",{C_POINTER
 				xSDL_SetSurfacePalette = define_c_func(sdl2,"SDL_SetSurfacePalette",{C_POINTER,C_POINTER},C_INT),
 				xSDL_SetSurfaceRLE = define_c_func(sdl2,"SDL_SetSurfaceRLE",{C_POINTER,C_INT},C_INT),
 				xSDL_UnlockSurface = define_c_proc(sdl2,"SDL_UnlockSurface",{C_POINTER}),
-				xSDL_CreateRGBSurfaceWithFormat = define_c_func(sdl2,"SDL_CreateRGBSurfaceWithFormat",{C_UINT,C_INT,C_INT,C_INT,C_UINT},C_POINTER)
+				xSDL_CreateRGBSurfaceWithFormat = define_c_func(sdl2,"SDL_CreateRGBSurfaceWithFormat",{C_UINT,C_INT,C_INT,C_INT,C_UINT},C_POINTER),
+				xSDL_DuplicateSurface = define_c_func(sdl2,"SDL_DuplicateSurface",{C_POINTER},C_POINTER)
 				
 public function SDL_BlitScaled(atom src,atom srcr,atom dst,atom dstr)
  
@@ -1979,6 +2006,12 @@ end procedure
 public function SDL_CreateRGBSurfaceWithFormat(atom flags,integer w,integer h,integer d,atom mat)
 
  return c_func(xSDL_CreateRGBSurfaceWithFormat,{flags,w,h,d,mat})
+	
+end function
+
+public function SDL_DuplicateSurface(atom surf)
+
+ return c_func(xSDL_DuplicateSurface,{surf})
 	
 end function
 
@@ -2479,7 +2512,17 @@ public constant xSDL_JoystickClose = define_c_proc(sdl2,"SDL_JoystickClose",{C_P
 				xSDL_JoystickNumHats = define_c_func(sdl2,"SDL_JoystickNumHats",{C_POINTER},C_INT),
 				xSDL_JoystickOpen = define_c_func(sdl2,"SDL_JoystickOpen",{C_INT},C_POINTER),
 				xSDL_JoystickUpdate = define_c_proc(sdl2,"SDL_JoystickUpdate",{}),
-				xSDL_NumJoysticks = define_c_func(sdl2,"SDL_NumJoysticks",{},C_INT)
+				xSDL_NumJoysticks = define_c_func(sdl2,"SDL_NumJoysticks",{},C_INT),
+				xSDL_JoystickGetDeviceVendor = define_c_func(sdl2,"SDL_JoystickGetDeviceVendor",{C_INT},C_UINT),
+				xSDL_JoystickGetDeviceProduct = define_c_func(sdl2,"SDL_JoystickGetDeviceProduct",{C_INT},C_UINT),
+				xSDL_JoystickGetDeviceProductVersion = define_c_func(sdl2,"SDL_JoystickGetDeviceProductVersion",{C_INT},C_UINT),
+				xSDL_JoystickGetDeviceType = define_c_func(sdl2,"SDL_JoystickGetDeviceType",{C_INT},C_POINTER),
+				xSDL_JoystickGetDeviceInstanceID = define_c_func(sdl2,"SDL_JoystickGetDeviceInstanceID",{C_INT},C_POINTER),
+				xSDL_JoystickGetVendor = define_c_func(sdl2,"SDL_JoystickGetVendor",{C_POINTER},C_UINT),
+				xSDL_JoystickGetProduct = define_c_func(sdl2,"SDL_JoystickGetProduct",{C_POINTER},C_UINT),
+				xSDL_JoystickGetProductVersion = define_c_func(sdl2,"SDL_JoystickGetProductVersion",{C_POINTER},C_UINT),
+				xSDL_JoystickGetType = define_c_func(sdl2,"SDL_JoystickGetType",{C_POINTER},C_POINTER),
+				xSDL_JoystickGetAxisInitialState = define_c_func(sdl2,"SDL_JoystickGetAxisInitialState",{C_POINTER,C_INT,C_POINTER},C_BOOL)
 				
 public procedure SDL_JoystickClose(atom joy)
 
@@ -2623,6 +2666,60 @@ public function SDL_NumJoysticks()
 	
 end function
 
+public function SDL_JoystickGetDeviceVendor(integer dev)
+
+ return c_func(xSDL_JoystickGetDeviceVendor,{dev})
+	
+end function
+
+public function SDL_JoystickGetDeviceProductVersion(integer dev)
+
+ return c_func(xSDL_JoystickGetDeviceProductVersion,{dev})
+	
+end function
+
+public function SDL_JoystickGetDeviceType(integer dev)
+
+ return c_func(xSDL_JoystickGetDeviceType,{dev})
+	
+end function
+
+public function SDL_JoystickGetDeviceInstanceID(integer dev)
+
+ return c_func(xSDL_JoystickGetDeviceInstanceID,{dev})
+	
+end function
+
+public function SDL_JoystickGetVendor(atom joy)
+
+ return c_func(xSDL_JoystickGetVendor,{joy})
+	
+end function
+
+public function SDL_JoystickGetProduct(atom joy)
+
+ return c_func(xSDL_JoystickGetProduct,{joy})
+	
+end function
+
+public function SDL_JoystickGetProductVersion(atom joy)
+
+ return c_func(xSDL_JoystickGetProductVersion,{joy})
+	
+end function
+
+public function SDL_JoystickGetType(atom joy)
+
+ return c_func(xSDL_JoystickGetType,{joy})
+	
+end function
+
+public function SDL_JoystickGetAxisInitialState(atom joy,integer axis,atom st)
+
+ return c_func(xSDL_JoystickGetAxisInitialState,{joy,axis,st})
+	
+end function
+
 --SDL Gamecontroller Functions
 
 public constant xSDL_GameControllerAddMapping = define_c_func(sdl2,"SDL_GameControllerAddMapping",{C_POINTER},C_INT),
@@ -2647,7 +2744,12 @@ public constant xSDL_GameControllerAddMapping = define_c_func(sdl2,"SDL_GameCont
 				xSDL_GameControllerNameForIndex = define_c_func(sdl2,"SDL_GameControllerNameForIndex",{C_INT},C_POINTER),
 				xSDL_GameControllerOpen = define_c_func(sdl2,"SDL_GameControllerOpen",{C_INT},C_POINTER),
 				xSDL_GameControllerUpdate = define_c_proc(sdl2,"SDL_GameControllerUpdate",{}),
-				xSDL_IsGameController = define_c_func(sdl2,"SDL_IsGameController",{C_INT},C_BOOL)
+				xSDL_IsGameController = define_c_func(sdl2,"SDL_IsGameController",{C_INT},C_BOOL),
+				xSDL_GameControllerGetVendor = define_c_func(sdl2,"SDL_GameControllerGetVendor",{C_POINTER},C_UINT),
+				xSDL_GameControllerGetProduct = define_c_func(sdl2,"SDL_GameControllerGetProduct",{C_POINTER},C_UINT),
+				xSDL_GameControllerGetProductVersion = define_c_func(sdl2,"SDL_GameControllerGetProductVersion",{C_POINTER},C_UINT),
+				xSDL_GameControllerNumMappings = define_c_func(sdl2,"SDL_GameControllerNumMappings",{},C_INT),
+				xSDL_GameControllerMappingForIndex = define_c_func(sdl2,"SDL_GameControllerMappingForIndex",{C_INT},C_POINTER)
 				
 public function SDL_GameControllerAddMapping(sequence xmap)
 
@@ -2796,6 +2898,36 @@ end procedure
 public function SDL_IsGameController(integer idx)
 
  return c_func(xSDL_IsGameController,{idx})
+	
+end function
+
+public function SDL_GameControllerGetVendor(atom pad)
+
+ return c_func(xSDL_GameControllerGetVendor,{pad})
+	
+end function
+
+public function SDL_GameControllerGetProduct(atom pad)
+
+ return c_func(xSDL_GameControllerGetProduct,{pad})
+	
+end function
+
+public function SDL_GameControllerGetProductVersion(atom pad)
+
+ return c_func(xSDL_GameControllerGetProductVersion,{pad})
+	
+end function
+
+public function SDL_GameControllerNumMappings()
+
+ return c_func(xSDL_GameControllerNumMappings,{})
+	
+end function
+
+public function SDL_GameControllerMappingForIndex(integer idx)
+
+ return c_func(xSDL_GameControllerMappingForIndex,{idx})
 	
 end function
 
@@ -3633,7 +3765,8 @@ public constant xSDL_GetCPUCacheLineSize = define_c_func(sdl2,"SDL_GetCPUCacheLi
 				xSDL_HasSSE2 = define_c_func(sdl2,"SDL_HasSSE2",{},C_BOOL),
 				xSDL_HasSSE3 = define_c_func(sdl2,"SDL_HasSSE3",{},C_BOOL),
 				xSDL_HasSSE41 = define_c_func(sdl2,"SDL_HasSSE41",{},C_BOOL),
-				xSDL_HasSSE42 = define_c_func(sdl2,"SDL_HasSSE42",{},C_BOOL)
+				xSDL_HasSSE42 = define_c_func(sdl2,"SDL_HasSSE42",{},C_BOOL),
+				xSDL_HasNEON = define_c_func(sdl2,"SDL_HasNEON",{},C_BOOL)
 				
 public function SDL_GetCPUCacheLineSize()
 
@@ -3716,6 +3849,12 @@ end function
 public function SDL_HasSSE42()
 
  return c_func(xSDL_HasSSE42,{})
+	
+end function
+
+public function SDL_HasNEON()
+
+ return c_func(xSDL_HasNEON,{})
 	
 end function
 
@@ -4041,4 +4180,65 @@ public function SDL_tanf(atom x)
  return c_func(xSDL_tanf,{x})
 	
 end function
-­1056.48
+
+--Vulkan SDL2 Functions
+
+public constant xSDL_Vulkan_LoadLibrary = define_c_func(sdl2,"SDL_Vulkan_LoadLibrary",{C_POINTER},C_INT),
+				xSDL_Vulkan_GetVkGetInstanceProcAddr = define_c_proc(sdl2,"SDL_Vulkan_GetVkGetInstanceProcAddr",{}),
+				xSDL_Vulkan_UnloadLibrary = define_c_proc(sdl2,"SDL_Vulkan_UnloadLibrary",{}),
+				xSDL_Vulkan_GetInstanceExtensions = define_c_func(sdl2,"SDL_Vulkan_GetInstanceExtensions",{C_POINTER,C_POINTER,C_POINTER},C_BOOL),
+				xSDL_Vulkan_CreateSurface = define_c_func(sdl2,"SDL_Vulkan_CreateSurface",{C_POINTER,C_POINTER,C_POINTER},C_BOOL),
+				xSDL_Vulkan_GetDrawableSize = define_c_proc(sdl2,"SDL_Vulkan_GetDrawableSize",{C_POINTER,C_POINTER,C_POINTER})
+				
+public function SDL_Vulkan_LoadLibrary(sequence path)
+
+ atom str = allocate_string(path,1)
+ atom ret = c_func(xSDL_Vulkan_LoadLibrary,{str})
+ 
+ return ret
+	
+end function
+
+public procedure SDL_Vulkan_GetVKGetInstanceProcAddr()
+
+ c_proc(xSDL_Vulkan_GetVkGetInstanceProcAddr,{})
+	
+end procedure
+
+public procedure SDL_Vulkan_UnloadLibrary()
+
+ c_proc(xSDL_Vulkan_UnloadLibrary,{})
+	
+end procedure
+
+public function SDL_Vulkan_GetInstanceExtensions(atom win,atom cnt,sequence name)
+
+ atom str = allocate_string(name,1)
+ atom ret = c_func(xSDL_Vulkan_GetInstanceExtensions,{win,cnt,str})
+ 
+ return ret
+	
+end function
+
+public function SDL_Vulkan_CreateSurface(atom win,atom inst,atom surf)
+
+ return c_func(xSDL_Vulkan_CreateSurface,{win,inst,surf})
+	
+end function
+
+public procedure SDL_Vulkan_GetDrawableSize(atom win,atom w,atom h)
+
+ c_proc(xSDL_Vulkan_GetDrawableSize,{win,w,h})
+	
+end procedure
+
+--CustomBlendMode
+
+public constant xSDL_ComposeCustomBlendMode = define_c_func(sdl2,"SDL_ComposeCustomBlendMode",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_POINTER)
+
+public function SDL_ComposeCustomBlendMode(SDL_BLENDFACTOR srcColorFactor,SDL_BLENDFACTOR dstColorFactor,SDL_BLENDOPERATION colorOperation,SDL_BLENDFACTOR srcAlphaFactor,SDL_BLENDFACTOR dstAlphaFactor,SDL_BLENDOPERATION alphaOperation)
+
+ return c_func(xSDL_ComposeCustomBlendMode,{srcColorFactor,dstColorFactor,colorOperation,srcAlphaFactor,dstAlphaFactor,alphaOperation})
+	
+end function
+­1041.20
