@@ -38,6 +38,5 @@ Thank you for using EuSDL2!
 Note: There appears to be a problem with the functions:
 
 SDL_BlitSurface()
-SDL_CreateRenderer()
 
 Any help solving these problems is highly appericated. Thanks.
