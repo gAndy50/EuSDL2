@@ -1016,7 +1016,7 @@ end function
 
 --SDL Render Functions
 
-public constant xSDL_CreateRenderer = define_c_func(sdl2,"SDL_CreateRender",{C_POINTER,C_INT,C_UINT},C_POINTER),
+public constant xSDL_CreateRenderer = define_c_func(sdl2,"SDL_CreateRenderer",{C_POINTER,C_INT,C_UINT},C_POINTER),
 				xSDL_CreateSoftwareRenderer = define_c_func(sdl2,"SDL_CreateSoftwareRenderer",{C_POINTER},C_POINTER),
 				xSDL_CreateTexture = define_c_func(sdl2,"SDL_CreateTexture",{C_POINTER,C_UINT,C_INT,C_INT,C_INT},C_POINTER),
 				xSDL_CreateTextureFromSurface = define_c_func(sdl2,"SDL_CreateTextureFromSurface",{C_POINTER,C_POINTER},C_POINTER),
@@ -1062,7 +1062,7 @@ public constant xSDL_CreateRenderer = define_c_func(sdl2,"SDL_CreateRender",{C_P
 				xSDL_RenderSetViewport = define_c_func(sdl2,"SDL_RenderSetViewport",{C_POINTER,C_POINTER},C_INT),
 				xSDL_RenderTargetSupported = define_c_func(sdl2,"SDL_RenderTargetSupported",{C_POINTER},C_BOOL),
 				xSDL_SetRenderDrawBlendMode = define_c_func(sdl2,"SDL_SetRenderDrawBlendMode",{C_POINTER,C_POINTER},C_INT),
-				xSDL_SetRenderDrawColor = define_c_func(sdl2,"SDL_SetRenderDrawcolor",{C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT},C_INT),
+				xSDL_SetRenderDrawColor = define_c_func(sdl2,"SDL_SetRenderDrawColor",{C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT},C_INT),
 				xSDL_SetRenderTarget = define_c_func(sdl2,"SDL_SetRenderTarget",{C_POINTER,C_POINTER},C_INT),
 				xSDL_SetTextureAlphaMod = define_c_func(sdl2,"SDL_SetTextureAlphaMod",{C_POINTER,C_UINT},C_INT),
 				xSDL_SetTextureBlendMode = define_c_func(sdl2,"SDL_SetTextureBlendMode",{C_POINTER,C_POINTER},C_INT),
@@ -4241,4 +4241,4 @@ public function SDL_ComposeCustomBlendMode(SDL_BLENDFACTOR srcColorFactor,SDL_BL
  return c_func(xSDL_ComposeCustomBlendMode,{srcColorFactor,dstColorFactor,colorOperation,srcAlphaFactor,dstAlphaFactor,alphaOperation})
 	
 end function
-­1041.20
+­1778.22
