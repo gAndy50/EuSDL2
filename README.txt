@@ -20,6 +20,7 @@ per uses the 32 bit version of SDL2 as to provide for more compatibility between
 Updates:
 
 This wrapper has been updated for SDL 2.0.6 and has included new functions. 
+9/27 - Fixed a couple of functions, all demos now working.
 
 
 Note: All demos written by author of EuSDL2 unless otherwise noted.
@@ -35,8 +36,4 @@ software you make using this wrapper as you please, whether gratis or for a fee.
 
 Thank you for using EuSDL2!
 
-Note: There appears to be a problem with the functions:
-
-SDL_BlitSurface()
-
-Any help solving these problems is highly appericated. Thanks.
+Special thanks to openEuphoria community!

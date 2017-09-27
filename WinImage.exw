@@ -1,12 +1,14 @@
---Demo currently not working
 include std/machine.e
 include EuSDL2.ew
 include flags.e
 
 atom width = 800, height = 600
+atom buffer,format
+atom x
+x = SDL_Init(SDL_INIT_EVERYTHING)
 
-if SDL_Init(SDL_INIT_EVERYTHING) = -1 then
-	puts(1,"Failed to init SDL2!\n")
+if x = -1 then
+	puts(1,"Failed to load initialize SDL!\n")
 	abort(0)
 end if
 
@@ -38,24 +40,45 @@ end procedure
 atom srect = allocate(10)
 atom drect = allocate(10)
 
-calc_rect(srect,0,0,100,100)
-calc_rect(drect,10,10,100,100)
+calc_rect(srect,10,10,100,100)
+calc_rect(drect,0,0,width,height)
 
-atom x = SDL_BlitSurface(img,srect,surf,drect)
+format = peek4u(surf+4)
+buffer = SDL_ConvertSurface(surf,format,0)
 
-if x = 0 then
+--Use SDL_UpperBlit to draw to screen
+--As this replaces SDL_BlitSurface
+x = SDL_UpperBlit(img,0,surf,0)
+
+if x = -1 then
 	puts(1,"Failed to blit image!\n")
 	abort(0)
 end if
 
-SDL_UpdateWindowSurface(win)
+integer running = 1
 
-SDL_Delay(3000)
+atom key = 0
+
+while running = 1 do
+
+	SDL_PumpEvents()
+	key = SDL_GetKeyboardState(key)
+	
+	if peek(key+SDL_SCANCODE_ESCAPE) > 0 then
+		running = 0
+	end if
+	
+	SDL_UpdateWindowSurface(win)
+end while
 
 SDL_FreeSurface(img)
 SDL_FreeSurface(surf)
 
 SDL_DestroyWindow(win)
 
+free(key)
+free(srect)
+free(drect)
+
 SDL_Quit()
-­1.8
+­51.30

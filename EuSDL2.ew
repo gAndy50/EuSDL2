@@ -1815,7 +1815,9 @@ public constant xSDL_BlitScaled = define_c_func(sdl2,"SDL_BlitScaled",{C_POINTER
 				xSDL_SetSurfaceRLE = define_c_func(sdl2,"SDL_SetSurfaceRLE",{C_POINTER,C_INT},C_INT),
 				xSDL_UnlockSurface = define_c_proc(sdl2,"SDL_UnlockSurface",{C_POINTER}),
 				xSDL_CreateRGBSurfaceWithFormat = define_c_func(sdl2,"SDL_CreateRGBSurfaceWithFormat",{C_UINT,C_INT,C_INT,C_INT,C_UINT},C_POINTER),
-				xSDL_DuplicateSurface = define_c_func(sdl2,"SDL_DuplicateSurface",{C_POINTER},C_POINTER)
+				xSDL_DuplicateSurface = define_c_func(sdl2,"SDL_DuplicateSurface",{C_POINTER},C_POINTER),
+				xSDL_UpperBlit = define_c_func(sdl2,"SDL_UpperBlit",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xSDL_UpperBlitScaled = define_c_func(sdl2,"SDL_UpperBlitScaled",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT)
 				
 public function SDL_BlitScaled(atom src,atom srcr,atom dst,atom dstr)
  
@@ -1823,6 +1825,7 @@ public function SDL_BlitScaled(atom src,atom srcr,atom dst,atom dstr)
 	
 end function
 
+--UpperBlitSurface replaces this function, it is kept for legacy reasons
 public function SDL_BlitSurface(atom src,atom srcr,atom dst,atom dstr)
 
  return c_func(xSDL_BlitSurface,{src,srcr,dst,dstr})
@@ -1915,6 +1918,7 @@ end function
 
 public function SDL_LoadBMP(sequence fname)
 
+ --atom str = allocate_string(fname,1)
  return SDL_LoadBMP_RW(SDL_RWFromFile(fname,"rb"),1)
 	
 end function
@@ -2012,6 +2016,18 @@ end function
 public function SDL_DuplicateSurface(atom surf)
 
  return c_func(xSDL_DuplicateSurface,{surf})
+	
+end function
+
+public function SDL_UpperBlit(atom src,atom srcrect,atom dst,atom dstrect)
+
+ return c_func(xSDL_UpperBlit,{src,srcrect,dst,dstrect})
+	
+end function
+
+public function SDL_UpperBlitScaled(atom src,atom srcrect,atom dst,atom dstrect)
+
+ return c_func(xSDL_UpperBlitScaled,{src,srcrect,dst,dstrect})
 	
 end function
 
@@ -4241,4 +4257,4 @@ public function SDL_ComposeCustomBlendMode(SDL_BLENDFACTOR srcColorFactor,SDL_BL
  return c_func(xSDL_ComposeCustomBlendMode,{srcColorFactor,dstColorFactor,colorOperation,srcAlphaFactor,dstAlphaFactor,alphaOperation})
 	
 end function
-­1778.22
+­1922.43
