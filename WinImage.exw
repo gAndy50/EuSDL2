@@ -31,24 +31,21 @@ end if
 procedure calc_rect(atom rect,integer sx,integer sy,integer tx,integer ty)
 
  poke4(rect,sx)
- poke4(rect+2,sy)
- poke4(rect+4,tx)
- poke4(rect+6,ty)
+ poke4(rect+4,sy)
+ poke4(rect+8,tx)
+ poke4(rect+12,ty)
 	
 end procedure
 
-atom srect = allocate(10)
+--atom srect = allocate(10)
 atom drect = allocate(10)
 
-calc_rect(srect,10,10,100,100)
-calc_rect(drect,0,0,width,height)
-
-format = peek4u(surf+4)
-buffer = SDL_ConvertSurface(surf,format,0)
+--calc_rect(srect,10,10,100,100)
+calc_rect(drect,width / 2,height / 2,100,100)
 
 --Use SDL_UpperBlit to draw to screen
 --As this replaces SDL_BlitSurface
-x = SDL_UpperBlit(img,0,surf,0)
+x = SDL_UpperBlit(img,0,surf,drect)
 
 if x = -1 then
 	puts(1,"Failed to blit image!\n")
@@ -76,9 +73,5 @@ SDL_FreeSurface(surf)
 
 SDL_DestroyWindow(win)
 
-free(key)
-free(srect)
-free(drect)
-
 SDL_Quit()
-­51.30
+­43.32
