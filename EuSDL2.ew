@@ -1,10 +1,10 @@
 -------------------------------------
---EuSDL2			   --	
+--EuSDL2						   --	
 --Wrapper of SDL2 for Euphoria     --
---Author: Andy Patterson           --
---SDL Version Wrapped: 2.0.6	   --
---Euphoria Version: 4.0.5          --
---Date Started: 1/2/16		   --
+--Author: Andy Patterson		   --
+--SDL Version Wrapped: 2.0.7	   --
+--Euphoria Version: 4.0.5		   --
+--Date Started: 1/2/16			   --
 --Date Finished: 1/12/16           --
 -------------------------------------
 
@@ -2538,7 +2538,9 @@ public constant xSDL_JoystickClose = define_c_proc(sdl2,"SDL_JoystickClose",{C_P
 				xSDL_JoystickGetProduct = define_c_func(sdl2,"SDL_JoystickGetProduct",{C_POINTER},C_UINT),
 				xSDL_JoystickGetProductVersion = define_c_func(sdl2,"SDL_JoystickGetProductVersion",{C_POINTER},C_UINT),
 				xSDL_JoystickGetType = define_c_func(sdl2,"SDL_JoystickGetType",{C_POINTER},C_POINTER),
-				xSDL_JoystickGetAxisInitialState = define_c_func(sdl2,"SDL_JoystickGetAxisInitialState",{C_POINTER,C_INT,C_POINTER},C_BOOL)
+				xSDL_JoystickGetAxisInitialState = define_c_func(sdl2,"SDL_JoystickGetAxisInitialState",{C_POINTER,C_INT,C_POINTER},C_BOOL),
+				xSDL_LockJoysticks = define_c_proc(sdl2,"SDL_LockJoysticks",{}),
+				xSDL_UnlockJoysticks = define_c_proc(sdl2,"SDL_UnlockJoysticks",{})
 				
 public procedure SDL_JoystickClose(atom joy)
 
@@ -2735,6 +2737,18 @@ public function SDL_JoystickGetAxisInitialState(atom joy,integer axis,atom st)
  return c_func(xSDL_JoystickGetAxisInitialState,{joy,axis,st})
 	
 end function
+
+public procedure SDL_LockJoysticks()
+
+ c_proc(xSDL_LockJoysticks,{})
+	
+end procedure
+
+public procedure SDL_UnlockJoysticks()
+
+ c_proc(xSDL_UnlockJoysticks,{})
+	
+end procedure
 
 --SDL Gamecontroller Functions
 
@@ -3376,6 +3390,99 @@ end procedure
 public function SDL_DequeueAudio(atom dev,object dat,atom len)
 
  return c_func(xSDL_DequeueAudio,{dev,dat,len})
+	
+end function
+
+--SDL Audio Stream Functions
+
+public constant xSDL_NewAudioStream = define_c_func(sdl2,"SDL_NewAudioStream",{C_POINTER,C_UINT,C_INT,C_POINTER,C_UINT,C_POINTER,C_INT},C_POINTER),
+				xSDL_AudioStreamPut = define_c_func(sdl2,"SDL_AudioStreamPut",{C_POINTER,C_POINTER,C_INT},C_INT),
+				xSDL_AudioStreamGet = define_c_func(sdl2,"SDL_AudioStreamGet",{C_POINTER,C_POINTER,C_INT},C_INT),
+				xSDL_AudioStreamAvailable = define_c_func(sdl2,"SDL_AudioStreamAvailable",{C_POINTER},C_INT),
+				xSDL_AudioStreamFlush = define_c_func(sdl2,"SDL_AudioStreamFlush",{C_POINTER},C_INT),
+				xSDL_AudioStreamClear = define_c_proc(sdl2,"SDL_AudioStreamClear",{C_POINTER}),
+				xSDL_FreeAudioStream = define_c_proc(sdl2,"SDL_FreeAudioStream",{C_POINTER})
+				
+public function SDL_NewAudioStream(atom src_format,atom src_channels,integer src_rate,atom dst_format,atom dst_channels,integer dst_rate)
+
+ return c_func(xSDL_NewAudioStream,{src_format,src_channels,src_rate,dst_format,dst_channels,dst_rate})
+	
+end function
+
+public function SDL_AudioStreamPut(atom stream,object buf,integer len)
+
+ return c_func(xSDL_AudioStreamPut,{stream,buf,len})
+	
+end function
+
+public function SDL_AudioStreamGet(atom stream,object buf,integer len)
+
+ return c_func(xSDL_AudioStreamGet,{stream,buf,len})
+	
+end function
+
+public function SDL_AudioStreamAvailable(atom stream)
+
+ return c_func(xSDL_AudioStreamAvailable,{stream})
+	
+end function
+
+public function SDL_AudioStreamFlush(atom stream)
+
+ return c_func(xSDL_AudioStreamFlush,{stream})
+	
+end function
+
+public procedure SDL_AudioStreamClear(atom stream)
+
+ c_proc(xSDL_AudioStreamClear,{stream})
+	
+end procedure
+
+public procedure SDL_FreeAudioStream(atom stream)
+
+ c_proc(xSDL_FreeAudioStream,{stream})
+	
+end procedure
+
+--SDL Memory Functions
+
+public constant xSDL_GetMemoryFunctions = define_c_proc(sdl2,"SDL_GetMemoryFunctions",{C_POINTER,C_POINTER,C_POINTER,C_POINTER}),
+				xSDL_SetMemoryFunctions = define_c_func(sdl2,"SDL_SetMemoryFunctions",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xSDL_GetNumAllocations = define_c_func(sdl2,"SDL_GetNumAllocations",{},C_INT),
+				xSDL_getenv = define_c_func(sdl2,"SDL_getenv",{C_POINTER},C_POINTER),
+				xSDL_setenv = define_c_func(sdl2,"SDL_setenv",{C_POINTER,C_POINTER,C_INT},C_INT)
+				
+public procedure SDL_GetMemoryFunctions(atom x,atom x2,atom x3,atom x4)
+
+ c_proc(xSDL_GetMemoryFunctions,{x,x2,x3,x4})
+	
+end procedure
+
+public function SDL_SetMemoryFunctions(atom x,atom x2,atom x3,atom x4)
+
+ return c_func(xSDL_SetMemoryFunctions,{x,x2,x3,x4})
+	
+end function
+
+public function SDL_GetNumAllocations()
+
+ return c_func(xSDL_GetNumAllocations,{})
+	
+end function
+
+public function SDL_getenv(sequence name)
+
+ atom str = allocate_string(name,1)
+ return c_func(xSDL_getenv,{str})
+	
+end function
+
+public function SDL_setenv(sequence name,sequence val,integer ow)
+
+ atom str = allocate_string(name,1)
+ atom str2 = allocate_string(val,1)
+ return c_func(xSDL_setenv,{str,str2,ow})
 	
 end function
 
@@ -4081,7 +4188,12 @@ public constant xSDL_acos = define_c_func(sdl2,"SDL_acos",{C_DOUBLE},C_DOUBLE),
 				xSDL_sqrt = define_c_func(sdl2,"SDL_sqrt",{C_DOUBLE},C_DOUBLE),
 				xSDL_sqrtf = define_c_func(sdl2,"SDL_sqrtf",{C_FLOAT},C_FLOAT),
 				xSDL_tan = define_c_func(sdl2,"SDL_tan",{C_DOUBLE},C_DOUBLE),
-				xSDL_tanf = define_c_func(sdl2,"SDL_tanf",{C_FLOAT},C_FLOAT)
+				xSDL_tanf = define_c_func(sdl2,"SDL_tanf",{C_FLOAT},C_FLOAT),
+				xSDL_abs = define_c_func(sdl2,"SDL_abs",{C_INT},C_INT),
+				xSDL_isdigit = define_c_func(sdl2,"SDL_isdigit",{C_INT},C_INT),
+				xSDL_isspace = define_c_func(sdl2,"SDL_isspace",{C_INT},C_INT),
+				xSDL_toupper = define_c_func(sdl2,"SDL_toupper",{C_INT},C_INT),
+				xSDL_tolower = define_c_func(sdl2,"SDL_tolower",{C_INT},C_INT)
 				
 public function SDL_acos(atom x)
 
@@ -4197,6 +4309,36 @@ public function SDL_tanf(atom x)
 	
 end function
 
+public function SDL_abs(integer x)
+
+ return c_func(xSDL_abs,{x})
+	
+end function
+
+public function SDL_isdigit(integer x)
+
+ return c_func(xSDL_isdigit,{x})
+	
+end function
+
+public function SDL_isspace(integer x)
+
+ return c_func(xSDL_isspace,{x})
+	
+end function
+
+public function SDL_toupper(integer x)
+
+ return c_func(xSDL_toupper,{x})
+	
+end function
+
+public function SDL_tolower(integer x)
+
+ return c_func(xSDL_tolower,{x})
+	
+end function
+
 --Vulkan SDL2 Functions
 
 public constant xSDL_Vulkan_LoadLibrary = define_c_func(sdl2,"SDL_Vulkan_LoadLibrary",{C_POINTER},C_INT),
@@ -4257,4 +4399,4 @@ public function SDL_ComposeCustomBlendMode(SDL_BLENDFACTOR srcColorFactor,SDL_BL
  return c_func(xSDL_ComposeCustomBlendMode,{srcColorFactor,dstColorFactor,colorOperation,srcAlphaFactor,dstAlphaFactor,alphaOperation})
 	
 end function
-Â­1922.43
+­2076.14
