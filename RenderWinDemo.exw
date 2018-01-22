@@ -67,10 +67,12 @@ while running = 1 do
 
 end while
 
+free(drect)
+
 SDL_FreeSurface(gfx)
 SDL_DestroyTexture(tex)
 SDL_DestroyRenderer(ren)
 SDL_DestroyWindow(win)
 
 SDL_Quit()
-­61.34
+Â­61.34
