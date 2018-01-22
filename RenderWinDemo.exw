@@ -10,7 +10,8 @@ if SDL_Init(SDL_INIT_EVERYTHING) = -1 then
 end if
 
 atom win = SDL_CreateWindow("Render Demo",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,640,480,SDL_WINDOW_SHOWN)
-atom ren = SDL_CreateRenderer(win,0,SDL_RENDERER_ACCELERATED)
+atom ren = SDL_CreateRenderer(win,-1,SDL_RENDERER_ACCELERATED)
+
 
 atom gfx,tex
 
@@ -21,6 +22,21 @@ if win = -1 then
 	puts(1,"Failed to create window!\n")
 	abort(0)
 end if
+
+procedure calc_rect(atom rect,integer sx,integer sy,integer tx,integer ty)
+
+ poke4(rect,sx)
+ poke4(rect+4,sy)
+ poke4(rect+8,tx)
+ poke4(rect+12,ty)
+	
+end procedure
+
+--atom srect = allocate(10)
+atom drect = allocate(10)
+
+--calc_rect(srect,10,10,100,100)
+calc_rect(drect,10,10,100,100)
 
 atom key = 0
 integer running = 1
@@ -35,8 +51,18 @@ while running = 1 do
 			running = 0
 	end if
 	
-	SDL_RenderClear(ren)
-	SDL_RenderCopy(ren,tex,0,0)
+	SDL_SetRenderDrawColor(ren,0,0,0,0)
+	
+	if SDL_RenderClear(ren) < 0 then
+		puts(1,"Failed to clear window!\n")
+		abort(0)
+	end if
+	
+	if SDL_RenderCopy(ren,tex,0,drect) < 0 then
+		puts(1,"Failed to render image!\n")
+		abort(0)
+	end if
+	
 	SDL_RenderPresent(ren)
 
 end while
@@ -47,4 +73,4 @@ SDL_DestroyRenderer(ren)
 SDL_DestroyWindow(win)
 
 SDL_Quit()
-­13.36
+­61.34
