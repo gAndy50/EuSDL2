@@ -2,7 +2,7 @@
 --EuSDL2						   --	
 --Wrapper of SDL2 for Euphoria     --
 --Author: Andy Patterson		   --
---SDL Version Wrapped: 2.0.7	   --
+--SDL Version Wrapped: 2.0.8	   --
 --Euphoria Version: 4.0.5		   --
 --Date Started: 1/2/16			   --
 --Date Finished: 1/12/16           --
@@ -1817,7 +1817,9 @@ public constant xSDL_BlitScaled = define_c_func(sdl2,"SDL_BlitScaled",{C_POINTER
 				xSDL_CreateRGBSurfaceWithFormat = define_c_func(sdl2,"SDL_CreateRGBSurfaceWithFormat",{C_UINT,C_INT,C_INT,C_INT,C_UINT},C_POINTER),
 				xSDL_DuplicateSurface = define_c_func(sdl2,"SDL_DuplicateSurface",{C_POINTER},C_POINTER),
 				xSDL_UpperBlit = define_c_func(sdl2,"SDL_UpperBlit",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
-				xSDL_UpperBlitScaled = define_c_func(sdl2,"SDL_UpperBlitScaled",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT)
+				xSDL_UpperBlitScaled = define_c_func(sdl2,"SDL_UpperBlitScaled",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xSDL_SetYUVConversionMode = define_c_proc(sdl2,"SDL_SetYUVConversionMode",{C_POINTER}),
+				xSDL_GetYUVConversionMode = define_c_func(sdl2,"SDL_GetYUVConversionMode",{},C_POINTER)
 				
 public function SDL_BlitScaled(atom src,atom srcr,atom dst,atom dstr)
  
@@ -2028,6 +2030,18 @@ end function
 public function SDL_UpperBlitScaled(atom src,atom srcrect,atom dst,atom dstrect)
 
  return c_func(xSDL_UpperBlitScaled,{src,srcrect,dst,dstrect})
+	
+end function
+
+public procedure SDL_SetYUVConversionMode(atom mode)
+
+ c_proc(xSDL_SetYUVConversionMode,{mode})
+	
+end procedure
+
+public function SDL_GetYUVConversionMode()
+
+ return c_func(xSDL_GetYUVConversionMode,{})
 	
 end function
 
@@ -4100,7 +4114,8 @@ public constant xSDL_AndroidGetActivity = define_c_proc(sdl2,"SDL_AndroidGetActi
 				xSDL_RenderGetD3D9Device = define_c_func(sdl2,"SDL_RenderGetD3D9Device",{C_POINTER},C_POINTER),
 				xSDL_SetWindowsMessageHook = define_c_proc(sdl2,"SDL_SetWindowsMessageHook",{C_POINTER,C_POINTER}),
 				xSDL_WinRTGetFSPathUNICODE = define_c_func(sdl2,"SDL_WinRTGetFSPathUNICODE",{C_POINTER},C_POINTER),
-				xSDL_WinRTGetFSPathUTF8 = define_c_func(sdl2,"SDL_WinRTGetFSPathUTF8",{C_POINTER},C_POINTER)
+				xSDL_WinRTGetFSPathUTF8 = define_c_func(sdl2,"SDL_WinRTGetFSPathUTF8",{C_POINTER},C_POINTER),
+				xSDL_WinRTGetDeviceFamily = define_c_func(sdl2,"SDL_WinRTGetDeviceFamily",{},C_POINTER)
 				
 public procedure SDL_AndroidGetActivity()
 
@@ -4168,6 +4183,12 @@ public function SDL_WinRTGetFSPathUTF8(SDL_WINRT_PATH path)
 	
 end function
 
+public function SDL_WinRTGetDeviceFamily()
+
+ return c_func(xSDL_WinRTGetDeviceFamily,{})
+	
+end function
+
 --SDL Additional Functions
 
 public constant xSDL_acos = define_c_func(sdl2,"SDL_acos",{C_DOUBLE},C_DOUBLE),
@@ -4193,7 +4214,9 @@ public constant xSDL_acos = define_c_func(sdl2,"SDL_acos",{C_DOUBLE},C_DOUBLE),
 				xSDL_isdigit = define_c_func(sdl2,"SDL_isdigit",{C_INT},C_INT),
 				xSDL_isspace = define_c_func(sdl2,"SDL_isspace",{C_INT},C_INT),
 				xSDL_toupper = define_c_func(sdl2,"SDL_toupper",{C_INT},C_INT),
-				xSDL_tolower = define_c_func(sdl2,"SDL_tolower",{C_INT},C_INT)
+				xSDL_tolower = define_c_func(sdl2,"SDL_tolower",{C_INT},C_INT),
+				xSDL_fmod = define_c_func(sdl2,"SDL_fmod",{C_DOUBLE,C_DOUBLE},C_DOUBLE),
+				xSDL_fmodf = define_c_func(sdl2,"SDL_fmodf",{C_FLOAT,C_FLOAT},C_FLOAT)
 				
 public function SDL_acos(atom x)
 
@@ -4339,6 +4362,18 @@ public function SDL_tolower(integer x)
 	
 end function
 
+public function SDL_fmod(atom x,atom y)
+
+ return c_func(xSDL_fmod,{x,y})
+	
+end function
+
+public function SDL_fmodf(atom x,atom y)
+
+ return c_func(xSDL_fmodf,{x,y})
+	
+end function
+
 --Vulkan SDL2 Functions
 
 public constant xSDL_Vulkan_LoadLibrary = define_c_func(sdl2,"SDL_Vulkan_LoadLibrary",{C_POINTER},C_INT),
@@ -4399,4 +4434,4 @@ public function SDL_ComposeCustomBlendMode(SDL_BLENDFACTOR srcColorFactor,SDL_BL
  return c_func(xSDL_ComposeCustomBlendMode,{srcColorFactor,dstColorFactor,colorOperation,srcAlphaFactor,dstAlphaFactor,alphaOperation})
 	
 end function
-­2076.14
+­2044.44
