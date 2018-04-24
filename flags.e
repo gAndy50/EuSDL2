@@ -942,7 +942,7 @@ public constant SDL_TOUCH_MOUSEID = -1
 
 public constant SDL_MAJOR_VERSION = 2,
 				SDL_MINOR_VERSION = 0,
-				SDL_PATCHLEVEL = 3
+				SDL_PATCHLEVEL = 8
 				
 public constant	SDL_WINDOW_FULLSCREEN = 1,
 				SDL_WINDOW_OPENGL = 2,
@@ -1164,4 +1164,4 @@ public enum type SDL_JOYSTICKPOWERLEVEL
 	SDL_JOYSTICK_POWER_MAX
 	
 end type
-­1055.26
+Â­1055.26
