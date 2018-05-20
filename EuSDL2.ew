@@ -1,11 +1,12 @@
 -------------------------------------
---EuSDL2						   --	
+--EuSDL2			   --	
 --Wrapper of SDL2 for Euphoria     --
---Author: Andy Patterson		   --
+--Author: Andy P.		   --
 --SDL Version Wrapped: 2.0.8	   --
---Euphoria Version: 4.0.5		   --
---Date Started: 1/2/16			   --
+--Euphoria Version: 4.0.5          --
+--Date Started: 1/2/16	           --
 --Date Finished: 1/12/16           --
+--Copyright (c) 2018               --
 -------------------------------------
 
 without warning
@@ -4434,4 +4435,4 @@ public function SDL_ComposeCustomBlendMode(SDL_BLENDFACTOR srcColorFactor,SDL_BL
  return c_func(xSDL_ComposeCustomBlendMode,{srcColorFactor,dstColorFactor,colorOperation,srcAlphaFactor,dstAlphaFactor,alphaOperation})
 	
 end function
-­2044.44
+Â­2044.44
