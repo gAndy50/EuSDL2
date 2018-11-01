@@ -482,7 +482,8 @@ public constant xSDL_CreateWindow = define_c_func(sdl2,"SDL_CreateWindow",{C_POI
 				xSDL_GetWindowBordersSize = define_c_func(sdl2,"SDL_GetWindowBordersSize",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
 				xSDL_SetWindowResizable = define_c_proc(sdl2,"SDL_SetWindowResizable",{C_POINTER,C_BOOL}),
 				xSDL_SetWindowOpacity = define_c_func(sdl2,"SDL_SetWindowOpacity",{C_POINTER,C_FLOAT},C_INT),
-				xSDL_SetWindowModalFor = define_c_func(sdl2,"SDL_SetWindowModalFor",{C_POINTER,C_POINTER},C_INT)
+				xSDL_SetWindowModalFor = define_c_func(sdl2,"SDL_SetWindowModalFor",{C_POINTER,C_POINTER},C_INT),
+				xSDL_GetDisplayOrientation = define_c_func(sdl2,"SDL_GetDisplayOrientation",{C_INT},C_POINTER)
 				
 public function SDL_CreateWindow(sequence title,integer x,integer y,integer w,integer h,atom flags)
 
@@ -1013,6 +1014,12 @@ end function
 public function SDL_SetWindowModalFor(atom modal,atom parent)
 
  return c_func(xSDL_SetWindowModalFor,{modal,parent})
+	
+end function
+
+public function SDL_GetDisplayOrientation(integer idx)
+
+ return c_func(xSDL_GetDisplayOrientation,{idx})
 	
 end function
 
@@ -1821,7 +1828,8 @@ public constant xSDL_BlitScaled = define_c_func(sdl2,"SDL_BlitScaled",{C_POINTER
 				xSDL_UpperBlit = define_c_func(sdl2,"SDL_UpperBlit",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
 				xSDL_UpperBlitScaled = define_c_func(sdl2,"SDL_UpperBlitScaled",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
 				xSDL_SetYUVConversionMode = define_c_proc(sdl2,"SDL_SetYUVConversionMode",{C_POINTER}),
-				xSDL_GetYUVConversionMode = define_c_func(sdl2,"SDL_GetYUVConversionMode",{},C_POINTER)
+				xSDL_GetYUVConversionMode = define_c_func(sdl2,"SDL_GetYUVConversionMode",{},C_POINTER),
+				xSDL_HasColorKey = define_c_func(sdl2,"SDL_HasColorKey",{C_POINTER},C_BOOL)
 				
 public function SDL_BlitScaled(atom src,atom srcr,atom dst,atom dstr)
  
@@ -2044,6 +2052,12 @@ end procedure
 public function SDL_GetYUVConversionMode()
 
  return c_func(xSDL_GetYUVConversionMode,{})
+	
+end function
+
+public function SDL_HasColorKey(atom surf)
+
+ return c_func(xSDL_HasColorKey,{surf})
 	
 end function
 
@@ -2556,7 +2570,10 @@ public constant xSDL_JoystickClose = define_c_proc(sdl2,"SDL_JoystickClose",{C_P
 				xSDL_JoystickGetType = define_c_func(sdl2,"SDL_JoystickGetType",{C_POINTER},C_POINTER),
 				xSDL_JoystickGetAxisInitialState = define_c_func(sdl2,"SDL_JoystickGetAxisInitialState",{C_POINTER,C_INT,C_POINTER},C_BOOL),
 				xSDL_LockJoysticks = define_c_proc(sdl2,"SDL_LockJoysticks",{}),
-				xSDL_UnlockJoysticks = define_c_proc(sdl2,"SDL_UnlockJoysticks",{})
+				xSDL_UnlockJoysticks = define_c_proc(sdl2,"SDL_UnlockJoysticks",{}),
+				xSDL_JoystickGetDevicePlayerIndex = define_c_func(sdl2,"SDL_JoystickGetDevicePlayerIndex",{C_INT},C_INT),
+				xSDL_JoystickGetPlayerIndex = define_c_func(sdl2,"SDL_JoystickGetPlayerIndex",{C_POINTER},C_INT),
+				xSDL_JoystickRumble = define_c_func(sdl2,"SDL_JoystickRumble",{C_POINTER,C_UINT,C_UINT,C_UINT},C_INT)
 				
 public procedure SDL_JoystickClose(atom joy)
 
@@ -2766,6 +2783,24 @@ public procedure SDL_UnlockJoysticks()
 	
 end procedure
 
+public function SDL_JoystickGetDevicePlayerIndex(atom joy)
+
+ return c_func(xSDL_JoystickGetDevicePlayerIndex,{joy})
+	
+end function
+
+public function SDL_JoystickGetPlayerIndex(atom joy)
+
+ return c_func(xSDL_JoystickGetPlayerIndex,{joy})
+	
+end function
+
+public function SDL_JoystickRumble(atom joy,atom low,atom high,atom duration)
+
+ return c_func(xSDL_JoystickRumble,{joy,low,high,duration})
+	
+end function
+
 --SDL Gamecontroller Functions
 
 public constant xSDL_GameControllerAddMapping = define_c_func(sdl2,"SDL_GameControllerAddMapping",{C_POINTER},C_INT),
@@ -2795,7 +2830,10 @@ public constant xSDL_GameControllerAddMapping = define_c_func(sdl2,"SDL_GameCont
 				xSDL_GameControllerGetProduct = define_c_func(sdl2,"SDL_GameControllerGetProduct",{C_POINTER},C_UINT),
 				xSDL_GameControllerGetProductVersion = define_c_func(sdl2,"SDL_GameControllerGetProductVersion",{C_POINTER},C_UINT),
 				xSDL_GameControllerNumMappings = define_c_func(sdl2,"SDL_GameControllerNumMappings",{},C_INT),
-				xSDL_GameControllerMappingForIndex = define_c_func(sdl2,"SDL_GameControllerMappingForIndex",{C_INT},C_POINTER)
+				xSDL_GameControllerMappingForIndex = define_c_func(sdl2,"SDL_GameControllerMappingForIndex",{C_INT},C_POINTER),
+				xSDL_GameControllerGetPlayerIndex = define_c_func(sdl2,"SDL_GameControllerGetPlayerIndex",{C_POINTER},C_INT),
+				xSDL_GameControllerRumble = define_c_func(sdl2,"SDL_GameControllerRumble",{C_POINTER,C_UINT,C_UINT,C_UINT},C_INT),
+				xSDL_GameControllerMappingForDeviceIndex = define_c_func(sdl2,"SDL_GameControllerMappingForDeviceIndex",{C_INT},C_POINTER)
 				
 public function SDL_GameControllerAddMapping(sequence xmap)
 
@@ -2974,6 +3012,24 @@ end function
 public function SDL_GameControllerMappingForIndex(integer idx)
 
  return c_func(xSDL_GameControllerMappingForIndex,{idx})
+	
+end function
+
+public function SDL_GameControllerGetPlayerIndex(atom con)
+
+ return c_func(xSDL_GameControllerGetPlayerIndex,{con})
+	
+end function
+
+public function SDL_GameControllerRumble(atom con,atom low,atom high,atom dur)
+
+ return c_func(xSDL_GameControllerRumble,{con,low,high,dur})
+	
+end function
+
+public function SDL_GameControllerMappingForDeviceIndex(atom con)
+
+ return c_func(xSDL_GameControllerMappingForDeviceIndex,{con})
 	
 end function
 
@@ -3905,7 +3961,9 @@ public constant xSDL_GetCPUCacheLineSize = define_c_func(sdl2,"SDL_GetCPUCacheLi
 				xSDL_HasSSE3 = define_c_func(sdl2,"SDL_HasSSE3",{},C_BOOL),
 				xSDL_HasSSE41 = define_c_func(sdl2,"SDL_HasSSE41",{},C_BOOL),
 				xSDL_HasSSE42 = define_c_func(sdl2,"SDL_HasSSE42",{},C_BOOL),
-				xSDL_HasNEON = define_c_func(sdl2,"SDL_HasNEON",{},C_BOOL)
+				xSDL_HasNEON = define_c_func(sdl2,"SDL_HasNEON",{},C_BOOL),
+				xSDL_HasAVX512F = define_c_func(sdl2,"SDL_HasAVX512F",{},C_BOOL),
+				xSDL_IsTablet = define_c_func(sdl2,"SDL_IsTablet",{},C_BOOL)
 				
 public function SDL_GetCPUCacheLineSize()
 
@@ -3994,6 +4052,18 @@ end function
 public function SDL_HasNEON()
 
  return c_func(xSDL_HasNEON,{})
+	
+end function
+
+public function SDL_HasAVX512F()
+
+ return c_func(xSDL_HasAVX512F,{})
+	
+end function
+
+public function SDL_IsTablet()
+
+ return c_func(xSDL_IsTablet,{})
 	
 end function
 
@@ -4436,4 +4506,99 @@ public function SDL_ComposeCustomBlendMode(SDL_BLENDFACTOR srcColorFactor,SDL_BL
  return c_func(xSDL_ComposeCustomBlendMode,{srcColorFactor,dstColorFactor,colorOperation,srcAlphaFactor,dstAlphaFactor,alphaOperation})
 	
 end function
-­4158.11
+
+--SDL Sensor
+
+public constant xSDL_NumSensors = define_c_func(sdl2,"SDL_NumSensors",{},C_INT),
+				xSDL_SensorGetDeviceName = define_c_func(sdl2,"SDL_SensorGetDeviceName",{C_INT},C_POINTER),
+				xSDL_SensorGetDeviceType = define_c_func(sdl2,"SDL_SensorGetDeviceType",{C_INT},C_POINTER),
+				xSDL_SensorGetDeviceNonPortableType = define_c_func(sdl2,"SDL_SensorGetDeviceNonPortableType",{C_INT},C_INT),
+				xSDL_SensorGetDeviceInstanceID = define_c_func(sdl2,"SDL_SensorGetDeviceInstanceID",{C_INT},C_POINTER),
+				xSDL_SensorOpen = define_c_func(sdl2,"SDL_SensorOpen",{C_INT},C_POINTER),
+				xSDL_SensorFromInstanceID = define_c_func(sdl2,"SDL_SensorFromInstanceID",{C_POINTER},C_POINTER),
+				xSDL_SensorGetName = define_c_func(sdl2,"SDL_SensorGetName",{C_POINTER},C_POINTER),
+				xSDL_SensorGetType = define_c_func(sdl2,"SDL_SensorGetType",{C_POINTER},C_POINTER),
+				xSDL_SensorGetNonPortableType = define_c_func(sdl2,"SDL_SensorGetNonPortableType",{C_POINTER},C_INT),
+				xSDL_SensorGetInstanceID = define_c_func(sdl2,"SDL_SensorGetInstanceID",{C_POINTER},C_POINTER),
+				xSDL_SensorGetData = define_c_func(sdl2,"SDL_SensorGetData",{C_POINTER,C_POINTER,C_FLOAT},C_INT),
+				xSDL_SensorClose = define_c_proc(sdl2,"SDL_SensorClose",{C_POINTER}),
+				xSDL_SensorUpdate = define_c_proc(sdl2,"SDL_SensorUpdate",{})
+				
+public function SDL_NumSensors()
+
+ return c_func(xSDL_NumSensors,{})
+	
+end function
+
+public function SDL_SensorGetDeviceType(integer idx)
+
+ return c_func(xSDL_SensorGetDeviceType,{idx})
+	
+end function
+
+public function SDL_SensorGetDeviceNonPortableType(integer idx)
+
+ return c_func(xSDL_SensorGetDeviceNonPortableType,{idx})
+	
+end function
+
+public function SDL_SensorGetDeviceInstanceID(integer idx)
+
+ return c_func(xSDL_SensorGetDeviceInstanceID,{idx})
+	
+end function
+
+public function SDL_SensorOpen(integer idx)
+
+ return c_func(xSDL_SensorOpen,{idx})
+	
+end function
+
+public function SDL_SensorFromInstanceID(atom id)
+
+ return c_func(xSDL_SensorFromInstanceID,{id})
+	
+end function
+
+public function SDL_SensorGetName(atom sen)
+
+ return c_func(xSDL_SensorGetName,{sen})
+	
+end function
+
+public function SDL_SensorGetType(atom sen)
+
+ return c_func(xSDL_SensorGetType,{sen})
+	
+end function
+
+public function SDL_SensorGetNonPortableType(atom sen)
+
+ return c_func(xSDL_SensorGetNonPortableType,{sen})
+	
+end function
+
+public function SDL_SensorGetInstanceID(atom sen)
+
+ return c_func(xSDL_SensorGetInstanceID,{sen})
+	
+end function
+
+public function SDL_SensorGetData(atom sen,atom dat,integer num)
+
+ return c_func(xSDL_SensorGetData,{sen,dat,num})
+	
+end function
+
+public procedure SDL_SensorClose(atom sen)
+
+ c_proc(xSDL_SensorClose,{sen})
+	
+end procedure
+
+public procedure SDL_SensorUpdate()
+
+ c_proc(xSDL_SensorUpdate,{})
+	
+end procedure
+­3020.48
