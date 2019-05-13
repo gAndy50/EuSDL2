@@ -5,7 +5,7 @@ Euphoria Version: 4.0.5
 Date Started: 1/2/16
 Date Finished: 1/12/16
 
-(c) EusDL2 2018
+(c) EusDL2 2018-2019
 
 Contact/Paypal: g_andy <at> live.com
 
