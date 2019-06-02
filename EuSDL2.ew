@@ -1,10 +1,10 @@
 -------------------------------------
---EuSDL2						   --	
+--EuSDL2		           --	
 --Wrapper of SDL2 for Euphoria     --
---Author: Andy Patterson		   --
+--Author: Andy Patterson           --
 --SDL Version Wrapped: 2.0.8	   --
---Euphoria Version: 4.0.5		   --
---Date Started: 1/2/16			   --
+--Euphoria Version: 4.1.0 Beta 2   --
+--Date Started: 1/2/16		   --
 --Date Finished: 1/12/16           --
 -------------------------------------
 
@@ -4601,4 +4601,4 @@ public procedure SDL_SensorUpdate()
  c_proc(xSDL_SensorUpdate,{})
 	
 end procedure
-­4534.0
+Â­4534.0
