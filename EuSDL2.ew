@@ -24,8 +24,8 @@ ifdef WIN32 then
   sdl2 = open_dll("SDL2.so")
 end ifdef
 
-if sdl2 = -1 then
-	puts(1,"Failed to load SDL2.dll!\n")
+if sdl2 < 1 then
+	puts(1, "Failed to load SDL2.dll!\n")
 	abort(0)
 end if
 
@@ -40,13 +40,13 @@ public constant RECT_LEFT = 0,
 
 --SDL Init Functions
 
-public constant xSDL_Init = define_c_func(sdl2,"SDL_Init",{C_UINT},C_INT),
-				xSDL_InitSubSystem = define_c_func(sdl2,"SDL_InitSubSystem",{C_UINT},C_INT),
-				xSDL_Quit = define_c_proc(sdl2,"SDL_Quit",{}),
-				xSDL_QuitSubSystem = define_c_proc(sdl2,"SDL_QuitSubSystem",{C_UINT}),
-				xSDL_SetMainReady = define_c_proc(sdl2,"SDL_SetMainReady",{}),
-				xSDL_WasInit = define_c_func(sdl2,"SDL_WasInit",{C_UINT},C_UINT),
-				xSDL_WinRTRunApp = define_c_func(sdl2,"SDL_WinRTRunApp",{C_POINTER,C_POINTER},C_INT)
+public constant xSDL_Init = define_c_func(sdl2,"+SDL_Init",{C_UINT},C_INT),
+				xSDL_InitSubSystem = define_c_func(sdl2,"+SDL_InitSubSystem",{C_UINT},C_INT),
+				xSDL_Quit = define_c_proc(sdl2,"+SDL_Quit",{}),
+				xSDL_QuitSubSystem = define_c_proc(sdl2,"+SDL_QuitSubSystem",{C_UINT}),
+				xSDL_SetMainReady = define_c_proc(sdl2,"+SDL_SetMainReady",{}),
+				xSDL_WasInit = define_c_func(sdl2,"+SDL_WasInit",{C_UINT},C_UINT),
+				xSDL_WinRTRunApp = define_c_func(sdl2,"+SDL_WinRTRunApp",{C_POINTER,C_POINTER},C_INT)
 				
 public function SDL_Init(atom flags)
 
@@ -92,13 +92,13 @@ end function
 
 --SDL Hint Functions
 
-public constant xSDL_AddHintCallback = define_c_proc(sdl2,"SDL_AddHintCallback",{C_POINTER,C_POINTER,C_POINTER}),
-				xSDL_ClearHints = define_c_proc(sdl2,"SDL_ClearHints",{}),
-				xSDL_DelHintCallback = define_c_proc(sdl2,"SDL_DelHintCallback",{C_POINTER,C_POINTER,C_POINTER}),
-				xSDL_GetHint = define_c_func(sdl2,"SDL_GetHint",{C_POINTER},C_POINTER),
-				xSDL_SetHint = define_c_func(sdl2,"SDL_SetHint",{C_POINTER,C_POINTER},C_BOOL),
-				xSDL_SetHintWithPriority = define_c_func(sdl2,"SDL_SetHintWithPriority",{C_POINTER,C_POINTER,C_POINTER},C_BOOL),
-				xSDL_GetHintBoolean = define_c_func(sdl2,"SDL_GetHintBoolean",{C_POINTER,C_BOOL},C_BOOL)
+public constant xSDL_AddHintCallback = define_c_proc(sdl2,"+SDL_AddHintCallback",{C_POINTER,C_POINTER,C_POINTER}),
+				xSDL_ClearHints = define_c_proc(sdl2,"+SDL_ClearHints",{}),
+				xSDL_DelHintCallback = define_c_proc(sdl2,"+SDL_DelHintCallback",{C_POINTER,C_POINTER,C_POINTER}),
+				xSDL_GetHint = define_c_func(sdl2,"+SDL_GetHint",{C_POINTER},C_POINTER),
+				xSDL_SetHint = define_c_func(sdl2,"+SDL_SetHint",{C_POINTER,C_POINTER},C_BOOL),
+				xSDL_SetHintWithPriority = define_c_func(sdl2,"+SDL_SetHintWithPriority",{C_POINTER,C_POINTER,C_POINTER},C_BOOL),
+				xSDL_GetHintBoolean = define_c_func(sdl2,"+SDL_GetHintBoolean",{C_POINTER,C_BOOL},C_BOOL)
 				
 public procedure SDL_AddHintCallback(sequence name,atom cb,atom dat)
 
@@ -165,9 +165,9 @@ end function
 
 --SDL Error Functions
 
-public constant xSDL_ClearError = define_c_proc(sdl2,"SDL_ClearError",{}),
-				xSDL_GetError = define_c_func(sdl2,"SDL_GetError",{},C_POINTER),
-				xSDL_SetError = define_c_func(sdl2,"SDL_SetError",{C_POINTER,C_POINTER},C_INT)
+public constant xSDL_ClearError = define_c_proc(sdl2,"+SDL_ClearError",{}),
+				xSDL_GetError = define_c_func(sdl2,"+SDL_GetError",{},C_POINTER),
+				xSDL_SetError = define_c_func(sdl2,"+SDL_SetError",{C_POINTER,C_POINTER},C_INT)
 				
 public procedure SDL_ClearError()
 
@@ -192,21 +192,21 @@ end function
 
 --SDL Log Functions
 
-public constant xSDL_Log = define_c_proc(sdl2,"SDL_Log",{C_POINTER,C_POINTER}),
-				xSDL_LogCritical = define_c_proc(sdl2,"SDL_LogCritical",{C_INT,C_POINTER,C_POINTER}),
-				xSDL_LogDebug = define_c_proc(sdl2,"SDL_LogDebug",{C_INT,C_POINTER,C_POINTER}),
-				xSDL_LogError = define_c_proc(sdl2,"SDL_LogError",{C_INT,C_POINTER,C_POINTER}),
-				xSDL_LogGetOutputFunction = define_c_proc(sdl2,"SDL_LogGetOutputFunction",{C_POINTER,C_POINTER}),
-				xSDL_LogGetPriority = define_c_func(sdl2,"SDL_LogGetPriority",{C_INT},C_POINTER),
-				xSDL_LogInfo = define_c_proc(sdl2,"SDL_LogInfo",{C_INT,C_POINTER,C_POINTER}),
-				xSDL_LogMessage = define_c_proc(sdl2,"SDL_LogMessage",{C_INT,C_POINTER,C_POINTER,C_POINTER}),
-				xSDL_LogMessageV = define_c_proc(sdl2,"SDL_LogMessageV",{C_INT,C_POINTER,C_POINTER,C_POINTER}),
-				xSDL_LogResetPriorities = define_c_proc(sdl2,"SDL_LogResetPriorities",{}),
-				xSDL_LogSetAllPriority = define_c_proc(sdl2,"SDL_LogSetAllPriority",{C_POINTER}),
-				xSDL_LogSetOutputFunction = define_c_proc(sdl2,"SDL_LogSetOutputFunction",{C_POINTER,C_POINTER}),
-				xSDL_LogSetPriority = define_c_proc(sdl2,"SDL_LogSetPriority",{C_INT,C_POINTER}),
-				xSDL_LogVerbose = define_c_proc(sdl2,"SDL_LogVerbose",{C_INT,C_POINTER,C_POINTER}),
-				xSDL_LogWarn = define_c_proc(sdl2,"SDL_LogWarn",{C_INT,C_POINTER,C_POINTER})
+public constant xSDL_Log = define_c_proc(sdl2,"+SDL_Log",{C_POINTER,C_POINTER}),
+				xSDL_LogCritical = define_c_proc(sdl2,"+SDL_LogCritical",{C_INT,C_POINTER,C_POINTER}),
+				xSDL_LogDebug = define_c_proc(sdl2,"+SDL_LogDebug",{C_INT,C_POINTER,C_POINTER}),
+				xSDL_LogError = define_c_proc(sdl2,"+SDL_LogError",{C_INT,C_POINTER,C_POINTER}),
+				xSDL_LogGetOutputFunction = define_c_proc(sdl2,"+SDL_LogGetOutputFunction",{C_POINTER,C_POINTER}),
+				xSDL_LogGetPriority = define_c_func(sdl2,"+SDL_LogGetPriority",{C_INT},C_POINTER),
+				xSDL_LogInfo = define_c_proc(sdl2,"+SDL_LogInfo",{C_INT,C_POINTER,C_POINTER}),
+				xSDL_LogMessage = define_c_proc(sdl2,"+SDL_LogMessage",{C_INT,C_POINTER,C_POINTER,C_POINTER}),
+				xSDL_LogMessageV = define_c_proc(sdl2,"+SDL_LogMessageV",{C_INT,C_POINTER,C_POINTER,C_POINTER}),
+				xSDL_LogResetPriorities = define_c_proc(sdl2,"+SDL_LogResetPriorities",{}),
+				xSDL_LogSetAllPriority = define_c_proc(sdl2,"+SDL_LogSetAllPriority",{C_POINTER}),
+				xSDL_LogSetOutputFunction = define_c_proc(sdl2,"+SDL_LogSetOutputFunction",{C_POINTER,C_POINTER}),
+				xSDL_LogSetPriority = define_c_proc(sdl2,"+SDL_LogSetPriority",{C_INT,C_POINTER}),
+				xSDL_LogVerbose = define_c_proc(sdl2,"+SDL_LogVerbose",{C_INT,C_POINTER,C_POINTER}),
+				xSDL_LogWarn = define_c_proc(sdl2,"+SDL_LogWarn",{C_INT,C_POINTER,C_POINTER})
 				
 public procedure SDL_Log(sequence fmt,atom x)
 
@@ -309,15 +309,15 @@ end procedure
 
 --SDL Assertion Functions
 
-public constant xSDL_GetAssertionHandler = define_c_func(sdl2,"SDL_GetAssertionHandler",{C_POINTER},C_POINTER),
-				xSDL_GetAssertionReport = define_c_func(sdl2,"SDL_GetAssertionReport",{},C_POINTER),
-				xSDL_GetDefaultAssertionHandler = define_c_func(sdl2,"SDL_GetDefaultAssertionHandler",{},C_POINTER),
-				xSDL_ResetAssertionReport = define_c_proc(sdl2,"SDL_ResetAssertionReport",{}),
-				xSDL_SetAssertionHandler = define_c_proc(sdl2,"SDL_SetAssertionHandler",{C_POINTER,C_POINTER}),
-				xSDL_TriggerBreakpoint = define_c_proc(sdl2,"SDL_TriggerBreakpoint",{}),
-				xSDL_assert = define_c_proc(sdl2,"SDL_assert",{C_POINTER}),
-				xSDL_assert_paranoid = define_c_proc(sdl2,"SDL_assert_paranoid",{C_POINTER}),
-				xSDL_assert_release = define_c_proc(sdl2,"SDL_assert_release",{C_POINTER})
+public constant xSDL_GetAssertionHandler = define_c_func(sdl2,"+SDL_GetAssertionHandler",{C_POINTER},C_POINTER),
+				xSDL_GetAssertionReport = define_c_func(sdl2,"+SDL_GetAssertionReport",{},C_POINTER),
+				xSDL_GetDefaultAssertionHandler = define_c_func(sdl2,"+SDL_GetDefaultAssertionHandler",{},C_POINTER),
+				xSDL_ResetAssertionReport = define_c_proc(sdl2,"+SDL_ResetAssertionReport",{}),
+				xSDL_SetAssertionHandler = define_c_proc(sdl2,"+SDL_SetAssertionHandler",{C_POINTER,C_POINTER}),
+				xSDL_TriggerBreakpoint = define_c_proc(sdl2,"+SDL_TriggerBreakpoint",{}),
+				xSDL_assert = define_c_proc(sdl2,"+SDL_assert",{C_POINTER}),
+				xSDL_assert_paranoid = define_c_proc(sdl2,"+SDL_assert_paranoid",{C_POINTER}),
+				xSDL_assert_release = define_c_proc(sdl2,"+SDL_assert_release",{C_POINTER})
 				
 public function SDL_GetAssertionHandler(atom dat)
 
@@ -375,9 +375,9 @@ end procedure
 
 --SDL Version Functions
 
-public constant xSDL_GetRevision = define_c_func(sdl2,"SDL_GetRevision",{},C_POINTER),
-				xSDL_GetRevisionNumber = define_c_func(sdl2,"SDL_GetRevisionNumber",{},C_INT),
-				xSDL_GetVersion = define_c_proc(sdl2,"SDL_GetVersion",{C_POINTER})
+public constant xSDL_GetRevision = define_c_func(sdl2,"+SDL_GetRevision",{},C_POINTER),
+				xSDL_GetRevisionNumber = define_c_func(sdl2,"+SDL_GetRevisionNumber",{},C_INT),
+				xSDL_GetVersion = define_c_proc(sdl2,"+SDL_GetVersion",{C_POINTER})
 				
 public function SDL_GetRevision()
 
@@ -399,91 +399,91 @@ end procedure
 
 --SDL Window Functions
 
-public constant xSDL_CreateWindow = define_c_func(sdl2,"SDL_CreateWindow",{C_POINTER,C_INT,C_INT,C_INT,C_INT,C_UINT},C_POINTER),
-				xSDL_CreateWindowAndRenderer = define_c_func(sdl2,"SDL_CreateWindowAndRenderer",{C_INT,C_INT,C_UINT,C_POINTER,C_POINTER},C_INT),
-				xSDL_CreateWindowFrom = define_c_func(sdl2,"SDL_CreateWindowFrom",{C_POINTER},C_POINTER),
-				xSDL_DestroyWindow = define_c_proc(sdl2,"SDL_DestroyWindow",{C_POINTER}),
-				xSDL_DisableScreenSaver = define_c_proc(sdl2,"SDL_DisableScreenSaver",{}),
-				xSDL_EnableScreenSaver = define_c_proc(sdl2,"SDL_EnableScreenSaver",{}),
-				xSDL_GL_CreateContext = define_c_func(sdl2,"SDL_GL_CreateContext",{C_POINTER},C_POINTER),
-				xSDL_GL_DeleteContext = define_c_proc(sdl2,"SDL_GL_DeleteContext",{C_POINTER}),
-				xSDL_GL_ExtensionSupported = define_c_func(sdl2,"SDL_GL_ExtensionSupported",{C_POINTER},C_BOOL),
-				xSDL_GL_GetAttribute = define_c_func(sdl2,"SDL_GL_GetAttribute",{C_POINTER,C_POINTER},C_INT),
-				xSDL_GL_GetCurrentContext = define_c_func(sdl2,"SDL_GL_GetCurrentContext",{},C_POINTER),
-				xSDL_GL_GetCurrentWindow = define_c_func(sdl2,"SDL_GL_GetCurrentWindow",{},C_POINTER),
-				xSDL_GL_GetDrawableSize = define_c_proc(sdl2,"SDL_GL_GetDrawableSize",{C_POINTER,C_POINTER,C_POINTER}),
-				xSDL_GL_GetProcAddress = define_c_proc(sdl2,"SDL_GL_GetProcAddress",{C_POINTER}),
-				xSDL_GL_GetSwapInterval = define_c_func(sdl2,"SDL_GL_GetSwapInterval",{},C_INT),
-				xSDL_GL_LoadLibrary = define_c_func(sdl2,"SDL_GL_LoadLibrary",{C_POINTER},C_INT),
-				xSDL_GL_MakeCurrent = define_c_func(sdl2,"SDL_GL_MakeCurrent",{C_POINTER,C_POINTER},C_INT),
-				xSDL_GL_ResetAttributes = define_c_proc(sdl2,"SDL_GL_ResetAttributes",{}),
-				xSDL_GL_SetAttribute = define_c_func(sdl2,"SDL_GL_SetAttribute",{C_POINTER,C_INT},C_INT),
-				xSDL_GL_SetSwapInterval = define_c_func(sdl2,"SDL_GL_SetSwapInterval",{C_INT},C_INT),
-				xSDL_GL_SwapWindow = define_c_proc(sdl2,"SDL_GL_SwapWindow",{C_POINTER}),
-				xSDL_GL_UnloadLibrary = define_c_proc(sdl2,"SDL_GL_UnloadLibrary",{}),
-				xSDL_GetClosestDisplayMode = define_c_func(sdl2,"SDL_GetClosestDisplayMode",{C_INT,C_POINTER,C_POINTER},C_POINTER),
-				xSDL_GetCurrentDisplayMode = define_c_func(sdl2,"SDL_GetCurrentDisplayMode",{C_INT,C_POINTER},C_INT),
-				xSDL_GetCurrentVideoDriver = define_c_func(sdl2,"SDL_GetCurrentVideoDriver",{},C_POINTER),
-				xSDL_GetDesktopDisplayMode = define_c_func(sdl2,"SDL_GetDesktopDisplayMode",{C_INT,C_POINTER},C_INT),
-				xSDL_GetDisplayBounds = define_c_func(sdl2,"SDL_GetDisplayBounds",{C_INT,C_POINTER},C_INT),
-				xSDL_GetDisplayDPI = define_c_func(sdl2,"SDL_GetDisplayDPI",{C_INT,C_POINTER,C_POINTER,C_POINTER},C_INT),
-				xSDL_GetDisplayMode = define_c_func(sdl2,"SDL_GetDisplayMode",{C_INT,C_INT,C_POINTER},C_INT),
-				xSDL_GetDisplayName = define_c_func(sdl2,"SDL_GetDisplayName",{C_INT},C_POINTER),
-				xSDL_GetGrabbedWindow = define_c_func(sdl2,"SDL_GetGrabbedWindow",{},C_POINTER),
-				xSDL_GetNumDisplayModes = define_c_func(sdl2,"SDL_GetNumDisplayModes",{C_INT},C_INT),
-				xSDL_GetNumVideoDisplays = define_c_func(sdl2,"SDL_GetNumVideoDisplays",{},C_INT),
-				xSDL_GetNumVideoDrivers = define_c_func(sdl2,"SDL_GetNumVideoDrivers",{},C_INT),
-				xSDL_GetVideoDriver = define_c_func(sdl2,"SDL_GetVideoDriver",{C_INT},C_POINTER),
-				xSDL_GetWindowBrightness = define_c_func(sdl2,"SDL_GetWindowBrightness",{C_POINTER},C_FLOAT),
-				xSDL_GetWindowData = define_c_proc(sdl2,"SDL_GetWindowData",{C_POINTER,C_POINTER}),
-				xSDL_GetWindowDisplayIndex = define_c_func(sdl2,"SDL_GetWindowDisplayIndex",{C_POINTER},C_INT),
-				xSDL_GetWindowDisplayMode = define_c_func(sdl2,"SDL_GetWindowDisplayMode",{C_POINTER,C_POINTER},C_INT),
-				xSDL_GetWindowFlags = define_c_func(sdl2,"SDL_GetWindowFlags",{C_POINTER},C_UINT),
-				xSDL_GetWindowFromID = define_c_func(sdl2,"SDL_GetWindowFromID",{C_UINT},C_POINTER),
-				xSDL_GetWindowGammaRamp = define_c_func(sdl2,"SDL_GetWindowGammaRamp",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
-				xSDL_GetWindowGrab = define_c_func(sdl2,"SDL_GetWindowGrab",{C_POINTER},C_BOOL),
-				xSDL_GetWindowID = define_c_func(sdl2,"SDL_GetWindowID",{C_POINTER},C_UINT),
-				xSDL_GetWindowMaximumSize = define_c_proc(sdl2,"SDL_GetWindowMaximumSize",{C_POINTER,C_POINTER,C_POINTER}),
-				xSDL_GetWindowMinimumSize = define_c_proc(sdl2,"SDL_GetWindowMinimumSize",{C_POINTER,C_POINTER,C_POINTER}),
-				xSDL_GetWindowPixelFormat = define_c_func(sdl2,"SDL_GetWindowPixelFormat",{C_POINTER},C_UINT),
-				xSDL_GetWindowPosition = define_c_proc(sdl2,"SDL_GetWindowPosition",{C_POINTER,C_POINTER,C_POINTER}),
-				xSDL_GetWindowSize = define_c_proc(sdl2,"SDL_GetWindowSize",{C_POINTER,C_POINTER,C_POINTER}),
-				xSDL_GetWindowSurface = define_c_func(sdl2,"SDL_GetWindowSurface",{C_POINTER},C_POINTER),
-				xSDL_GetWindowTitle = define_c_func(sdl2,"SDL_GetWindowTitle",{C_POINTER},C_POINTER),
-				xSDL_GetWindowWMInfo = define_c_func(sdl2,"SDL_GetWindowWMInfo",{C_POINTER,C_POINTER},C_BOOL),
-				xSDL_HideWindow = define_c_proc(sdl2,"SDL_HideWindow",{C_POINTER}),
-				xSDL_IsScreenSaverEnabled = define_c_func(sdl2,"SDL_IsScreenSaverEnabled",{},C_BOOL),
-				xSDL_MaximizeWindow = define_c_proc(sdl2,"SDL_MaximizeWindow",{C_POINTER}),
-				xSDL_MinimizeWindow = define_c_proc(sdl2,"SDL_MinimizeWindow",{C_POINTER}),
-				xSDL_RaiseWindow = define_c_proc(sdl2,"SDL_RaiseWindow",{C_POINTER}),
-				xSDL_RestoreWindow = define_c_proc(sdl2,"SDL_RestoreWindow",{C_POINTER}),
-				xSDL_SetWindowBordered = define_c_proc(sdl2,"SDL_SetWindowBordered",{C_POINTER,C_BOOL}),
-				xSDL_SetWindowBrightness = define_c_func(sdl2,"SDL_SetWindowBrightness",{C_POINTER,C_FLOAT},C_INT),
-				xSDL_SetWindowData = define_c_proc(sdl2,"SDL_SetWindowData",{C_POINTER,C_POINTER,C_POINTER}),
-				xSDL_SetWindowDisplayMode = define_c_func(sdl2,"SDL_SetWindowDisplayMode",{C_POINTER,C_POINTER},C_INT),
-				xSDL_SetWindowFullscreen = define_c_func(sdl2,"SDL_SetWindowFullscreen",{C_POINTER,C_UINT},C_INT),
-				xSDL_SetWindowGammaRamp = define_c_func(sdl2,"SDL_SetWindowGammaRamp",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
-				xSDL_SetWindowGrab = define_c_proc(sdl2,"SDL_SetWindowGrab",{C_POINTER,C_BOOL}),
-				xSDL_SetWindowHitTest = define_c_func(sdl2,"SDL_SetWindowHitTest",{C_POINTER,C_POINTER,C_POINTER},C_INT),
-				xSDL_SetWindowIcon = define_c_proc(sdl2,"SDL_SetWindowIcon",{C_POINTER,C_POINTER}),
-				xSDL_SetWindowMaximumSize = define_c_proc(sdl2,"SDL_SetWindowMaximumSize",{C_POINTER,C_INT,C_INT}),
-				xSDL_SetWindowMinimumSize = define_c_proc(sdl2,"SDL_SetWindowMinimumSize",{C_POINTER,C_INT,C_INT}),
-				xSDL_SetWindowPosition = define_c_proc(sdl2,"SDL_SetWindowPosition",{C_POINTER,C_INT,C_INT}),
-				xSDL_SetWindowSize = define_c_proc(sdl2,"SDL_SetWindowSize",{C_POINTER,C_INT,C_INT}),
-				xSDL_SetWindowTitle = define_c_proc(sdl2,"SDL_SetWindowTitle",{C_POINTER,C_POINTER}),
-				xSDL_ShowMessageBox = define_c_func(sdl2,"SDL_ShowMessageBox",{C_POINTER,C_POINTER},C_INT),
-				xSDL_ShowSimpleMessageBox = define_c_func(sdl2,"SDL_ShowSimpleMessageBox",{C_UINT,C_POINTER,C_POINTER,C_POINTER},C_INT),
-				xSDL_ShowWindow = define_c_proc(sdl2,"SDL_ShowWindow",{C_POINTER}),
-				xSDL_UpdateWindowSurface = define_c_func(sdl2,"SDL_UpdateWindowSurface",{C_POINTER},C_INT),
-				xSDL_UpdateWindowSurfaceRects = define_c_func(sdl2,"SDL_UpdateWindowSurfaceRects",{C_POINTER,C_POINTER,C_INT},C_INT),
-				xSDL_VideoInit = define_c_func(sdl2,"SDL_VideoInit",{C_POINTER},C_INT),
-				xSDL_VideoQuit = define_c_proc(sdl2,"SDL_VideoQuit",{}),
-				xSDL_GetDisplayUsableBounds = define_c_func(sdl2,"SDL_GetDisplayUsableBounds",{C_INT,C_POINTER},C_INT),
-				xSDL_GetWindowBordersSize = define_c_func(sdl2,"SDL_GetWindowBordersSize",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
-				xSDL_SetWindowResizable = define_c_proc(sdl2,"SDL_SetWindowResizable",{C_POINTER,C_BOOL}),
-				xSDL_SetWindowOpacity = define_c_func(sdl2,"SDL_SetWindowOpacity",{C_POINTER,C_FLOAT},C_INT),
-				xSDL_SetWindowModalFor = define_c_func(sdl2,"SDL_SetWindowModalFor",{C_POINTER,C_POINTER},C_INT),
-				xSDL_GetDisplayOrientation = define_c_func(sdl2,"SDL_GetDisplayOrientation",{C_INT},C_POINTER)
+public constant xSDL_CreateWindow = define_c_func(sdl2,"+SDL_CreateWindow",{C_POINTER,C_INT,C_INT,C_INT,C_INT,C_UINT},C_POINTER),
+				xSDL_CreateWindowAndRenderer = define_c_func(sdl2,"+SDL_CreateWindowAndRenderer",{C_INT,C_INT,C_UINT,C_POINTER,C_POINTER},C_INT),
+				xSDL_CreateWindowFrom = define_c_func(sdl2,"+SDL_CreateWindowFrom",{C_POINTER},C_POINTER),
+				xSDL_DestroyWindow = define_c_proc(sdl2,"+SDL_DestroyWindow",{C_POINTER}),
+				xSDL_DisableScreenSaver = define_c_proc(sdl2,"+SDL_DisableScreenSaver",{}),
+				xSDL_EnableScreenSaver = define_c_proc(sdl2,"+SDL_EnableScreenSaver",{}),
+				xSDL_GL_CreateContext = define_c_func(sdl2,"+SDL_GL_CreateContext",{C_POINTER},C_POINTER),
+				xSDL_GL_DeleteContext = define_c_proc(sdl2,"+SDL_GL_DeleteContext",{C_POINTER}),
+				xSDL_GL_ExtensionSupported = define_c_func(sdl2,"+SDL_GL_ExtensionSupported",{C_POINTER},C_BOOL),
+				xSDL_GL_GetAttribute = define_c_func(sdl2,"+SDL_GL_GetAttribute",{C_POINTER,C_POINTER},C_INT),
+				xSDL_GL_GetCurrentContext = define_c_func(sdl2,"+SDL_GL_GetCurrentContext",{},C_POINTER),
+				xSDL_GL_GetCurrentWindow = define_c_func(sdl2,"+SDL_GL_GetCurrentWindow",{},C_POINTER),
+				xSDL_GL_GetDrawableSize = define_c_proc(sdl2,"+SDL_GL_GetDrawableSize",{C_POINTER,C_POINTER,C_POINTER}),
+				xSDL_GL_GetProcAddress = define_c_proc(sdl2,"+SDL_GL_GetProcAddress",{C_POINTER}),
+				xSDL_GL_GetSwapInterval = define_c_func(sdl2,"+SDL_GL_GetSwapInterval",{},C_INT),
+				xSDL_GL_LoadLibrary = define_c_func(sdl2,"+SDL_GL_LoadLibrary",{C_POINTER},C_INT),
+				xSDL_GL_MakeCurrent = define_c_func(sdl2,"+SDL_GL_MakeCurrent",{C_POINTER,C_POINTER},C_INT),
+				xSDL_GL_ResetAttributes = define_c_proc(sdl2,"+SDL_GL_ResetAttributes",{}),
+				xSDL_GL_SetAttribute = define_c_func(sdl2,"+SDL_GL_SetAttribute",{C_POINTER,C_INT},C_INT),
+				xSDL_GL_SetSwapInterval = define_c_func(sdl2,"+SDL_GL_SetSwapInterval",{C_INT},C_INT),
+				xSDL_GL_SwapWindow = define_c_proc(sdl2,"+SDL_GL_SwapWindow",{C_POINTER}),
+				xSDL_GL_UnloadLibrary = define_c_proc(sdl2,"+SDL_GL_UnloadLibrary",{}),
+				xSDL_GetClosestDisplayMode = define_c_func(sdl2,"+SDL_GetClosestDisplayMode",{C_INT,C_POINTER,C_POINTER},C_POINTER),
+				xSDL_GetCurrentDisplayMode = define_c_func(sdl2,"+SDL_GetCurrentDisplayMode",{C_INT,C_POINTER},C_INT),
+				xSDL_GetCurrentVideoDriver = define_c_func(sdl2,"+SDL_GetCurrentVideoDriver",{},C_POINTER),
+				xSDL_GetDesktopDisplayMode = define_c_func(sdl2,"+SDL_GetDesktopDisplayMode",{C_INT,C_POINTER},C_INT),
+				xSDL_GetDisplayBounds = define_c_func(sdl2,"+SDL_GetDisplayBounds",{C_INT,C_POINTER},C_INT),
+				xSDL_GetDisplayDPI = define_c_func(sdl2,"+SDL_GetDisplayDPI",{C_INT,C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xSDL_GetDisplayMode = define_c_func(sdl2,"+SDL_GetDisplayMode",{C_INT,C_INT,C_POINTER},C_INT),
+				xSDL_GetDisplayName = define_c_func(sdl2,"+SDL_GetDisplayName",{C_INT},C_POINTER),
+				xSDL_GetGrabbedWindow = define_c_func(sdl2,"+SDL_GetGrabbedWindow",{},C_POINTER),
+				xSDL_GetNumDisplayModes = define_c_func(sdl2,"+SDL_GetNumDisplayModes",{C_INT},C_INT),
+				xSDL_GetNumVideoDisplays = define_c_func(sdl2,"+SDL_GetNumVideoDisplays",{},C_INT),
+				xSDL_GetNumVideoDrivers = define_c_func(sdl2,"+SDL_GetNumVideoDrivers",{},C_INT),
+				xSDL_GetVideoDriver = define_c_func(sdl2,"+SDL_GetVideoDriver",{C_INT},C_POINTER),
+				xSDL_GetWindowBrightness = define_c_func(sdl2,"+SDL_GetWindowBrightness",{C_POINTER},C_FLOAT),
+				xSDL_GetWindowData = define_c_proc(sdl2,"+SDL_GetWindowData",{C_POINTER,C_POINTER}),
+				xSDL_GetWindowDisplayIndex = define_c_func(sdl2,"+SDL_GetWindowDisplayIndex",{C_POINTER},C_INT),
+				xSDL_GetWindowDisplayMode = define_c_func(sdl2,"+SDL_GetWindowDisplayMode",{C_POINTER,C_POINTER},C_INT),
+				xSDL_GetWindowFlags = define_c_func(sdl2,"+SDL_GetWindowFlags",{C_POINTER},C_UINT),
+				xSDL_GetWindowFromID = define_c_func(sdl2,"+SDL_GetWindowFromID",{C_UINT},C_POINTER),
+				xSDL_GetWindowGammaRamp = define_c_func(sdl2,"+SDL_GetWindowGammaRamp",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xSDL_GetWindowGrab = define_c_func(sdl2,"+SDL_GetWindowGrab",{C_POINTER},C_BOOL),
+				xSDL_GetWindowID = define_c_func(sdl2,"+SDL_GetWindowID",{C_POINTER},C_UINT),
+				xSDL_GetWindowMaximumSize = define_c_proc(sdl2,"+SDL_GetWindowMaximumSize",{C_POINTER,C_POINTER,C_POINTER}),
+				xSDL_GetWindowMinimumSize = define_c_proc(sdl2,"+SDL_GetWindowMinimumSize",{C_POINTER,C_POINTER,C_POINTER}),
+				xSDL_GetWindowPixelFormat = define_c_func(sdl2,"+SDL_GetWindowPixelFormat",{C_POINTER},C_UINT),
+				xSDL_GetWindowPosition = define_c_proc(sdl2,"+SDL_GetWindowPosition",{C_POINTER,C_POINTER,C_POINTER}),
+				xSDL_GetWindowSize = define_c_proc(sdl2,"+SDL_GetWindowSize",{C_POINTER,C_POINTER,C_POINTER}),
+				xSDL_GetWindowSurface = define_c_func(sdl2,"+SDL_GetWindowSurface",{C_POINTER},C_POINTER),
+				xSDL_GetWindowTitle = define_c_func(sdl2,"+SDL_GetWindowTitle",{C_POINTER},C_POINTER),
+				xSDL_GetWindowWMInfo = define_c_func(sdl2,"+SDL_GetWindowWMInfo",{C_POINTER,C_POINTER},C_BOOL),
+				xSDL_HideWindow = define_c_proc(sdl2,"+SDL_HideWindow",{C_POINTER}),
+				xSDL_IsScreenSaverEnabled = define_c_func(sdl2,"+SDL_IsScreenSaverEnabled",{},C_BOOL),
+				xSDL_MaximizeWindow = define_c_proc(sdl2,"+SDL_MaximizeWindow",{C_POINTER}),
+				xSDL_MinimizeWindow = define_c_proc(sdl2,"+SDL_MinimizeWindow",{C_POINTER}),
+				xSDL_RaiseWindow = define_c_proc(sdl2,"+SDL_RaiseWindow",{C_POINTER}),
+				xSDL_RestoreWindow = define_c_proc(sdl2,"+SDL_RestoreWindow",{C_POINTER}),
+				xSDL_SetWindowBordered = define_c_proc(sdl2,"+SDL_SetWindowBordered",{C_POINTER,C_BOOL}),
+				xSDL_SetWindowBrightness = define_c_func(sdl2,"+SDL_SetWindowBrightness",{C_POINTER,C_FLOAT},C_INT),
+				xSDL_SetWindowData = define_c_proc(sdl2,"+SDL_SetWindowData",{C_POINTER,C_POINTER,C_POINTER}),
+				xSDL_SetWindowDisplayMode = define_c_func(sdl2,"+SDL_SetWindowDisplayMode",{C_POINTER,C_POINTER},C_INT),
+				xSDL_SetWindowFullscreen = define_c_func(sdl2,"+SDL_SetWindowFullscreen",{C_POINTER,C_UINT},C_INT),
+				xSDL_SetWindowGammaRamp = define_c_func(sdl2,"+SDL_SetWindowGammaRamp",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xSDL_SetWindowGrab = define_c_proc(sdl2,"+SDL_SetWindowGrab",{C_POINTER,C_BOOL}),
+				xSDL_SetWindowHitTest = define_c_func(sdl2,"+SDL_SetWindowHitTest",{C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xSDL_SetWindowIcon = define_c_proc(sdl2,"+SDL_SetWindowIcon",{C_POINTER,C_POINTER}),
+				xSDL_SetWindowMaximumSize = define_c_proc(sdl2,"+SDL_SetWindowMaximumSize",{C_POINTER,C_INT,C_INT}),
+				xSDL_SetWindowMinimumSize = define_c_proc(sdl2,"+SDL_SetWindowMinimumSize",{C_POINTER,C_INT,C_INT}),
+				xSDL_SetWindowPosition = define_c_proc(sdl2,"+SDL_SetWindowPosition",{C_POINTER,C_INT,C_INT}),
+				xSDL_SetWindowSize = define_c_proc(sdl2,"+SDL_SetWindowSize",{C_POINTER,C_INT,C_INT}),
+				xSDL_SetWindowTitle = define_c_proc(sdl2,"+SDL_SetWindowTitle",{C_POINTER,C_POINTER}),
+				xSDL_ShowMessageBox = define_c_func(sdl2,"+SDL_ShowMessageBox",{C_POINTER,C_POINTER},C_INT),
+				xSDL_ShowSimpleMessageBox = define_c_func(sdl2,"+SDL_ShowSimpleMessageBox",{C_UINT,C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xSDL_ShowWindow = define_c_proc(sdl2,"+SDL_ShowWindow",{C_POINTER}),
+				xSDL_UpdateWindowSurface = define_c_func(sdl2,"+SDL_UpdateWindowSurface",{C_POINTER},C_INT),
+				xSDL_UpdateWindowSurfaceRects = define_c_func(sdl2,"+SDL_UpdateWindowSurfaceRects",{C_POINTER,C_POINTER,C_INT},C_INT),
+				xSDL_VideoInit = define_c_func(sdl2,"+SDL_VideoInit",{C_POINTER},C_INT),
+				xSDL_VideoQuit = define_c_proc(sdl2,"+SDL_VideoQuit",{}),
+				xSDL_GetDisplayUsableBounds = define_c_func(sdl2,"+SDL_GetDisplayUsableBounds",{C_INT,C_POINTER},C_INT),
+				xSDL_GetWindowBordersSize = define_c_func(sdl2,"+SDL_GetWindowBordersSize",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xSDL_SetWindowResizable = define_c_proc(sdl2,"+SDL_SetWindowResizable",{C_POINTER,C_BOOL}),
+				xSDL_SetWindowOpacity = define_c_func(sdl2,"+SDL_SetWindowOpacity",{C_POINTER,C_FLOAT},C_INT),
+				xSDL_SetWindowModalFor = define_c_func(sdl2,"+SDL_SetWindowModalFor",{C_POINTER,C_POINTER},C_INT),
+				xSDL_GetDisplayOrientation = define_c_func(sdl2,"+SDL_GetDisplayOrientation",{C_INT},C_POINTER)
 				
 public function SDL_CreateWindow(sequence title,integer x,integer y,integer w,integer h,atom flags)
 
@@ -1025,61 +1025,61 @@ end function
 
 --SDL Render Functions
 
-public constant xSDL_CreateRenderer = define_c_func(sdl2,"SDL_CreateRenderer",{C_POINTER,C_INT,C_UINT},C_POINTER),
-				xSDL_CreateSoftwareRenderer = define_c_func(sdl2,"SDL_CreateSoftwareRenderer",{C_POINTER},C_POINTER),
-				xSDL_CreateTexture = define_c_func(sdl2,"SDL_CreateTexture",{C_POINTER,C_UINT,C_INT,C_INT,C_INT},C_POINTER),
-				xSDL_CreateTextureFromSurface = define_c_func(sdl2,"SDL_CreateTextureFromSurface",{C_POINTER,C_POINTER},C_POINTER),
+public constant xSDL_CreateRenderer = define_c_func(sdl2,"+SDL_CreateRenderer",{C_POINTER,C_INT,C_UINT},C_POINTER),
+				xSDL_CreateSoftwareRenderer = define_c_func(sdl2,"+SDL_CreateSoftwareRenderer",{C_POINTER},C_POINTER),
+				xSDL_CreateTexture = define_c_func(sdl2,"+SDL_CreateTexture",{C_POINTER,C_UINT,C_INT,C_INT,C_INT},C_POINTER),
+				xSDL_CreateTextureFromSurface = define_c_func(sdl2,"+SDL_CreateTextureFromSurface",{C_POINTER,C_POINTER},C_POINTER),
 				--xSDL_CreateWindowAndRenderer = define_c_func(sdl2,"SDL_CreateWindowAndRenderer",{C_INT,C_INT,C_UINT,C_POINTER,C_POINTER},C_INT),
-				xSDL_DestroyRenderer = define_c_proc(sdl2,"SDL_DestroyRenderer",{C_POINTER}),
-				xSDL_DestroyTexture = define_c_proc(sdl2,"SDL_DestroyTexture",{C_POINTER}),
-				xSDL_GL_BindTexture = define_c_func(sdl2,"SDL_GL_BindTexture",{C_POINTER,C_POINTER,C_POINTER},C_INT),
-				xSDL_GL_UnbindTexture = define_c_func(sdl2,"SDL_GL_UnbindTexture",{C_POINTER},C_INT),
-				xSDL_GetNumRenderDrivers = define_c_func(sdl2,"SDL_GetNumRenderDrivers",{},C_INT),
-				xSDL_GetRenderDrawBlendMode = define_c_func(sdl2,"SDL_GetRenderDrawBlendMode",{C_POINTER,C_POINTER},C_INT),
-				xSDL_GetRenderDrawColor = define_c_func(sdl2,"SDL_GetRenderDrawColor",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
-				xSDL_GetRenderDriverInfo = define_c_func(sdl2,"SDL_GetRenderDriverInfo",{C_INT,C_POINTER},C_INT),
-				xSDL_GetRenderTarget = define_c_func(sdl2,"SDL_GetRenderTarget",{C_POINTER},C_POINTER),
-				xSDL_GetRenderer = define_c_func(sdl2,"SDL_GetRenderer",{C_POINTER},C_POINTER),
-				xSDL_GetRendererInfo = define_c_func(sdl2,"SDL_GetRendererInfo",{C_POINTER,C_POINTER},C_INT),
-				xSDL_GetRendererOutputSize = define_c_func(sdl2,"SDL_GetRendererOutputSize",{C_POINTER,C_POINTER,C_POINTER},C_INT),
-				xSDL_GetTextureAlphaMod = define_c_func(sdl2,"SDL_GetTextureAlphaMod",{C_POINTER,C_POINTER},C_INT),
-				xSDL_GetTextureBlendMode = define_c_func(sdl2,"SDL_GetTextureBlendMode",{C_POINTER,C_POINTER},C_INT),
-				xSDL_GetTextureColorMod = define_c_func(sdl2,"SDL_GetTextureColorMod",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
-				xSDL_LockTexture = define_c_func(sdl2,"SDL_LockTexture",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
-				xSDL_QueryTexture = define_c_func(sdl2,"SDL_QueryTexture",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
-				xSDL_RenderClear = define_c_func(sdl2,"SDL_RenderClear",{C_POINTER},C_INT),
-				xSDL_RenderCopy = define_c_func(sdl2,"SDL_RenderCopy",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
-				xSDL_RenderCopyEx = define_c_func(sdl2,"SDL_RendercopyEx",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_DOUBLE,C_POINTER,C_POINTER},C_INT),
-				xSDL_RenderDrawLine = define_c_func(sdl2,"SDL_RenderDrawLine",{C_POINTER,C_INT,C_INT,C_INT,C_INT},C_INT),
-				xSDL_RenderDrawLines = define_c_func(sdl2,"SDL_RenderDrawLines",{C_POINTER,C_POINTER,C_INT},C_INT),
-				xSDL_RenderDrawPoint = define_c_func(sdl2,"SDL_RenderDrawPoint",{C_POINTER,C_INT,C_INT},C_INT),
-				xSDL_RenderDrawPoints = define_c_func(sdl2,"SDL_RenderDrawPoints",{C_POINTER,C_POINTER,C_INT},C_INT),
-				xSDL_RenderDrawRect = define_c_func(sdl2,"SDL_RenderDrawRect",{C_POINTER,C_POINTER},C_INT),
-				xSDL_RenderDrawRects = define_c_func(sdl2,"SDL_RenderDrawRects",{C_POINTER,C_POINTER,C_INT},C_INT),
-				xSDL_RenderFillRect = define_c_func(sdl2,"SDL_RenderFillRect",{C_POINTER,C_POINTER},C_INT),
-				xSDL_RenderFillRects = define_c_func(sdl2,"SDL_RenderFillRects",{C_POINTER,C_POINTER,C_INT},C_INT),
-				xSDL_RenderGetClipRect = define_c_proc(sdl2,"SDL_RenderGetClipRect",{C_POINTER,C_POINTER}),
-				xSDL_RenderGetLogicalSize = define_c_proc(sdl2,"SDL_RenderGetLogicalSize",{C_POINTER,C_POINTER,C_POINTER}),
-				xSDL_RenderGetScale = define_c_proc(sdl2,"SDL_RenderGetScale",{C_POINTER,C_POINTER,C_POINTER}),
-				xSDL_RenderGetViewport = define_c_proc(sdl2,"SDL_RenderGetViewport",{C_POINTER,C_POINTER}),
-				xSDL_RenderIsClipEnabled = define_c_func(sdl2,"SDL_RenderIsClipEnabled",{C_POINTER},C_BOOL),
-				xSDL_RenderPresent = define_c_proc(sdl2,"SDL_RenderPresent",{C_POINTER}),
-				xSDL_RenderReadPixels = define_c_func(sdl2,"SDL_RenderReadPixels",{C_POINTER,C_POINTER,C_UINT,C_POINTER,C_INT},C_INT),
-				xSDL_RenderSetClipRect = define_c_func(sdl2,"SDL_RenderSetClipRect",{C_POINTER,C_POINTER},C_INT),
-				xSDL_RenderSetLogicalSize = define_c_func(sdl2,"SDL_RenderSetLogicalSize",{C_POINTER,C_INT,C_INT},C_INT),
-				xSDL_RenderSetScale = define_c_func(sdl2,"SDL_RenderSetScale",{C_POINTER,C_FLOAT,C_FLOAT},C_INT),
-				xSDL_RenderSetViewport = define_c_func(sdl2,"SDL_RenderSetViewport",{C_POINTER,C_POINTER},C_INT),
-				xSDL_RenderTargetSupported = define_c_func(sdl2,"SDL_RenderTargetSupported",{C_POINTER},C_BOOL),
-				xSDL_SetRenderDrawBlendMode = define_c_func(sdl2,"SDL_SetRenderDrawBlendMode",{C_POINTER,C_POINTER},C_INT),
-				xSDL_SetRenderDrawColor = define_c_func(sdl2,"SDL_SetRenderDrawColor",{C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT},C_INT),
-				xSDL_SetRenderTarget = define_c_func(sdl2,"SDL_SetRenderTarget",{C_POINTER,C_POINTER},C_INT),
-				xSDL_SetTextureAlphaMod = define_c_func(sdl2,"SDL_SetTextureAlphaMod",{C_POINTER,C_UINT},C_INT),
-				xSDL_SetTextureBlendMode = define_c_func(sdl2,"SDL_SetTextureBlendMode",{C_POINTER,C_POINTER},C_INT),
-				xSDL_SetTextureColorMod = define_c_func(sdl2,"SDL_SetTextureColorMod",{C_POINTER,C_UINT,C_UINT,C_UINT},C_INT),
-				xSDL_UnlockTexture = define_c_proc(sdl2,"SDL_UnlockTexture",{C_POINTER}),
-				xSDL_UpdateTexture = define_c_func(sdl2,"SDL_UpdateTexture",{C_POINTER,C_POINTER,C_POINTER,C_INT},C_INT),
-				xSDL_UpdateYUVTexture = define_c_func(sdl2,"SDL_UpdateYUVTexture",{C_POINTER,C_POINTER,C_POINTER,C_INT,C_POINTER,C_INT,C_POINTER,C_INT},C_INT),
-				xSDL_RenderSetIntegerScale = define_c_func(sdl2,"SDL_RenderSetIntegerScale",{C_POINTER,C_BOOL},C_INT)
+				xSDL_DestroyRenderer = define_c_proc(sdl2,"+SDL_DestroyRenderer",{C_POINTER}),
+				xSDL_DestroyTexture = define_c_proc(sdl2,"+SDL_DestroyTexture",{C_POINTER}),
+				xSDL_GL_BindTexture = define_c_func(sdl2,"+SDL_GL_BindTexture",{C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xSDL_GL_UnbindTexture = define_c_func(sdl2,"+SDL_GL_UnbindTexture",{C_POINTER},C_INT),
+				xSDL_GetNumRenderDrivers = define_c_func(sdl2,"+SDL_GetNumRenderDrivers",{},C_INT),
+				xSDL_GetRenderDrawBlendMode = define_c_func(sdl2,"+SDL_GetRenderDrawBlendMode",{C_POINTER,C_POINTER},C_INT),
+				xSDL_GetRenderDrawColor = define_c_func(sdl2,"+SDL_GetRenderDrawColor",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xSDL_GetRenderDriverInfo = define_c_func(sdl2,"+SDL_GetRenderDriverInfo",{C_INT,C_POINTER},C_INT),
+				xSDL_GetRenderTarget = define_c_func(sdl2,"+SDL_GetRenderTarget",{C_POINTER},C_POINTER),
+				xSDL_GetRenderer = define_c_func(sdl2,"+SDL_GetRenderer",{C_POINTER},C_POINTER),
+				xSDL_GetRendererInfo = define_c_func(sdl2,"+SDL_GetRendererInfo",{C_POINTER,C_POINTER},C_INT),
+				xSDL_GetRendererOutputSize = define_c_func(sdl2,"+SDL_GetRendererOutputSize",{C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xSDL_GetTextureAlphaMod = define_c_func(sdl2,"+SDL_GetTextureAlphaMod",{C_POINTER,C_POINTER},C_INT),
+				xSDL_GetTextureBlendMode = define_c_func(sdl2,"+SDL_GetTextureBlendMode",{C_POINTER,C_POINTER},C_INT),
+				xSDL_GetTextureColorMod = define_c_func(sdl2,"+SDL_GetTextureColorMod",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xSDL_LockTexture = define_c_func(sdl2,"+SDL_LockTexture",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xSDL_QueryTexture = define_c_func(sdl2,"+SDL_QueryTexture",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xSDL_RenderClear = define_c_func(sdl2,"+SDL_RenderClear",{C_POINTER},C_INT),
+				xSDL_RenderCopy = define_c_func(sdl2,"+SDL_RenderCopy",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xSDL_RenderCopyEx = define_c_func(sdl2,"+SDL_RendercopyEx",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_DOUBLE,C_POINTER,C_POINTER},C_INT),
+				xSDL_RenderDrawLine = define_c_func(sdl2,"+SDL_RenderDrawLine",{C_POINTER,C_INT,C_INT,C_INT,C_INT},C_INT),
+				xSDL_RenderDrawLines = define_c_func(sdl2,"+SDL_RenderDrawLines",{C_POINTER,C_POINTER,C_INT},C_INT),
+				xSDL_RenderDrawPoint = define_c_func(sdl2,"+SDL_RenderDrawPoint",{C_POINTER,C_INT,C_INT},C_INT),
+				xSDL_RenderDrawPoints = define_c_func(sdl2,"+SDL_RenderDrawPoints",{C_POINTER,C_POINTER,C_INT},C_INT),
+				xSDL_RenderDrawRect = define_c_func(sdl2,"+SDL_RenderDrawRect",{C_POINTER,C_POINTER},C_INT),
+				xSDL_RenderDrawRects = define_c_func(sdl2,"+SDL_RenderDrawRects",{C_POINTER,C_POINTER,C_INT},C_INT),
+				xSDL_RenderFillRect = define_c_func(sdl2,"+SDL_RenderFillRect",{C_POINTER,C_POINTER},C_INT),
+				xSDL_RenderFillRects = define_c_func(sdl2,"+SDL_RenderFillRects",{C_POINTER,C_POINTER,C_INT},C_INT),
+				xSDL_RenderGetClipRect = define_c_proc(sdl2,"+SDL_RenderGetClipRect",{C_POINTER,C_POINTER}),
+				xSDL_RenderGetLogicalSize = define_c_proc(sdl2,"+SDL_RenderGetLogicalSize",{C_POINTER,C_POINTER,C_POINTER}),
+				xSDL_RenderGetScale = define_c_proc(sdl2,"+SDL_RenderGetScale",{C_POINTER,C_POINTER,C_POINTER}),
+				xSDL_RenderGetViewport = define_c_proc(sdl2,"+SDL_RenderGetViewport",{C_POINTER,C_POINTER}),
+				xSDL_RenderIsClipEnabled = define_c_func(sdl2,"+SDL_RenderIsClipEnabled",{C_POINTER},C_BOOL),
+				xSDL_RenderPresent = define_c_proc(sdl2,"+SDL_RenderPresent",{C_POINTER}),
+				xSDL_RenderReadPixels = define_c_func(sdl2,"+SDL_RenderReadPixels",{C_POINTER,C_POINTER,C_UINT,C_POINTER,C_INT},C_INT),
+				xSDL_RenderSetClipRect = define_c_func(sdl2,"+SDL_RenderSetClipRect",{C_POINTER,C_POINTER},C_INT),
+				xSDL_RenderSetLogicalSize = define_c_func(sdl2,"+SDL_RenderSetLogicalSize",{C_POINTER,C_INT,C_INT},C_INT),
+				xSDL_RenderSetScale = define_c_func(sdl2,"+SDL_RenderSetScale",{C_POINTER,C_FLOAT,C_FLOAT},C_INT),
+				xSDL_RenderSetViewport = define_c_func(sdl2,"+SDL_RenderSetViewport",{C_POINTER,C_POINTER},C_INT),
+				xSDL_RenderTargetSupported = define_c_func(sdl2,"+SDL_RenderTargetSupported",{C_POINTER},C_BOOL),
+				xSDL_SetRenderDrawBlendMode = define_c_func(sdl2,"+SDL_SetRenderDrawBlendMode",{C_POINTER,C_POINTER},C_INT),
+				xSDL_SetRenderDrawColor = define_c_func(sdl2,"+SDL_SetRenderDrawColor",{C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT},C_INT),
+				xSDL_SetRenderTarget = define_c_func(sdl2,"+SDL_SetRenderTarget",{C_POINTER,C_POINTER},C_INT),
+				xSDL_SetTextureAlphaMod = define_c_func(sdl2,"+SDL_SetTextureAlphaMod",{C_POINTER,C_UINT},C_INT),
+				xSDL_SetTextureBlendMode = define_c_func(sdl2,"+SDL_SetTextureBlendMode",{C_POINTER,C_POINTER},C_INT),
+				xSDL_SetTextureColorMod = define_c_func(sdl2,"+SDL_SetTextureColorMod",{C_POINTER,C_UINT,C_UINT,C_UINT},C_INT),
+				xSDL_UnlockTexture = define_c_proc(sdl2,"+SDL_UnlockTexture",{C_POINTER}),
+				xSDL_UpdateTexture = define_c_func(sdl2,"+SDL_UpdateTexture",{C_POINTER,C_POINTER,C_POINTER,C_INT},C_INT),
+				xSDL_UpdateYUVTexture = define_c_func(sdl2,"+SDL_UpdateYUVTexture",{C_POINTER,C_POINTER,C_POINTER,C_INT,C_POINTER,C_INT,C_POINTER,C_INT},C_INT),
+				xSDL_RenderSetIntegerScale = define_c_func(sdl2,"+SDL_RenderSetIntegerScale",{C_POINTER,C_BOOL},C_INT)
 				
 public function SDL_CreateRenderer(atom win,integer idx,SDL_RENDERERFLAGS flags)
 
@@ -1413,20 +1413,20 @@ end function
 
 --SDL Pixel Functions
 
-public constant xSDL_AllocFormat = define_c_func(sdl2,"SDL_AllocFormat",{C_UINT},C_POINTER),
-				xSDL_AllocPalette = define_c_func(sdl2,"SDL_AllocPalette",{C_INT},C_POINTER),
-				xSDL_CalculateGammaRamp = define_c_proc(sdl2,"SDL_CalculateGammaRamp",{C_FLOAT,C_POINTER}),
-				xSDL_FreeFormat = define_c_proc(sdl2,"SDL_FreeFormat",{C_POINTER}),
-				xSDL_FreePalette = define_c_proc(sdl2,"SDL_FreePalette",{C_POINTER}),
-				xSDL_GetPixelFormatName = define_c_func(sdl2,"SDL_GetPixelFormatName",{C_UINT},C_POINTER),
-				xSDL_GetRGB = define_c_proc(sdl2,"SDL_GetRGB",{C_UINT,C_POINTER,C_POINTER,C_POINTER,C_POINTER}),
-				xSDL_GetRGBA = define_c_proc(sdl2,"SDL_GetRBA",{C_UINT,C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER}),
-				xSDL_MapRGB = define_c_func(sdl2,"SDL_MapRGB",{C_POINTER,C_UINT,C_UINT,C_UINT},C_UINT),
-				xSDL_MapRGBA = define_c_func(sdl2,"SDL_MapRGBA",{C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT,C_UINT},C_UINT),
-				xSDL_MasksToPixelFormatEnum = define_c_func(sdl2,"SDL_MasksToPixelFormatEnum",{C_INT,C_UINT,C_UINT,C_UINT,C_UINT},C_UINT),
-				xSDL_PixelFormatEnumToMasks = define_c_func(sdl2,"SDL_PixelFormatEnumToMasks",{C_UINT,C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_BOOL),
-				xSDL_SetPaletteColors = define_c_func(sdl2,"SDL_SetPaletteColors",{C_POINTER,C_POINTER,C_INT,C_INT},C_INT),
-				xSDL_SetPixelFormatPalette = define_c_func(sdl2,"SDL_SetPixelFormatPalette",{C_POINTER,C_POINTER},C_INT)
+public constant xSDL_AllocFormat = define_c_func(sdl2,"+SDL_AllocFormat",{C_UINT},C_POINTER),
+				xSDL_AllocPalette = define_c_func(sdl2,"+SDL_AllocPalette",{C_INT},C_POINTER),
+				xSDL_CalculateGammaRamp = define_c_proc(sdl2,"+SDL_CalculateGammaRamp",{C_FLOAT,C_POINTER}),
+				xSDL_FreeFormat = define_c_proc(sdl2,"+SDL_FreeFormat",{C_POINTER}),
+				xSDL_FreePalette = define_c_proc(sdl2,"+SDL_FreePalette",{C_POINTER}),
+				xSDL_GetPixelFormatName = define_c_func(sdl2,"+SDL_GetPixelFormatName",{C_UINT},C_POINTER),
+				xSDL_GetRGB = define_c_proc(sdl2,"+SDL_GetRGB",{C_UINT,C_POINTER,C_POINTER,C_POINTER,C_POINTER}),
+				xSDL_GetRGBA = define_c_proc(sdl2,"+SDL_GetRBA",{C_UINT,C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER}),
+				xSDL_MapRGB = define_c_func(sdl2,"+SDL_MapRGB",{C_POINTER,C_UINT,C_UINT,C_UINT},C_UINT),
+				xSDL_MapRGBA = define_c_func(sdl2,"+SDL_MapRGBA",{C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT,C_UINT},C_UINT),
+				xSDL_MasksToPixelFormatEnum = define_c_func(sdl2,"+SDL_MasksToPixelFormatEnum",{C_INT,C_UINT,C_UINT,C_UINT,C_UINT},C_UINT),
+				xSDL_PixelFormatEnumToMasks = define_c_func(sdl2,"+SDL_PixelFormatEnumToMasks",{C_UINT,C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_BOOL),
+				xSDL_SetPaletteColors = define_c_func(sdl2,"+SDL_SetPaletteColors",{C_POINTER,C_POINTER,C_INT,C_INT},C_INT),
+				xSDL_SetPixelFormatPalette = define_c_func(sdl2,"+SDL_SetPixelFormatPalette",{C_POINTER,C_POINTER},C_INT)
 				
 public function SDL_AllocFormat(atom pix)
 
@@ -1514,14 +1514,14 @@ end function
 
 --SDL Rect Functions
 
-public constant xSDL_EnclosePoints = define_c_func(sdl2,"SDL_EnclosePoints",{C_POINTER,C_INT,C_POINTER,C_POINTER},C_BOOL),
-				xSDL_HasIntersection = define_c_func(sdl2,"SDL_HasIntersection",{C_POINTER,C_POINTER},C_BOOL),
-				xSDL_IntersectRect = define_c_func(sdl2,"SDL_IntersectRect",{C_POINTER,C_POINTER,C_POINTER},C_BOOL),
-				xSDL_IntersectRectAndLine = define_c_func(sdl2,"SDL_IntersectRectAndLinr",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_BOOL),
-				xSDL_PointInRect = define_c_func(sdl2,"SDL_PointInRect",{C_POINTER,C_POINTER},C_BOOL),
-				xSDL_RectEmpty = define_c_func(sdl2,"SDL_RectEmpty",{C_POINTER},C_BOOL),
-				xSDL_RectEquals = define_c_func(sdl2,"SDL_RectEquals",{C_POINTER,C_POINTER},C_BOOL),
-				xSDL_UnionRect = define_c_proc(sdl2,"SDL_UnionRect",{C_POINTER,C_POINTER,C_POINTER})
+public constant xSDL_EnclosePoints = define_c_func(sdl2,"+SDL_EnclosePoints",{C_POINTER,C_INT,C_POINTER,C_POINTER},C_BOOL),
+				xSDL_HasIntersection = define_c_func(sdl2,"+SDL_HasIntersection",{C_POINTER,C_POINTER},C_BOOL),
+				xSDL_IntersectRect = define_c_func(sdl2,"+SDL_IntersectRect",{C_POINTER,C_POINTER,C_POINTER},C_BOOL),
+				xSDL_IntersectRectAndLine = define_c_func(sdl2,"+SDL_IntersectRectAndLinr",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_BOOL),
+				xSDL_PointInRect = define_c_func(sdl2,"+SDL_PointInRect",{C_POINTER,C_POINTER},C_BOOL),
+				xSDL_RectEmpty = define_c_func(sdl2,"+SDL_RectEmpty",{C_POINTER},C_BOOL),
+				xSDL_RectEquals = define_c_func(sdl2,"+SDL_RectEquals",{C_POINTER,C_POINTER},C_BOOL),
+				xSDL_UnionRect = define_c_proc(sdl2,"+SDL_UnionRect",{C_POINTER,C_POINTER,C_POINTER})
 				
 public function SDL_EnclosePoints(atom pts,integer ct,atom clip,atom res)
 
@@ -1573,33 +1573,33 @@ end procedure
 
 --SDL RWops Functions
 
-public constant xSDL_AllocRW = define_c_func(sdl2,"SDL_AllocRW",{},C_POINTER),
-				xSDL_FreeRW = define_c_proc(sdl2,"SDL_FreeRW",{C_POINTER}),
-				xSDL_RWFromConstMem = define_c_func(sdl2,"SDL_RWFromConstMem",{C_POINTER,C_INT},C_POINTER),
-				xSDL_RWFromFP = define_c_func(sdl2,"SDL_RWFromFP",{C_POINTER,C_BOOL},C_POINTER),
-				xSDL_RWFromFile = define_c_func(sdl2,"SDL_RWFromFile",{C_POINTER,C_POINTER},C_POINTER),
-				xSDL_RWFromMem = define_c_func(sdl2,"SDL_RWFromMem",{C_POINTER,C_INT},C_POINTER),
-				xSDL_RWclose = define_c_func(sdl2,"SDL_RWclose",{C_POINTER},C_INT),
-				xSDL_RWread = define_c_func(sdl2,"SDL_RWread",{C_POINTER,C_POINTER,C_SIZE_T,C_SIZE_T},C_SIZE_T),
-				xSDL_RWseek = define_c_func(sdl2,"SDL_RWseek",{C_POINTER,C_LONG,C_INT},C_LONG),
-				xSDL_RWsize = define_c_func(sdl2,"SDL_RWsize",{C_POINTER},C_LONG),
-				xSDL_RWtell = define_c_func(sdl2,"SDL_RWtell",{C_POINTER},C_LONG),
-				xSDL_RWwrite = define_c_func(sdl2,"SDL_RWwrite",{C_POINTER,C_POINTER,C_SIZE_T,C_SIZE_T},C_SIZE_T),
-				xSDL_ReadBE16 = define_c_func(sdl2,"SDL_ReadBE16",{C_POINTER},C_UINT),
-				xSDL_ReadBE32 = define_c_func(sdl2,"SDL_ReadBE32",{C_POINTER},C_UINT),
-				xSDL_ReadBE64 = define_c_func(sdl2,"SDL_ReadBE64",{C_POINTER},C_UINT),
-				xSDL_ReadLE16 = define_c_func(sdl2,"SDL_ReadLE16",{C_POINTER},C_UINT),
-				xSDL_ReadLE32 = define_c_func(sdl2,"SDL_ReadLE32",{C_POINTER},C_UINT),
-				xSDL_ReadLE64 = define_c_func(sdl2,"SDL_ReadLE64",{C_POINTER},C_UINT),
-				xSDL_ReadU8 = define_c_func(sdl2,"SDL_ReadU8",{C_POINTER},C_UINT),
-				xSDL_WriteBE16 = define_c_func(sdl2,"SDL_WriteBE16",{C_POINTER,C_UINT},C_SIZE_T),
-				xSDL_WriteBE32 = define_c_func(sdl2,"SDL_WriteBE32",{C_POINTER,C_UINT},C_SIZE_T),
-				xSDL_WriteBE64 = define_c_func(sdl2,"SDL_WriteBE64",{C_POINTER,C_UINT},C_SIZE_T),
-				xSDL_WriteLE16 = define_c_func(sdl2,"SDL_WriteLE16",{C_POINTER,C_UINT},C_SIZE_T),
-				xSDL_WriteLE32 = define_c_func(sdl2,"SDL_writeLE32",{C_POINTER,C_UINT},C_SIZE_T),
-				xSDL_WriteLE64 = define_c_func(sdl2,"SDL_WriteLE64",{C_POINTER,C_UINT},C_SIZE_T),
-				xSDL_WriteU8 = define_c_func(sdl2,"SDL_WriteU8",{C_POINTER,C_UINT},C_SIZE_T),
-				xSDL_LoadFile_RW = define_c_proc(sdl2,"SDL_LoadFile_RW",{C_POINTER,C_POINTER,C_INT})
+public constant xSDL_AllocRW = define_c_func(sdl2,"+SDL_AllocRW",{},C_POINTER),
+				xSDL_FreeRW = define_c_proc(sdl2,"+SDL_FreeRW",{C_POINTER}),
+				xSDL_RWFromConstMem = define_c_func(sdl2,"+SDL_RWFromConstMem",{C_POINTER,C_INT},C_POINTER),
+				xSDL_RWFromFP = define_c_func(sdl2,"+SDL_RWFromFP",{C_POINTER,C_BOOL},C_POINTER),
+				xSDL_RWFromFile = define_c_func(sdl2,"+SDL_RWFromFile",{C_POINTER,C_POINTER},C_POINTER),
+				xSDL_RWFromMem = define_c_func(sdl2,"+SDL_RWFromMem",{C_POINTER,C_INT},C_POINTER),
+				xSDL_RWclose = define_c_func(sdl2,"+SDL_RWclose",{C_POINTER},C_INT),
+				xSDL_RWread = define_c_func(sdl2,"+SDL_RWread",{C_POINTER,C_POINTER,C_SIZE_T,C_SIZE_T},C_SIZE_T),
+				xSDL_RWseek = define_c_func(sdl2,"+SDL_RWseek",{C_POINTER,C_LONG,C_INT},C_LONG),
+				xSDL_RWsize = define_c_func(sdl2,"+SDL_RWsize",{C_POINTER},C_LONG),
+				xSDL_RWtell = define_c_func(sdl2,"+SDL_RWtell",{C_POINTER},C_LONG),
+				xSDL_RWwrite = define_c_func(sdl2,"+SDL_RWwrite",{C_POINTER,C_POINTER,C_SIZE_T,C_SIZE_T},C_SIZE_T),
+				xSDL_ReadBE16 = define_c_func(sdl2,"+SDL_ReadBE16",{C_POINTER},C_UINT),
+				xSDL_ReadBE32 = define_c_func(sdl2,"+SDL_ReadBE32",{C_POINTER},C_UINT),
+				xSDL_ReadBE64 = define_c_func(sdl2,"+SDL_ReadBE64",{C_POINTER},C_UINT),
+				xSDL_ReadLE16 = define_c_func(sdl2,"+SDL_ReadLE16",{C_POINTER},C_UINT),
+				xSDL_ReadLE32 = define_c_func(sdl2,"+SDL_ReadLE32",{C_POINTER},C_UINT),
+				xSDL_ReadLE64 = define_c_func(sdl2,"+SDL_ReadLE64",{C_POINTER},C_UINT),
+				xSDL_ReadU8 = define_c_func(sdl2,"+SDL_ReadU8",{C_POINTER},C_UINT),
+				xSDL_WriteBE16 = define_c_func(sdl2,"+SDL_WriteBE16",{C_POINTER,C_UINT},C_SIZE_T),
+				xSDL_WriteBE32 = define_c_func(sdl2,"+SDL_WriteBE32",{C_POINTER,C_UINT},C_SIZE_T),
+				xSDL_WriteBE64 = define_c_func(sdl2,"+SDL_WriteBE64",{C_POINTER,C_UINT},C_SIZE_T),
+				xSDL_WriteLE16 = define_c_func(sdl2,"+SDL_WriteLE16",{C_POINTER,C_UINT},C_SIZE_T),
+				xSDL_WriteLE32 = define_c_func(sdl2,"+SDL_writeLE32",{C_POINTER,C_UINT},C_SIZE_T),
+				xSDL_WriteLE64 = define_c_func(sdl2,"+SDL_WriteLE64",{C_POINTER,C_UINT},C_SIZE_T),
+				xSDL_WriteU8 = define_c_func(sdl2,"+SDL_WriteU8",{C_POINTER,C_UINT},C_SIZE_T),
+				xSDL_LoadFile_RW = define_c_proc(sdl2,"+SDL_LoadFile_RW",{C_POINTER,C_POINTER,C_INT})
 				
 public function SDL_AllocRW()
 
@@ -1770,8 +1770,8 @@ end procedure
 
 --Filesystem Path Functions
 
-public constant xSDL_GetBasePath = define_c_func(sdl2,"SDL_GetBasePath",{},C_POINTER),
-				xSDL_GetPrefPath = define_c_func(sdl2,"SDL_GetPrefPath",{C_POINTER,C_POINTER},C_POINTER)
+public constant xSDL_GetBasePath = define_c_func(sdl2,"+SDL_GetBasePath",{},C_POINTER),
+				xSDL_GetPrefPath = define_c_func(sdl2,"+SDL_GetPrefPath",{C_POINTER,C_POINTER},C_POINTER)
 				
 public function SDL_GetBasePath()
 
@@ -1792,44 +1792,44 @@ end function
 
 --SDL Surface Functions
 
-public constant xSDL_BlitScaled = define_c_func(sdl2,"SDL_BlitScaled",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
-				xSDL_BlitSurface = define_c_func(sdl2,"SDL_BlitSurface",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
-				xSDL_ConvertPixels = define_c_func(sdl2,"SDL_ConvertPixels",{C_INT,C_INT,C_UINT,C_POINTER,C_INT,C_UINT,C_POINTER,C_INT},C_INT),
-				xSDL_ConvertSurface = define_c_func(sdl2,"SDL_ConvertSurface",{C_POINTER,C_POINTER,C_UINT},C_POINTER),
-				xSDL_ConvertSurfaceFormat = define_c_func(sdl2,"SDL_ConvertSurfaceFormat",{C_POINTER,C_UINT,C_UINT},C_POINTER),
-				xSDL_CreateRGBSurface = define_c_func(sdl2,"SDL_CreateRGBSurface",{C_UINT,C_INT,C_INT,C_INT,C_UINT,C_UINT,C_UINT,C_UINT},C_POINTER),
-				xSDL_CreateRGBSurfaceFrom = define_c_func(sdl2,"SDL_CreateRGBSurfaceFrom",{C_POINTER,C_INT,C_INT,C_INT,C_INT,C_UINT,C_UINT,C_UINT,C_UINT},C_POINTER),
-				xSDL_FillRect = define_c_func(sdl2,"SDL_FillRect",{C_POINTER,C_POINTER,C_UINT},C_INT),
-				xSDL_FillRects = define_c_func(sdl2,"SDL_FillRects",{C_POINTER,C_POINTER,C_INT,C_UINT},C_INT),
-				xSDL_FreeSurface = define_c_proc(sdl2,"SDL_FreeSurface",{C_POINTER}),
-				xSDL_GetClipRect = define_c_proc(sdl2,"SDL_GetClipRect",{C_POINTER,C_POINTER}),
-				xSDL_GetColorKey = define_c_func(sdl2,"SDL_GetColorKey",{C_POINTER,C_POINTER},C_INT),
-				xSDL_GetSurfaceAlphaMod = define_c_func(sdl2,"SDL_GetSurfaceAlphaMod",{C_POINTER,C_POINTER},C_INT),
-				xSDL_GetSurfaceBlendMode = define_c_func(sdl2,"SDL_GetSurfaceBlendMode",{C_POINTER,C_POINTER},C_INT),
-				xSDL_GetSurfaceColorMod = define_c_func(sdl2,"SDL_GetSurfaceColorMod",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
-				xSDL_LoadBMP = define_c_func(sdl2,"SDL_LoadBMP",{C_POINTER},C_POINTER),
-				xSDL_LoadBMP_RW = define_c_func(sdl2,"SDL_LoadBMP_RW",{C_POINTER,C_INT},C_POINTER),
-				xSDL_LockSurface = define_c_func(sdl2,"SDL_LockSurface",{C_POINTER},C_INT),
-				xSDL_LowerBlit = define_c_func(sdl2,"SDL_LowerBlit",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
-				xSDL_LowerBlitScaled = define_c_func(sdl2,"SDL_LowerBlitScaled",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
-				xSDL_MUSTLOCK = define_c_func(sdl2,"SDL_MUSTLOCK",{C_POINTER},C_BOOL),
-				xSDL_SaveBMP = define_c_func(sdl2,"SDL_SaveBMP",{C_POINTER,C_POINTER},C_INT),
-				xSDL_SaveBMP_RW = define_c_func(sdl2,"SDL_SaveBMP_RW",{C_POINTER,C_POINTER,C_INT},C_INT),
-				xSDL_SetClipRect = define_c_func(sdl2,"SDL_SetClipRect",{C_POINTER,C_POINTER},C_INT),
-				xSDL_SetColorKey = define_c_func(sdl2,"SDL_SetColorKey",{C_POINTER,C_INT,C_UINT},C_INT),
-				xSDL_SetSurfaceAlphaMod = define_c_func(sdl2,"SDL_SetSurfaceAlphaMod",{C_POINTER,C_UINT},C_INT),
-				xSDL_SetSurfaceBlendMode = define_c_func(sdl2,"SDL_SetSurfaceBlendMode",{C_POINTER,C_POINTER},C_INT),
-				xSDL_SetSurfaceColorMod = define_c_func(sdl2,"SDL_SetSurfaceColorMod",{C_POINTER,C_UINT,C_UINT,C_UINT},C_INT),
-				xSDL_SetSurfacePalette = define_c_func(sdl2,"SDL_SetSurfacePalette",{C_POINTER,C_POINTER},C_INT),
-				xSDL_SetSurfaceRLE = define_c_func(sdl2,"SDL_SetSurfaceRLE",{C_POINTER,C_INT},C_INT),
-				xSDL_UnlockSurface = define_c_proc(sdl2,"SDL_UnlockSurface",{C_POINTER}),
-				xSDL_CreateRGBSurfaceWithFormat = define_c_func(sdl2,"SDL_CreateRGBSurfaceWithFormat",{C_UINT,C_INT,C_INT,C_INT,C_UINT},C_POINTER),
-				xSDL_DuplicateSurface = define_c_func(sdl2,"SDL_DuplicateSurface",{C_POINTER},C_POINTER),
-				xSDL_UpperBlit = define_c_func(sdl2,"SDL_UpperBlit",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
-				xSDL_UpperBlitScaled = define_c_func(sdl2,"SDL_UpperBlitScaled",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
-				xSDL_SetYUVConversionMode = define_c_proc(sdl2,"SDL_SetYUVConversionMode",{C_POINTER}),
-				xSDL_GetYUVConversionMode = define_c_func(sdl2,"SDL_GetYUVConversionMode",{},C_POINTER),
-				xSDL_HasColorKey = define_c_func(sdl2,"SDL_HasColorKey",{C_POINTER},C_BOOL)
+public constant xSDL_BlitScaled = define_c_func(sdl2,"+SDL_BlitScaled",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xSDL_BlitSurface = define_c_func(sdl2,"+SDL_BlitSurface",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xSDL_ConvertPixels = define_c_func(sdl2,"+SDL_ConvertPixels",{C_INT,C_INT,C_UINT,C_POINTER,C_INT,C_UINT,C_POINTER,C_INT},C_INT),
+				xSDL_ConvertSurface = define_c_func(sdl2,"+SDL_ConvertSurface",{C_POINTER,C_POINTER,C_UINT},C_POINTER),
+				xSDL_ConvertSurfaceFormat = define_c_func(sdl2,"+SDL_ConvertSurfaceFormat",{C_POINTER,C_UINT,C_UINT},C_POINTER),
+				xSDL_CreateRGBSurface = define_c_func(sdl2,"+SDL_CreateRGBSurface",{C_UINT,C_INT,C_INT,C_INT,C_UINT,C_UINT,C_UINT,C_UINT},C_POINTER),
+				xSDL_CreateRGBSurfaceFrom = define_c_func(sdl2,"+SDL_CreateRGBSurfaceFrom",{C_POINTER,C_INT,C_INT,C_INT,C_INT,C_UINT,C_UINT,C_UINT,C_UINT},C_POINTER),
+				xSDL_FillRect = define_c_func(sdl2,"+SDL_FillRect",{C_POINTER,C_POINTER,C_UINT},C_INT),
+				xSDL_FillRects = define_c_func(sdl2,"+SDL_FillRects",{C_POINTER,C_POINTER,C_INT,C_UINT},C_INT),
+				xSDL_FreeSurface = define_c_proc(sdl2,"+SDL_FreeSurface",{C_POINTER}),
+				xSDL_GetClipRect = define_c_proc(sdl2,"+SDL_GetClipRect",{C_POINTER,C_POINTER}),
+				xSDL_GetColorKey = define_c_func(sdl2,"+SDL_GetColorKey",{C_POINTER,C_POINTER},C_INT),
+				xSDL_GetSurfaceAlphaMod = define_c_func(sdl2,"+SDL_GetSurfaceAlphaMod",{C_POINTER,C_POINTER},C_INT),
+				xSDL_GetSurfaceBlendMode = define_c_func(sdl2,"+SDL_GetSurfaceBlendMode",{C_POINTER,C_POINTER},C_INT),
+				xSDL_GetSurfaceColorMod = define_c_func(sdl2,"+SDL_GetSurfaceColorMod",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xSDL_LoadBMP = define_c_func(sdl2,"+SDL_LoadBMP",{C_POINTER},C_POINTER),
+				xSDL_LoadBMP_RW = define_c_func(sdl2,"+SDL_LoadBMP_RW",{C_POINTER,C_INT},C_POINTER),
+				xSDL_LockSurface = define_c_func(sdl2,"+SDL_LockSurface",{C_POINTER},C_INT),
+				xSDL_LowerBlit = define_c_func(sdl2,"+SDL_LowerBlit",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xSDL_LowerBlitScaled = define_c_func(sdl2,"+SDL_LowerBlitScaled",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xSDL_MUSTLOCK = define_c_func(sdl2,"+SDL_MUSTLOCK",{C_POINTER},C_BOOL),
+				xSDL_SaveBMP = define_c_func(sdl2,"+SDL_SaveBMP",{C_POINTER,C_POINTER},C_INT),
+				xSDL_SaveBMP_RW = define_c_func(sdl2,"+SDL_SaveBMP_RW",{C_POINTER,C_POINTER,C_INT},C_INT),
+				xSDL_SetClipRect = define_c_func(sdl2,"+SDL_SetClipRect",{C_POINTER,C_POINTER},C_INT),
+				xSDL_SetColorKey = define_c_func(sdl2,"+SDL_SetColorKey",{C_POINTER,C_INT,C_UINT},C_INT),
+				xSDL_SetSurfaceAlphaMod = define_c_func(sdl2,"+SDL_SetSurfaceAlphaMod",{C_POINTER,C_UINT},C_INT),
+				xSDL_SetSurfaceBlendMode = define_c_func(sdl2,"+SDL_SetSurfaceBlendMode",{C_POINTER,C_POINTER},C_INT),
+				xSDL_SetSurfaceColorMod = define_c_func(sdl2,"+SDL_SetSurfaceColorMod",{C_POINTER,C_UINT,C_UINT,C_UINT},C_INT),
+				xSDL_SetSurfacePalette = define_c_func(sdl2,"+SDL_SetSurfacePalette",{C_POINTER,C_POINTER},C_INT),
+				xSDL_SetSurfaceRLE = define_c_func(sdl2,"+SDL_SetSurfaceRLE",{C_POINTER,C_INT},C_INT),
+				xSDL_UnlockSurface = define_c_proc(sdl2,"+SDL_UnlockSurface",{C_POINTER}),
+				xSDL_CreateRGBSurfaceWithFormat = define_c_func(sdl2,"+SDL_CreateRGBSurfaceWithFormat",{C_UINT,C_INT,C_INT,C_INT,C_UINT},C_POINTER),
+				xSDL_DuplicateSurface = define_c_func(sdl2,"+SDL_DuplicateSurface",{C_POINTER},C_POINTER),
+				xSDL_UpperBlit = define_c_func(sdl2,"+SDL_UpperBlit",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xSDL_UpperBlitScaled = define_c_func(sdl2,"+SDL_UpperBlitScaled",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xSDL_SetYUVConversionMode = define_c_proc(sdl2,"+SDL_SetYUVConversionMode",{C_POINTER}),
+				xSDL_GetYUVConversionMode = define_c_func(sdl2,"+SDL_GetYUVConversionMode",{},C_POINTER),
+				xSDL_HasColorKey = define_c_func(sdl2,"+SDL_HasColorKey",{C_POINTER},C_BOOL)
 				
 public function SDL_BlitScaled(atom src,atom srcr,atom dst,atom dstr)
  
@@ -2073,9 +2073,9 @@ end function
 
 --SDL Clipboard functions
 
-public constant xSDL_GetClipboardText = define_c_func(sdl2,"SDL_GetClipboardText",{},C_POINTER),
-				xSDL_HasClipboardText = define_c_func(sdl2,"SDL_HasClipboardText",{},C_BOOL),
-				xSDL_SetClipboardText = define_c_func(sdl2,"SDL_SetClipboardText",{C_POINTER},C_INT)
+public constant xSDL_GetClipboardText = define_c_func(sdl2,"+SDL_GetClipboardText",{},C_POINTER),
+				xSDL_HasClipboardText = define_c_func(sdl2,"+SDL_HasClipboardText",{},C_BOOL),
+				xSDL_SetClipboardText = define_c_func(sdl2,"+SDL_SetClipboardText",{C_POINTER},C_INT)
 				
 public function SDL_GetClipboardText()
 
@@ -2101,33 +2101,33 @@ end function
 
 --SDL Event Functions
 
-public constant xSDL_AddEventWatch = define_c_proc(sdl2,"SDL_AddEventWatch",{C_POINTER,C_POINTER}),
-				xSDL_DelEventWatch = define_c_proc(sdl2,"SDL_DelEventWatch",{C_POINTER,C_POINTER}),
-				xSDL_EventState = define_c_func(sdl2,"SDL_EventState",{C_UINT,C_INT},C_UINT),
-				xSDL_FilterEvents = define_c_proc(sdl2,"SDL_FilterEvents",{C_POINTER,C_POINTER}),
-				xSDL_FlushEvent = define_c_proc(sdl2,"SDL_FlushEvent",{C_UINT}),
-				xSDL_FlushEvents = define_c_proc(sdl2,"SDL_FlushEvents",{C_UINT,C_UINT}),
-				xSDL_GetEventFilter = define_c_func(sdl2,"SDL_GetEventFilter",{C_POINTER,C_POINTER},C_BOOL),
-				xSDL_GetEventState = define_c_func(sdl2,"SDL_GetEventState",{C_UINT},C_UINT),
-				xSDL_GetNumTouchDevices = define_c_func(sdl2,"SDL_GetNumTouchDevices",{},C_INT),
-				xSDL_GetNumTouchFingers = define_c_func(sdl2,"SDL_GetNumTouchFingers",{C_POINTER},C_INT),
-				xSDL_GetTouchDevice = define_c_func(sdl2,"SDL_GetTouchDevice",{C_INT},C_POINTER),
-				xSDL_GetTouchFinger = define_c_func(sdl2,"SDL_GetTouchFinger",{C_POINTER,C_INT},C_POINTER),
-				xSDL_HasEvent = define_c_func(sdl2,"SDL_HasEvent",{C_UINT},C_BOOL),
-				xSDL_HasEvents = define_c_func(sdl2,"SDL_HasEvents",{C_UINT,C_UINT},C_BOOL),
-				xSDL_LoadDollarTemplates = define_c_func(sdl2,"SDL_LoadDollarTemplates",{C_POINTER,C_POINTER},C_INT),
-				xSDL_PeepEvents = define_c_func(sdl2,"SDL_PeepEvents",{C_POINTER,C_INT,C_POINTER,C_UINT,C_UINT},C_INT),
-				xSDL_PollEvent = define_c_func(sdl2,"SDL_PollEvent",{C_POINTER},C_INT),
-				xSDL_PumpEvents = define_c_proc(sdl2,"SDL_PumpEvents",{}),
-				xSDL_PushEvent = define_c_func(sdl2,"SDL_PushEvent",{C_POINTER},C_INT),
-				xSDL_QuitRequested = define_c_func(sdl2,"SDL_QuitRequested",{},C_BOOL),
-				xSDL_RecordGesture = define_c_func(sdl2,"SDL_RecordGesture",{C_POINTER},C_INT),
-				xSDL_RegisterEvents = define_c_func(sdl2,"SDL_RegisterEvents",{C_INT},C_UINT),
-				xSDL_SaveAllDollarTemplates = define_c_func(sdl2,"SDL_SaveAllDollarTemplates",{C_POINTER},C_INT),
-				xSDL_SaveDollarTemplate = define_c_func(sdl2,"SDL_SaveDollarTemplate",{C_POINTER,C_POINTER},C_INT),
-				xSDL_SetEventFilter = define_c_proc(sdl2,"SDL_SetEventFilter",{C_POINTER,C_POINTER}),
-				xSDL_WaitEvent = define_c_func(sdl2,"SDL_WaitEvent",{C_POINTER},C_INT),
-				xSDL_WaitEventTimeout = define_c_func(sdl2,"SDL_WaitEventTimeout",{C_POINTER,C_INT},C_INT)
+public constant xSDL_AddEventWatch = define_c_proc(sdl2,"+SDL_AddEventWatch",{C_POINTER,C_POINTER}),
+				xSDL_DelEventWatch = define_c_proc(sdl2,"+SDL_DelEventWatch",{C_POINTER,C_POINTER}),
+				xSDL_EventState = define_c_func(sdl2,"+SDL_EventState",{C_UINT,C_INT},C_UINT),
+				xSDL_FilterEvents = define_c_proc(sdl2,"+SDL_FilterEvents",{C_POINTER,C_POINTER}),
+				xSDL_FlushEvent = define_c_proc(sdl2,"+SDL_FlushEvent",{C_UINT}),
+				xSDL_FlushEvents = define_c_proc(sdl2,"+SDL_FlushEvents",{C_UINT,C_UINT}),
+				xSDL_GetEventFilter = define_c_func(sdl2,"+SDL_GetEventFilter",{C_POINTER,C_POINTER},C_BOOL),
+				xSDL_GetEventState = define_c_func(sdl2,"+SDL_GetEventState",{C_UINT},C_UINT),
+				xSDL_GetNumTouchDevices = define_c_func(sdl2,"+SDL_GetNumTouchDevices",{},C_INT),
+				xSDL_GetNumTouchFingers = define_c_func(sdl2,"+SDL_GetNumTouchFingers",{C_POINTER},C_INT),
+				xSDL_GetTouchDevice = define_c_func(sdl2,"+SDL_GetTouchDevice",{C_INT},C_POINTER),
+				xSDL_GetTouchFinger = define_c_func(sdl2,"+SDL_GetTouchFinger",{C_POINTER,C_INT},C_POINTER),
+				xSDL_HasEvent = define_c_func(sdl2,"+SDL_HasEvent",{C_UINT},C_BOOL),
+				xSDL_HasEvents = define_c_func(sdl2,"+SDL_HasEvents",{C_UINT,C_UINT},C_BOOL),
+				xSDL_LoadDollarTemplates = define_c_func(sdl2,"+SDL_LoadDollarTemplates",{C_POINTER,C_POINTER},C_INT),
+				xSDL_PeepEvents = define_c_func(sdl2,"+SDL_PeepEvents",{C_POINTER,C_INT,C_POINTER,C_UINT,C_UINT},C_INT),
+				xSDL_PollEvent = define_c_func(sdl2,"+SDL_PollEvent",{C_POINTER},C_INT),
+				xSDL_PumpEvents = define_c_proc(sdl2,"+SDL_PumpEvents",{}),
+				xSDL_PushEvent = define_c_func(sdl2,"+SDL_PushEvent",{C_POINTER},C_INT),
+				xSDL_QuitRequested = define_c_func(sdl2,"+SDL_QuitRequested",{},C_BOOL),
+				xSDL_RecordGesture = define_c_func(sdl2,"+SDL_RecordGesture",{C_POINTER},C_INT),
+				xSDL_RegisterEvents = define_c_func(sdl2,"+SDL_RegisterEvents",{C_INT},C_UINT),
+				xSDL_SaveAllDollarTemplates = define_c_func(sdl2,"+SDL_SaveAllDollarTemplates",{C_POINTER},C_INT),
+				xSDL_SaveDollarTemplate = define_c_func(sdl2,"+SDL_SaveDollarTemplate",{C_POINTER,C_POINTER},C_INT),
+				xSDL_SetEventFilter = define_c_proc(sdl2,"+SDL_SetEventFilter",{C_POINTER,C_POINTER}),
+				xSDL_WaitEvent = define_c_func(sdl2,"+SDL_WaitEvent",{C_POINTER},C_INT),
+				xSDL_WaitEventTimeout = define_c_func(sdl2,"+SDL_WaitEventTimeout",{C_POINTER,C_INT},C_INT)
 				
 public procedure SDL_AddEventWatch(atom filter,atom dat)
 
@@ -2293,22 +2293,22 @@ end function
 
 --SDL Keyboard Functions
 
-public constant xSDL_GetKeyFromName = define_c_func(sdl2,"SDL_GetKeyFromName",{C_POINTER},C_POINTER),
-				xSDL_GetKeyFromScancode = define_c_func(sdl2,"SDL_GetKeyFromScancode",{C_POINTER},C_POINTER),
-				xSDL_GetKeyName = define_c_func(sdl2,"SDL_GetKeyName",{C_POINTER},C_POINTER),
-				xSDL_GetKeyboardFocus = define_c_func(sdl2,"SDL_GetKeyboardFocus",{},C_POINTER),
-				xSDL_GetKeyboardState = define_c_func(sdl2,"SDL_GetKeyboardState",{C_POINTER},C_POINTER),
-				xSDL_GetModState = define_c_func(sdl2,"SDL_GetModState",{},C_POINTER),
-				xSDL_GetScancodeFromKey = define_c_func(sdl2,"SDL_GetScancodeFromKey",{C_POINTER},C_POINTER),
-				xSDL_GetScancodeFromName = define_c_func(sdl2,"SDL_GetScancodeFromName",{C_POINTER},C_POINTER),
-				xSDL_GetScancodeName = define_c_func(sdl2,"SDL_GetScancodeName",{C_POINTER},C_POINTER),
-				xSDL_HasScreenKeyboardSupport = define_c_func(sdl2,"SDL_HasScreenKeyboardSupport",{},C_BOOL),
-				xSDL_IsScreenKeyboardShown = define_c_func(sdl2,"SDL_IsScreenKeyboardShown",{C_POINTER},C_BOOL),
-				xSDL_IsTextInputActive = define_c_func(sdl2,"SDL_IsTextInputActive",{},C_BOOL),
-				xSDL_SetModState = define_c_proc(sdl2,"SDL_SetModState",{C_POINTER}),
-				xSDL_SetTextInputRect = define_c_proc(sdl2,"SDL_SetTextInputRect",{C_POINTER}),
-				xSDL_StartTextInput = define_c_proc(sdl2,"SDL_StartTextInput",{}),
-				xSDL_StopTextInput = define_c_proc(sdl2,"SDL_StopTextInput",{})
+public constant xSDL_GetKeyFromName = define_c_func(sdl2,"+SDL_GetKeyFromName",{C_POINTER},C_POINTER),
+				xSDL_GetKeyFromScancode = define_c_func(sdl2,"+SDL_GetKeyFromScancode",{C_POINTER},C_POINTER),
+				xSDL_GetKeyName = define_c_func(sdl2,"+SDL_GetKeyName",{C_POINTER},C_POINTER),
+				xSDL_GetKeyboardFocus = define_c_func(sdl2,"+SDL_GetKeyboardFocus",{},C_POINTER),
+				xSDL_GetKeyboardState = define_c_func(sdl2,"+SDL_GetKeyboardState",{C_POINTER},C_POINTER),
+				xSDL_GetModState = define_c_func(sdl2,"+SDL_GetModState",{},C_POINTER),
+				xSDL_GetScancodeFromKey = define_c_func(sdl2,"+SDL_GetScancodeFromKey",{C_POINTER},C_POINTER),
+				xSDL_GetScancodeFromName = define_c_func(sdl2,"+SDL_GetScancodeFromName",{C_POINTER},C_POINTER),
+				xSDL_GetScancodeName = define_c_func(sdl2,"+SDL_GetScancodeName",{C_POINTER},C_POINTER),
+				xSDL_HasScreenKeyboardSupport = define_c_func(sdl2,"+SDL_HasScreenKeyboardSupport",{},C_BOOL),
+				xSDL_IsScreenKeyboardShown = define_c_func(sdl2,"+SDL_IsScreenKeyboardShown",{C_POINTER},C_BOOL),
+				xSDL_IsTextInputActive = define_c_func(sdl2,"+SDL_IsTextInputActive",{},C_BOOL),
+				xSDL_SetModState = define_c_proc(sdl2,"+SDL_SetModState",{C_POINTER}),
+				xSDL_SetTextInputRect = define_c_proc(sdl2,"+SDL_SetTextInputRect",{C_POINTER}),
+				xSDL_StartTextInput = define_c_proc(sdl2,"+SDL_StartTextInput",{}),
+				xSDL_StopTextInput = define_c_proc(sdl2,"+SDL_StopTextInput",{})
 				
 public function SDL_GetKeyFromName(sequence name)
 
@@ -2414,23 +2414,23 @@ end procedure
 
 --SDL Mouse Functions
 
-public constant xSDL_CaptureMouse = define_c_func(sdl2,"SDL_CaptureMouse",{C_BOOL},C_INT),
-				xSDL_CreateColorCursor = define_c_func(sdl2,"SDL_CreateColorCursor",{C_POINTER,C_INT,C_INT},C_POINTER),
-				xSDL_CreateCursor = define_c_func(sdl2,"SDL_CreateCursor",{C_POINTER,C_POINTER,C_INT,C_INT,C_INT,C_INT},C_POINTER),
-				xSDL_CreateSystemCursor = define_c_func(sdl2,"SDL_CreateSystemCursor",{C_POINTER},C_POINTER),
-				xSDL_FreeCursor = define_c_proc(sdl2,"SDL_FreeCursor",{C_POINTER}),
-				xSDL_GetCursor = define_c_func(sdl2,"SDL_GetCursor",{},C_POINTER),
-				xSDL_GetDefaultCursor = define_c_func(sdl2,"SDL_GetDefaultCursor",{},C_POINTER),
-				xSDL_GetGlobalMouseState = define_c_func(sdl2,"SDL_GetGlobalMouseState",{C_POINTER,C_POINTER},C_UINT),
-				xSDL_GetMouseFocus = define_c_func(sdl2,"SDL_GetMouseFocus",{},C_POINTER),
-				xSDL_GetMouseState = define_c_func(sdl2,"SDL_GetMouseState",{C_POINTER,C_POINTER},C_UINT),
-				xSDL_GetRelativeMouseMode = define_c_func(sdl2,"SDL_GetRelativeMouseMode",{},C_BOOL),
-				xSDL_GetRelativeMouseState = define_c_func(sdl2,"SDL_GetRelativeMouseState",{C_POINTER,C_POINTER},C_UINT),
-				xSDL_SetCursor = define_c_proc(sdl2,"SDL_SetCursor",{C_POINTER}),
-				xSDL_SetRelativeMouseMode = define_c_func(sdl2,"SDL_SetRelativeMouseMode",{C_BOOL},C_INT),
-				xSDL_ShowCursor = define_c_func(sdl2,"SDL_ShowCursor",{C_INT},C_INT),
-				xSDL_WarpMouseGlobal = define_c_func(sdl2,"SDL_WarpMouseGlobal",{C_INT,C_INT},C_INT),
-				xSDL_WarpMouseInWindow = define_c_proc(sdl2,"SDL_WarpMouseInWindow",{C_POINTER,C_INT,C_INT})
+public constant xSDL_CaptureMouse = define_c_func(sdl2,"+SDL_CaptureMouse",{C_BOOL},C_INT),
+				xSDL_CreateColorCursor = define_c_func(sdl2,"+SDL_CreateColorCursor",{C_POINTER,C_INT,C_INT},C_POINTER),
+				xSDL_CreateCursor = define_c_func(sdl2,"+SDL_CreateCursor",{C_POINTER,C_POINTER,C_INT,C_INT,C_INT,C_INT},C_POINTER),
+				xSDL_CreateSystemCursor = define_c_func(sdl2,"+SDL_CreateSystemCursor",{C_POINTER},C_POINTER),
+				xSDL_FreeCursor = define_c_proc(sdl2,"+SDL_FreeCursor",{C_POINTER}),
+				xSDL_GetCursor = define_c_func(sdl2,"+SDL_GetCursor",{},C_POINTER),
+				xSDL_GetDefaultCursor = define_c_func(sdl2,"+SDL_GetDefaultCursor",{},C_POINTER),
+				xSDL_GetGlobalMouseState = define_c_func(sdl2,"+SDL_GetGlobalMouseState",{C_POINTER,C_POINTER},C_UINT),
+				xSDL_GetMouseFocus = define_c_func(sdl2,"+SDL_GetMouseFocus",{},C_POINTER),
+				xSDL_GetMouseState = define_c_func(sdl2,"+SDL_GetMouseState",{C_POINTER,C_POINTER},C_UINT),
+				xSDL_GetRelativeMouseMode = define_c_func(sdl2,"+SDL_GetRelativeMouseMode",{},C_BOOL),
+				xSDL_GetRelativeMouseState = define_c_func(sdl2,"+SDL_GetRelativeMouseState",{C_POINTER,C_POINTER},C_UINT),
+				xSDL_SetCursor = define_c_proc(sdl2,"+SDL_SetCursor",{C_POINTER}),
+				xSDL_SetRelativeMouseMode = define_c_func(sdl2,"+SDL_SetRelativeMouseMode",{C_BOOL},C_INT),
+				xSDL_ShowCursor = define_c_func(sdl2,"+SDL_ShowCursor",{C_INT},C_INT),
+				xSDL_WarpMouseGlobal = define_c_func(sdl2,"+SDL_WarpMouseGlobal",{C_INT,C_INT},C_INT),
+				xSDL_WarpMouseInWindow = define_c_proc(sdl2,"+SDL_WarpMouseInWindow",{C_POINTER,C_INT,C_INT})
 				
 public function SDL_CaptureMouse(integer enable)
 
@@ -2536,44 +2536,44 @@ end procedure
 
 --SDL Joystick Functions
 
-public constant xSDL_JoystickClose = define_c_proc(sdl2,"SDL_JoystickClose",{C_POINTER}),
-				xSDL_JoystickCurrentPowerLevel = define_c_func(sdl2,"SDL_JoystickCurrentPowerLevel",{C_POINTER},C_POINTER),
-				xSDL_JoystickEventState = define_c_func(sdl2,"SDL_JoystickEventState",{C_INT},C_INT),
-				xSDL_JoystickFromInstanceID = define_c_func(sdl2,"SDL_JoystickFromInstanceID",{C_POINTER},C_POINTER),
-				xSDL_JoystickGetAttached = define_c_func(sdl2,"SDL_JoystickGetAttached",{C_POINTER},C_BOOL),
-				xSDL_JoystickGetAxis = define_c_func(sdl2,"SDL_JoystickGetAxis",{C_POINTER,C_INT},C_INT),
-				xSDL_JoystickGetBall = define_c_func(sdl2,"SDL_JoystickGetBall",{C_POINTER,C_INT,C_POINTER,C_POINTER},C_INT),
-				xSDL_JoystickGetButton = define_c_func(sdl2,"SDL_JoystickGetButton",{C_POINTER,C_INT},C_UINT),
-				xSDL_JoystickGetDeviceGUID = define_c_func(sdl2,"SDL_JoystickGetDeviceGUID",{C_INT},C_POINTER),
-				xSDL_JoystickGetGUID = define_c_func(sdl2,"SDL_JoystickGetGUID",{C_POINTER},C_POINTER),
-				xSDL_JoystickGetGUIDFromString = define_c_func(sdl2,"SDL_JoystickGetGUIDFromString",{C_POINTER},C_POINTER),
-				xSDL_JoystickGetGUIDString = define_c_proc(sdl2,"SDL_JoystickGetGUIDString",{C_POINTER,C_POINTER,C_INT}),
-				xSDL_JoystickGetHat = define_c_func(sdl2,"SDL_JoystickGetHat",{C_POINTER,C_INT},C_UINT),
-				xSDL_JoystickInstanceID = define_c_func(sdl2,"SDL_JoystickInstanceID",{C_POINTER},C_POINTER),
-				xSDL_JoystickName = define_c_func(sdl2,"SDL_JoystickName",{C_POINTER},C_POINTER),
-				xSDL_JoystickNameForIndex = define_c_func(sdl2,"SDL_JoystickNameForIndex",{C_INT},C_POINTER),
-				xSDL_JoystickNumAxes = define_c_func(sdl2,"SDL_JoystickNumAxes",{C_POINTER},C_INT),
-				xSDL_JoystickNumBalls = define_c_func(sdl2,"SDL_JoystickNumBalls",{C_POINTER},C_INT),
-				xSDL_JoystickNumButtons = define_c_func(sdl2,"SDL_JoystickNumButtons",{C_POINTER},C_INT),
-				xSDL_JoystickNumHats = define_c_func(sdl2,"SDL_JoystickNumHats",{C_POINTER},C_INT),
-				xSDL_JoystickOpen = define_c_func(sdl2,"SDL_JoystickOpen",{C_INT},C_POINTER),
-				xSDL_JoystickUpdate = define_c_proc(sdl2,"SDL_JoystickUpdate",{}),
-				xSDL_NumJoysticks = define_c_func(sdl2,"SDL_NumJoysticks",{},C_INT),
-				xSDL_JoystickGetDeviceVendor = define_c_func(sdl2,"SDL_JoystickGetDeviceVendor",{C_INT},C_UINT),
-				xSDL_JoystickGetDeviceProduct = define_c_func(sdl2,"SDL_JoystickGetDeviceProduct",{C_INT},C_UINT),
-				xSDL_JoystickGetDeviceProductVersion = define_c_func(sdl2,"SDL_JoystickGetDeviceProductVersion",{C_INT},C_UINT),
-				xSDL_JoystickGetDeviceType = define_c_func(sdl2,"SDL_JoystickGetDeviceType",{C_INT},C_POINTER),
-				xSDL_JoystickGetDeviceInstanceID = define_c_func(sdl2,"SDL_JoystickGetDeviceInstanceID",{C_INT},C_POINTER),
-				xSDL_JoystickGetVendor = define_c_func(sdl2,"SDL_JoystickGetVendor",{C_POINTER},C_UINT),
-				xSDL_JoystickGetProduct = define_c_func(sdl2,"SDL_JoystickGetProduct",{C_POINTER},C_UINT),
-				xSDL_JoystickGetProductVersion = define_c_func(sdl2,"SDL_JoystickGetProductVersion",{C_POINTER},C_UINT),
-				xSDL_JoystickGetType = define_c_func(sdl2,"SDL_JoystickGetType",{C_POINTER},C_POINTER),
-				xSDL_JoystickGetAxisInitialState = define_c_func(sdl2,"SDL_JoystickGetAxisInitialState",{C_POINTER,C_INT,C_POINTER},C_BOOL),
-				xSDL_LockJoysticks = define_c_proc(sdl2,"SDL_LockJoysticks",{}),
-				xSDL_UnlockJoysticks = define_c_proc(sdl2,"SDL_UnlockJoysticks",{}),
-				xSDL_JoystickGetDevicePlayerIndex = define_c_func(sdl2,"SDL_JoystickGetDevicePlayerIndex",{C_INT},C_INT),
-				xSDL_JoystickGetPlayerIndex = define_c_func(sdl2,"SDL_JoystickGetPlayerIndex",{C_POINTER},C_INT),
-				xSDL_JoystickRumble = define_c_func(sdl2,"SDL_JoystickRumble",{C_POINTER,C_UINT,C_UINT,C_UINT},C_INT)
+public constant xSDL_JoystickClose = define_c_proc(sdl2,"+SDL_JoystickClose",{C_POINTER}),
+				xSDL_JoystickCurrentPowerLevel = define_c_func(sdl2,"+SDL_JoystickCurrentPowerLevel",{C_POINTER},C_POINTER),
+				xSDL_JoystickEventState = define_c_func(sdl2,"+SDL_JoystickEventState",{C_INT},C_INT),
+				xSDL_JoystickFromInstanceID = define_c_func(sdl2,"+SDL_JoystickFromInstanceID",{C_POINTER},C_POINTER),
+				xSDL_JoystickGetAttached = define_c_func(sdl2,"+SDL_JoystickGetAttached",{C_POINTER},C_BOOL),
+				xSDL_JoystickGetAxis = define_c_func(sdl2,"+SDL_JoystickGetAxis",{C_POINTER,C_INT},C_INT),
+				xSDL_JoystickGetBall = define_c_func(sdl2,"+SDL_JoystickGetBall",{C_POINTER,C_INT,C_POINTER,C_POINTER},C_INT),
+				xSDL_JoystickGetButton = define_c_func(sdl2,"+SDL_JoystickGetButton",{C_POINTER,C_INT},C_UINT),
+				xSDL_JoystickGetDeviceGUID = define_c_func(sdl2,"+SDL_JoystickGetDeviceGUID",{C_INT},C_POINTER),
+				xSDL_JoystickGetGUID = define_c_func(sdl2,"+SDL_JoystickGetGUID",{C_POINTER},C_POINTER),
+				xSDL_JoystickGetGUIDFromString = define_c_func(sdl2,"+SDL_JoystickGetGUIDFromString",{C_POINTER},C_POINTER),
+				xSDL_JoystickGetGUIDString = define_c_proc(sdl2,"+SDL_JoystickGetGUIDString",{C_POINTER,C_POINTER,C_INT}),
+				xSDL_JoystickGetHat = define_c_func(sdl2,"+SDL_JoystickGetHat",{C_POINTER,C_INT},C_UINT),
+				xSDL_JoystickInstanceID = define_c_func(sdl2,"+SDL_JoystickInstanceID",{C_POINTER},C_POINTER),
+				xSDL_JoystickName = define_c_func(sdl2,"+SDL_JoystickName",{C_POINTER},C_POINTER),
+				xSDL_JoystickNameForIndex = define_c_func(sdl2,"+SDL_JoystickNameForIndex",{C_INT},C_POINTER),
+				xSDL_JoystickNumAxes = define_c_func(sdl2,"+SDL_JoystickNumAxes",{C_POINTER},C_INT),
+				xSDL_JoystickNumBalls = define_c_func(sdl2,"+SDL_JoystickNumBalls",{C_POINTER},C_INT),
+				xSDL_JoystickNumButtons = define_c_func(sdl2,"+SDL_JoystickNumButtons",{C_POINTER},C_INT),
+				xSDL_JoystickNumHats = define_c_func(sdl2,"+SDL_JoystickNumHats",{C_POINTER},C_INT),
+				xSDL_JoystickOpen = define_c_func(sdl2,"+SDL_JoystickOpen",{C_INT},C_POINTER),
+				xSDL_JoystickUpdate = define_c_proc(sdl2,"+SDL_JoystickUpdate",{}),
+				xSDL_NumJoysticks = define_c_func(sdl2,"+SDL_NumJoysticks",{},C_INT),
+				xSDL_JoystickGetDeviceVendor = define_c_func(sdl2,"+SDL_JoystickGetDeviceVendor",{C_INT},C_UINT),
+				xSDL_JoystickGetDeviceProduct = define_c_func(sdl2,"+SDL_JoystickGetDeviceProduct",{C_INT},C_UINT),
+				xSDL_JoystickGetDeviceProductVersion = define_c_func(sdl2,"+SDL_JoystickGetDeviceProductVersion",{C_INT},C_UINT),
+				xSDL_JoystickGetDeviceType = define_c_func(sdl2,"+SDL_JoystickGetDeviceType",{C_INT},C_POINTER),
+				xSDL_JoystickGetDeviceInstanceID = define_c_func(sdl2,"+SDL_JoystickGetDeviceInstanceID",{C_INT},C_POINTER),
+				xSDL_JoystickGetVendor = define_c_func(sdl2,"+SDL_JoystickGetVendor",{C_POINTER},C_UINT),
+				xSDL_JoystickGetProduct = define_c_func(sdl2,"+SDL_JoystickGetProduct",{C_POINTER},C_UINT),
+				xSDL_JoystickGetProductVersion = define_c_func(sdl2,"+SDL_JoystickGetProductVersion",{C_POINTER},C_UINT),
+				xSDL_JoystickGetType = define_c_func(sdl2,"+SDL_JoystickGetType",{C_POINTER},C_POINTER),
+				xSDL_JoystickGetAxisInitialState = define_c_func(sdl2,"+SDL_JoystickGetAxisInitialState",{C_POINTER,C_INT,C_POINTER},C_BOOL),
+				xSDL_LockJoysticks = define_c_proc(sdl2,"+SDL_LockJoysticks",{}),
+				xSDL_UnlockJoysticks = define_c_proc(sdl2,"+SDL_UnlockJoysticks",{}),
+				xSDL_JoystickGetDevicePlayerIndex = define_c_func(sdl2,"+SDL_JoystickGetDevicePlayerIndex",{C_INT},C_INT),
+				xSDL_JoystickGetPlayerIndex = define_c_func(sdl2,"+SDL_JoystickGetPlayerIndex",{C_POINTER},C_INT),
+				xSDL_JoystickRumble = define_c_func(sdl2,"+SDL_JoystickRumble",{C_POINTER,C_UINT,C_UINT,C_UINT},C_INT)
 				
 public procedure SDL_JoystickClose(atom joy)
 
@@ -2803,37 +2803,37 @@ end function
 
 --SDL Gamecontroller Functions
 
-public constant xSDL_GameControllerAddMapping = define_c_func(sdl2,"SDL_GameControllerAddMapping",{C_POINTER},C_INT),
-				xSDL_GameControllerAddMappingsFromFile = define_c_func(sdl2,"SDL_GameControllerAddMappingsFromFile",{C_POINTER},C_INT),
-				xSDL_GameControllerAddMappingsFromRW = define_c_func(sdl2,"SDL_GameControllerAddMappingsFromRW",{C_POINTER,C_INT},C_INT),
-				xSDL_GameControllerClose = define_c_proc(sdl2,"SDL_GameControllerClose",{C_POINTER}),
-				xSDL_GameControllerEventState = define_c_func(sdl2,"SDL_GameControllerEventState",{C_INT},C_INT),
-				xSDL_GameControllerFromInstanceID = define_c_func(sdl2,"SDL_GameControllerFromInstanceID",{C_POINTER},C_POINTER),
-				xSDL_GameControllerGetAttached = define_c_func(sdl2,"SDL_GameControllerGetAttached",{C_POINTER},C_BOOL),
-				xSDL_GameControllerGetAxis = define_c_func(sdl2,"SDL_GameControllerGetAxis",{C_POINTER,C_POINTER},C_INT),
-				xSDL_GameControllerGetAxisFromString = define_c_func(sdl2,"SDL_GameControllerGetAxisFromString",{C_POINTER},C_POINTER),
-				xSDL_GameControllerGetBindForAxis = define_c_func(sdl2,"SDL_GameControllerGetBindForAxis",{C_POINTER,C_POINTER},C_POINTER),
-				xSDL_GameControllerGetBindForButton = define_c_func(sdl2,"SDL_GameControllerGetBindForButton",{C_POINTER,C_POINTER},C_POINTER),
-				xSDL_GameControllerGetButton = define_c_func(sdl2,"SDL_GameControllerGetButton",{C_POINTER,C_POINTER},C_UINT),
-				xSDL_GameControllerGetButtonFromString = define_c_func(sdl2,"SDL_GameControllerGetButtonFromString",{C_POINTER},C_POINTER),
-				xSDL_GameControllerGetJoystick = define_c_func(sdl2,"SDL_GameControllerGetJoystick",{C_POINTER},C_POINTER),
-				xSDL_GameControllerGetStringForAxis = define_c_func(sdl2,"SDL_GameControllerGetStringForAxis",{C_POINTER},C_POINTER),
-				xSDL_GameControllerGetStringForButton = define_c_func(sdl2,"SDL_GameControllerGetStringForButton",{C_POINTER},C_POINTER),
-				xSDL_GameControllerMapping = define_c_func(sdl2,"SDL_GameControllerMapping",{C_POINTER},C_POINTER),
-				xSDL_GameControllerMappingForGUID = define_c_func(sdl2,"SDL_GameControllerMappingForGUID",{C_POINTER},C_POINTER),
-				xSDL_GameControllerName = define_c_func(sdl2,"SDL_GameControllerName",{C_POINTER},C_POINTER),
-				xSDL_GameControllerNameForIndex = define_c_func(sdl2,"SDL_GameControllerNameForIndex",{C_INT},C_POINTER),
-				xSDL_GameControllerOpen = define_c_func(sdl2,"SDL_GameControllerOpen",{C_INT},C_POINTER),
-				xSDL_GameControllerUpdate = define_c_proc(sdl2,"SDL_GameControllerUpdate",{}),
-				xSDL_IsGameController = define_c_func(sdl2,"SDL_IsGameController",{C_INT},C_BOOL),
-				xSDL_GameControllerGetVendor = define_c_func(sdl2,"SDL_GameControllerGetVendor",{C_POINTER},C_UINT),
-				xSDL_GameControllerGetProduct = define_c_func(sdl2,"SDL_GameControllerGetProduct",{C_POINTER},C_UINT),
-				xSDL_GameControllerGetProductVersion = define_c_func(sdl2,"SDL_GameControllerGetProductVersion",{C_POINTER},C_UINT),
-				xSDL_GameControllerNumMappings = define_c_func(sdl2,"SDL_GameControllerNumMappings",{},C_INT),
-				xSDL_GameControllerMappingForIndex = define_c_func(sdl2,"SDL_GameControllerMappingForIndex",{C_INT},C_POINTER),
-				xSDL_GameControllerGetPlayerIndex = define_c_func(sdl2,"SDL_GameControllerGetPlayerIndex",{C_POINTER},C_INT),
-				xSDL_GameControllerRumble = define_c_func(sdl2,"SDL_GameControllerRumble",{C_POINTER,C_UINT,C_UINT,C_UINT},C_INT),
-				xSDL_GameControllerMappingForDeviceIndex = define_c_func(sdl2,"SDL_GameControllerMappingForDeviceIndex",{C_INT},C_POINTER)
+public constant xSDL_GameControllerAddMapping = define_c_func(sdl2,"+SDL_GameControllerAddMapping",{C_POINTER},C_INT),
+				xSDL_GameControllerAddMappingsFromFile = define_c_func(sdl2,"+SDL_GameControllerAddMappingsFromFile",{C_POINTER},C_INT),
+				xSDL_GameControllerAddMappingsFromRW = define_c_func(sdl2,"+SDL_GameControllerAddMappingsFromRW",{C_POINTER,C_INT},C_INT),
+				xSDL_GameControllerClose = define_c_proc(sdl2,"+SDL_GameControllerClose",{C_POINTER}),
+				xSDL_GameControllerEventState = define_c_func(sdl2,"+SDL_GameControllerEventState",{C_INT},C_INT),
+				xSDL_GameControllerFromInstanceID = define_c_func(sdl2,"+SDL_GameControllerFromInstanceID",{C_POINTER},C_POINTER),
+				xSDL_GameControllerGetAttached = define_c_func(sdl2,"+SDL_GameControllerGetAttached",{C_POINTER},C_BOOL),
+				xSDL_GameControllerGetAxis = define_c_func(sdl2,"+SDL_GameControllerGetAxis",{C_POINTER,C_POINTER},C_INT),
+				xSDL_GameControllerGetAxisFromString = define_c_func(sdl2,"+SDL_GameControllerGetAxisFromString",{C_POINTER},C_POINTER),
+				xSDL_GameControllerGetBindForAxis = define_c_func(sdl2,"+SDL_GameControllerGetBindForAxis",{C_POINTER,C_POINTER},C_POINTER),
+				xSDL_GameControllerGetBindForButton = define_c_func(sdl2,"+SDL_GameControllerGetBindForButton",{C_POINTER,C_POINTER},C_POINTER),
+				xSDL_GameControllerGetButton = define_c_func(sdl2,"+SDL_GameControllerGetButton",{C_POINTER,C_POINTER},C_UINT),
+				xSDL_GameControllerGetButtonFromString = define_c_func(sdl2,"+SDL_GameControllerGetButtonFromString",{C_POINTER},C_POINTER),
+				xSDL_GameControllerGetJoystick = define_c_func(sdl2,"+SDL_GameControllerGetJoystick",{C_POINTER},C_POINTER),
+				xSDL_GameControllerGetStringForAxis = define_c_func(sdl2,"+SDL_GameControllerGetStringForAxis",{C_POINTER},C_POINTER),
+				xSDL_GameControllerGetStringForButton = define_c_func(sdl2,"+SDL_GameControllerGetStringForButton",{C_POINTER},C_POINTER),
+				xSDL_GameControllerMapping = define_c_func(sdl2,"+SDL_GameControllerMapping",{C_POINTER},C_POINTER),
+				xSDL_GameControllerMappingForGUID = define_c_func(sdl2,"+SDL_GameControllerMappingForGUID",{C_POINTER},C_POINTER),
+				xSDL_GameControllerName = define_c_func(sdl2,"+SDL_GameControllerName",{C_POINTER},C_POINTER),
+				xSDL_GameControllerNameForIndex = define_c_func(sdl2,"+SDL_GameControllerNameForIndex",{C_INT},C_POINTER),
+				xSDL_GameControllerOpen = define_c_func(sdl2,"+SDL_GameControllerOpen",{C_INT},C_POINTER),
+				xSDL_GameControllerUpdate = define_c_proc(sdl2,"+SDL_GameControllerUpdate",{}),
+				xSDL_IsGameController = define_c_func(sdl2,"+SDL_IsGameController",{C_INT},C_BOOL),
+				xSDL_GameControllerGetVendor = define_c_func(sdl2,"+SDL_GameControllerGetVendor",{C_POINTER},C_UINT),
+				xSDL_GameControllerGetProduct = define_c_func(sdl2,"+SDL_GameControllerGetProduct",{C_POINTER},C_UINT),
+				xSDL_GameControllerGetProductVersion = define_c_func(sdl2,"+SDL_GameControllerGetProductVersion",{C_POINTER},C_UINT),
+				xSDL_GameControllerNumMappings = define_c_func(sdl2,"+SDL_GameControllerNumMappings",{},C_INT),
+				xSDL_GameControllerMappingForIndex = define_c_func(sdl2,"+SDL_GameControllerMappingForIndex",{C_INT},C_POINTER),
+				xSDL_GameControllerGetPlayerIndex = define_c_func(sdl2,"+SDL_GameControllerGetPlayerIndex",{C_POINTER},C_INT),
+				xSDL_GameControllerRumble = define_c_func(sdl2,"+SDL_GameControllerRumble",{C_POINTER,C_UINT,C_UINT,C_UINT},C_INT),
+				xSDL_GameControllerMappingForDeviceIndex = define_c_func(sdl2,"+SDL_GameControllerMappingForDeviceIndex",{C_INT},C_POINTER)
 				
 public function SDL_GameControllerAddMapping(sequence xmap)
 
@@ -3035,36 +3035,36 @@ end function
 
 --SDL Forcefeedback Functions
 
-public constant xSDL_HapticClose = define_c_proc(sdl2,"SDL_HapticClose",{C_POINTER}),
-				xSDL_HapticDestroyEffect = define_c_proc(sdl2,"SDL_HapticDestroyEffect",{C_POINTER,C_INT}),
-				xSDL_HapticEffectSupported = define_c_func(sdl2,"SDL_HapticEffectSupported",{C_POINTER,C_POINTER},C_INT),
-				xSDL_HapticGetEffectStatus = define_c_func(sdl2,"SDL_HapticGetEffectStatus",{C_POINTER,C_INT},C_INT),
-				xSDL_HapticIndex = define_c_func(sdl2,"SDL_HapticIndex",{C_POINTER},C_INT),
-				xSDL_HapticName = define_c_func(sdl2,"SDL_HapticName",{C_INT},C_POINTER),
-				xSDL_HapticNewEffect = define_c_func(sdl2,"SDL_HapticNewEffect",{C_POINTER,C_POINTER},C_INT),
-				xSDL_HapticNumAxes = define_c_func(sdl2,"SDL_HapticNumAxes",{C_POINTER},C_INT),
-				xSDL_HapticNumEffects = define_c_func(sdl2,"SDL_HapticNumEffects",{C_POINTER},C_INT),
-				xSDL_HapticNumEffectsPlaying = define_c_func(sdl2,"SDL_HapticNumEffectsPlaying",{C_POINTER},C_INT),
-				xSDL_HapticOpen = define_c_func(sdl2,"SDL_HapticOpen",{C_INT},C_POINTER),
-				xSDL_HapticOpenFromJoystick = define_c_func(sdl2,"SDL_HapticOpenFromJoystick",{C_POINTER},C_POINTER),
-				xSDL_HapticOpenFromMouse = define_c_func(sdl2,"SDL_HapticOpenFromMouse",{},C_POINTER),
-				xSDL_HapticOpened = define_c_func(sdl2,"SDL_HapticOpened",{C_INT},C_INT),
-				xSDL_HapticPause = define_c_func(sdl2,"SDL_HapticPause",{C_POINTER},C_INT),
-				xSDL_HapticQuery = define_c_func(sdl2,"SDL_HapticQuery",{C_POINTER},C_UINT),
-				xSDL_HapticRumbleInit = define_c_func(sdl2,"SDL_HapticRumbleInit",{C_POINTER},C_INT),
-				xSDL_HapticRumblePlay = define_c_func(sdl2,"SDL_HapticRumblePlay",{C_POINTER,C_FLOAT,C_UINT},C_INT),
-				xSDL_HapticRumbleStop = define_c_func(sdl2,"SDL_HapticRumbleStop",{C_POINTER},C_INT),
-				xSDL_HapticRumbleSupported = define_c_func(sdl2,"SDL_HapticRumbleSupported",{C_POINTER},C_INT),
-				xSDL_HapticRunEffect = define_c_func(sdl2,"SDL_HapticRunEffect",{C_POINTER,C_INT,C_UINT},C_INT),
-				xSDL_HapticSetAutocenter = define_c_func(sdl2,"SDL_HapticSetAutocenter",{C_POINTER,C_INT},C_INT),
-				xSDL_HapticSetGain = define_c_func(sdl2,"SDL_HapticSetGain",{C_POINTER,C_INT},C_INT),
-				xSDL_HapticStopAll = define_c_func(sdl2,"SDL_HapticStopAll",{C_POINTER},C_INT),
-				xSDL_HapticStopEffect = define_c_func(sdl2,"SDL_HapticStopEffect",{C_POINTER,C_INT},C_INT),
-				xSDL_HapticUnpause = define_c_func(sdl2,"SDL_HapticUnpause",{C_POINTER},C_INT),
-				xSDL_HapticUpdateEffect = define_c_func(sdl2,"SDL_HapticUpdateEffect",{C_POINTER,C_INT,C_POINTER},C_INT),
-				xSDL_JoystickIsHaptic = define_c_func(sdl2,"SDL_JoystickIsHaptic",{C_POINTER},C_INT),
-				xSDL_MouseIsHaptic = define_c_func(sdl2,"SDL_MouseIsHaptic",{},C_INT),
-				xSDL_NumHaptics = define_c_func(sdl2,"SDL_NumHaptics",{},C_INT)
+public constant xSDL_HapticClose = define_c_proc(sdl2,"+SDL_HapticClose",{C_POINTER}),
+				xSDL_HapticDestroyEffect = define_c_proc(sdl2,"+SDL_HapticDestroyEffect",{C_POINTER,C_INT}),
+				xSDL_HapticEffectSupported = define_c_func(sdl2,"+SDL_HapticEffectSupported",{C_POINTER,C_POINTER},C_INT),
+				xSDL_HapticGetEffectStatus = define_c_func(sdl2,"+SDL_HapticGetEffectStatus",{C_POINTER,C_INT},C_INT),
+				xSDL_HapticIndex = define_c_func(sdl2,"+SDL_HapticIndex",{C_POINTER},C_INT),
+				xSDL_HapticName = define_c_func(sdl2,"+SDL_HapticName",{C_INT},C_POINTER),
+				xSDL_HapticNewEffect = define_c_func(sdl2,"+SDL_HapticNewEffect",{C_POINTER,C_POINTER},C_INT),
+				xSDL_HapticNumAxes = define_c_func(sdl2,"+SDL_HapticNumAxes",{C_POINTER},C_INT),
+				xSDL_HapticNumEffects = define_c_func(sdl2,"+SDL_HapticNumEffects",{C_POINTER},C_INT),
+				xSDL_HapticNumEffectsPlaying = define_c_func(sdl2,"+SDL_HapticNumEffectsPlaying",{C_POINTER},C_INT),
+				xSDL_HapticOpen = define_c_func(sdl2,"+SDL_HapticOpen",{C_INT},C_POINTER),
+				xSDL_HapticOpenFromJoystick = define_c_func(sdl2,"+SDL_HapticOpenFromJoystick",{C_POINTER},C_POINTER),
+				xSDL_HapticOpenFromMouse = define_c_func(sdl2,"+SDL_HapticOpenFromMouse",{},C_POINTER),
+				xSDL_HapticOpened = define_c_func(sdl2,"+SDL_HapticOpened",{C_INT},C_INT),
+				xSDL_HapticPause = define_c_func(sdl2,"+SDL_HapticPause",{C_POINTER},C_INT),
+				xSDL_HapticQuery = define_c_func(sdl2,"+SDL_HapticQuery",{C_POINTER},C_UINT),
+				xSDL_HapticRumbleInit = define_c_func(sdl2,"+SDL_HapticRumbleInit",{C_POINTER},C_INT),
+				xSDL_HapticRumblePlay = define_c_func(sdl2,"+SDL_HapticRumblePlay",{C_POINTER,C_FLOAT,C_UINT},C_INT),
+				xSDL_HapticRumbleStop = define_c_func(sdl2,"+SDL_HapticRumbleStop",{C_POINTER},C_INT),
+				xSDL_HapticRumbleSupported = define_c_func(sdl2,"+SDL_HapticRumbleSupported",{C_POINTER},C_INT),
+				xSDL_HapticRunEffect = define_c_func(sdl2,"+SDL_HapticRunEffect",{C_POINTER,C_INT,C_UINT},C_INT),
+				xSDL_HapticSetAutocenter = define_c_func(sdl2,"+SDL_HapticSetAutocenter",{C_POINTER,C_INT},C_INT),
+				xSDL_HapticSetGain = define_c_func(sdl2,"+SDL_HapticSetGain",{C_POINTER,C_INT},C_INT),
+				xSDL_HapticStopAll = define_c_func(sdl2,"+SDL_HapticStopAll",{C_POINTER},C_INT),
+				xSDL_HapticStopEffect = define_c_func(sdl2,"+SDL_HapticStopEffect",{C_POINTER,C_INT},C_INT),
+				xSDL_HapticUnpause = define_c_func(sdl2,"+SDL_HapticUnpause",{C_POINTER},C_INT),
+				xSDL_HapticUpdateEffect = define_c_func(sdl2,"+SDL_HapticUpdateEffect",{C_POINTER,C_INT,C_POINTER},C_INT),
+				xSDL_JoystickIsHaptic = define_c_func(sdl2,"+SDL_JoystickIsHaptic",{C_POINTER},C_INT),
+				xSDL_MouseIsHaptic = define_c_func(sdl2,"+SDL_MouseIsHaptic",{},C_INT),
+				xSDL_NumHaptics = define_c_func(sdl2,"+SDL_NumHaptics",{},C_INT)
 				
 public procedure SDL_HapticClose(atom hap)
 
@@ -3248,36 +3248,36 @@ end function
 
 --SDL Audio Functions
 
-public constant xSDL_AudioInit = define_c_func(sdl2,"SDL_AudioInit",{C_POINTER},C_INT),
-				xSDL_AudioQuit = define_c_proc(sdl2,"SDL_AudioQuit",{}),
-				xSDL_BuildAudioCVT = define_c_func(sdl2,"SDL_BuildAudioCVT",{C_POINTER,C_POINTER,C_UINT,C_INT,C_POINTER,C_UINT,C_INT},C_INT),
-				xSDL_ClearQueuedAudio = define_c_proc(sdl2,"SDL_ClearQueuedAudio",{C_POINTER}),
-				xSDL_CloseAudio = define_c_proc(sdl2,"SDL_CloseAudio",{}),
-				xSDL_CloseAudioDevice = define_c_proc(sdl2,"SDL_CloseAudioDevice",{C_POINTER}),
-				xSDL_ConvertAudio = define_c_func(sdl2,"SDL_ConvertAudio",{C_POINTER},C_INT),
-				xSDL_FreeWAV = define_c_proc(sdl2,"SDL_FreeWAV",{C_POINTER}),
-				xSDL_GetAudioDeviceName = define_c_func(sdl2,"SDL_GetAudioDeviceName",{C_INT,C_INT},C_POINTER),
-				xSDL_GetAudioDeviceStatus = define_c_func(sdl2,"SDL_GetAudioDeviceStatus",{C_POINTER},C_POINTER),
-				xSDL_GetAudioDriver = define_c_func(sdl2,"SDL_GetAudioDriver",{C_INT},C_POINTER),
-				xSDL_GetAudioStatus = define_c_func(sdl2,"SDL_GetAudioStatus",{},C_POINTER),
-				xSDL_GetCurrentAudioDriver = define_c_func(sdl2,"SDL_GetCurrentAudioDriver",{},C_POINTER),
-				xSDL_GetNumAudioDevices = define_c_func(sdl2,"SDL_GetNumAudioDevices",{C_INT},C_INT),
-				xSDL_GetNumAudioDrivers = define_c_func(sdl2,"SDL_GetNumAudioDrivers",{},C_INT),
-				xSDL_GetQueuedAudioSize = define_c_func(sdl2,"SDL_GetQueuedAudioSize",{C_POINTER},C_UINT),
-				xSDL_LoadWAV = define_c_func(sdl2,"SDL_LoadWAV",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_POINTER),
-				xSDL_LoadWAV_RW = define_c_func(sdl2,"SDL_LoadWAV_RW",{C_POINTER,C_INT,C_POINTER,C_POINTER,C_POINTER},C_POINTER),
-				xSDL_LockAudio = define_c_proc(sdl2,"SDL_LockAudio",{}),
-				xSDL_LockAudioDevice = define_c_proc(sdl2,"SDL_LockAudioDevice",{C_POINTER}),
-				xSDL_MixAudio = define_c_proc(sdl2,"SDL_MixAudio",{C_POINTER,C_POINTER,C_UINT,C_INT}),
-				xSDL_MixAudioFormat = define_c_proc(sdl2,"SDL_MixAudioFormat",{C_POINTER,C_POINTER,C_POINTER,C_UINT,C_INT}),
-				xSDL_OpenAudio = define_c_func(sdl2,"SDL_OpenAudio",{C_POINTER,C_POINTER},C_INT),
-				xSDL_OpenAudioDevice = define_c_func(sdl2,"SDL_OpenAudioDevice",{C_POINTER,C_INT,C_POINTER,C_POINTER,C_INT},C_POINTER),
-				xSDL_PauseAudio = define_c_proc(sdl2,"SDL_PauseAudio",{C_INT}),
-				xSDL_PauseAudioDevice = define_c_proc(sdl2,"SDL_PauseAudioDevice",{C_POINTER,C_INT}),
-				xSDL_QueueAudio = define_c_func(sdl2,"SDL_QueueAudio",{C_POINTER,C_POINTER,C_UINT},C_INT),
-				xSDL_UnlockAudio = define_c_proc(sdl2,"SDL_UnlockAudio",{}),
-				xSDL_UnlockAudioDevice = define_c_proc(sdl2,"SDL_UnlockAudioDevice",{C_POINTER}),
-				xSDL_DequeueAudio = define_c_func(sdl2,"SDL_DequeueAudio",{C_POINTER,C_POINTER,C_UINT},C_UINT)
+public constant xSDL_AudioInit = define_c_func(sdl2,"+SDL_AudioInit",{C_POINTER},C_INT),
+				xSDL_AudioQuit = define_c_proc(sdl2,"+SDL_AudioQuit",{}),
+				xSDL_BuildAudioCVT = define_c_func(sdl2,"+SDL_BuildAudioCVT",{C_POINTER,C_POINTER,C_UINT,C_INT,C_POINTER,C_UINT,C_INT},C_INT),
+				xSDL_ClearQueuedAudio = define_c_proc(sdl2,"+SDL_ClearQueuedAudio",{C_POINTER}),
+				xSDL_CloseAudio = define_c_proc(sdl2,"+SDL_CloseAudio",{}),
+				xSDL_CloseAudioDevice = define_c_proc(sdl2,"+SDL_CloseAudioDevice",{C_POINTER}),
+				xSDL_ConvertAudio = define_c_func(sdl2,"+SDL_ConvertAudio",{C_POINTER},C_INT),
+				xSDL_FreeWAV = define_c_proc(sdl2,"+SDL_FreeWAV",{C_POINTER}),
+				xSDL_GetAudioDeviceName = define_c_func(sdl2,"+SDL_GetAudioDeviceName",{C_INT,C_INT},C_POINTER),
+				xSDL_GetAudioDeviceStatus = define_c_func(sdl2,"+SDL_GetAudioDeviceStatus",{C_POINTER},C_POINTER),
+				xSDL_GetAudioDriver = define_c_func(sdl2,"+SDL_GetAudioDriver",{C_INT},C_POINTER),
+				xSDL_GetAudioStatus = define_c_func(sdl2,"+SDL_GetAudioStatus",{},C_POINTER),
+				xSDL_GetCurrentAudioDriver = define_c_func(sdl2,"+SDL_GetCurrentAudioDriver",{},C_POINTER),
+				xSDL_GetNumAudioDevices = define_c_func(sdl2,"+SDL_GetNumAudioDevices",{C_INT},C_INT),
+				xSDL_GetNumAudioDrivers = define_c_func(sdl2,"+SDL_GetNumAudioDrivers",{},C_INT),
+				xSDL_GetQueuedAudioSize = define_c_func(sdl2,"+SDL_GetQueuedAudioSize",{C_POINTER},C_UINT),
+				xSDL_LoadWAV = define_c_func(sdl2,"+SDL_LoadWAV",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_POINTER),
+				xSDL_LoadWAV_RW = define_c_func(sdl2,"+SDL_LoadWAV_RW",{C_POINTER,C_INT,C_POINTER,C_POINTER,C_POINTER},C_POINTER),
+				xSDL_LockAudio = define_c_proc(sdl2,"+SDL_LockAudio",{}),
+				xSDL_LockAudioDevice = define_c_proc(sdl2,"+SDL_LockAudioDevice",{C_POINTER}),
+				xSDL_MixAudio = define_c_proc(sdl2,"+SDL_MixAudio",{C_POINTER,C_POINTER,C_UINT,C_INT}),
+				xSDL_MixAudioFormat = define_c_proc(sdl2,"+SDL_MixAudioFormat",{C_POINTER,C_POINTER,C_POINTER,C_UINT,C_INT}),
+				xSDL_OpenAudio = define_c_func(sdl2,"+SDL_OpenAudio",{C_POINTER,C_POINTER},C_INT),
+				xSDL_OpenAudioDevice = define_c_func(sdl2,"+SDL_OpenAudioDevice",{C_POINTER,C_INT,C_POINTER,C_POINTER,C_INT},C_POINTER),
+				xSDL_PauseAudio = define_c_proc(sdl2,"+SDL_PauseAudio",{C_INT}),
+				xSDL_PauseAudioDevice = define_c_proc(sdl2,"+SDL_PauseAudioDevice",{C_POINTER,C_INT}),
+				xSDL_QueueAudio = define_c_func(sdl2,"+SDL_QueueAudio",{C_POINTER,C_POINTER,C_UINT},C_INT),
+				xSDL_UnlockAudio = define_c_proc(sdl2,"+SDL_UnlockAudio",{}),
+				xSDL_UnlockAudioDevice = define_c_proc(sdl2,"+SDL_UnlockAudioDevice",{C_POINTER}),
+				xSDL_DequeueAudio = define_c_func(sdl2,"+SDL_DequeueAudio",{C_POINTER,C_POINTER,C_UINT},C_UINT)
 				
 public function SDL_AudioInit(sequence name)
 
@@ -3467,13 +3467,13 @@ end function
 
 --SDL Audio Stream Functions
 
-public constant xSDL_NewAudioStream = define_c_func(sdl2,"SDL_NewAudioStream",{C_POINTER,C_UINT,C_INT,C_POINTER,C_UINT,C_POINTER,C_INT},C_POINTER),
-				xSDL_AudioStreamPut = define_c_func(sdl2,"SDL_AudioStreamPut",{C_POINTER,C_POINTER,C_INT},C_INT),
-				xSDL_AudioStreamGet = define_c_func(sdl2,"SDL_AudioStreamGet",{C_POINTER,C_POINTER,C_INT},C_INT),
-				xSDL_AudioStreamAvailable = define_c_func(sdl2,"SDL_AudioStreamAvailable",{C_POINTER},C_INT),
-				xSDL_AudioStreamFlush = define_c_func(sdl2,"SDL_AudioStreamFlush",{C_POINTER},C_INT),
-				xSDL_AudioStreamClear = define_c_proc(sdl2,"SDL_AudioStreamClear",{C_POINTER}),
-				xSDL_FreeAudioStream = define_c_proc(sdl2,"SDL_FreeAudioStream",{C_POINTER})
+public constant xSDL_NewAudioStream = define_c_func(sdl2,"+SDL_NewAudioStream",{C_POINTER,C_UINT,C_INT,C_POINTER,C_UINT,C_POINTER,C_INT},C_POINTER),
+				xSDL_AudioStreamPut = define_c_func(sdl2,"+SDL_AudioStreamPut",{C_POINTER,C_POINTER,C_INT},C_INT),
+				xSDL_AudioStreamGet = define_c_func(sdl2,"+SDL_AudioStreamGet",{C_POINTER,C_POINTER,C_INT},C_INT),
+				xSDL_AudioStreamAvailable = define_c_func(sdl2,"+SDL_AudioStreamAvailable",{C_POINTER},C_INT),
+				xSDL_AudioStreamFlush = define_c_func(sdl2,"+SDL_AudioStreamFlush",{C_POINTER},C_INT),
+				xSDL_AudioStreamClear = define_c_proc(sdl2,"+SDL_AudioStreamClear",{C_POINTER}),
+				xSDL_FreeAudioStream = define_c_proc(sdl2,"+SDL_FreeAudioStream",{C_POINTER})
 				
 public function SDL_NewAudioStream(atom src_format,atom src_channels,integer src_rate,atom dst_format,atom dst_channels,integer dst_rate)
 
@@ -3519,11 +3519,11 @@ end procedure
 
 --SDL Memory Functions
 
-public constant xSDL_GetMemoryFunctions = define_c_proc(sdl2,"SDL_GetMemoryFunctions",{C_POINTER,C_POINTER,C_POINTER,C_POINTER}),
-				xSDL_SetMemoryFunctions = define_c_func(sdl2,"SDL_SetMemoryFunctions",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
-				xSDL_GetNumAllocations = define_c_func(sdl2,"SDL_GetNumAllocations",{},C_INT),
-				xSDL_getenv = define_c_func(sdl2,"SDL_getenv",{C_POINTER},C_POINTER),
-				xSDL_setenv = define_c_func(sdl2,"SDL_setenv",{C_POINTER,C_POINTER,C_INT},C_INT)
+public constant xSDL_GetMemoryFunctions = define_c_proc(sdl2,"+SDL_GetMemoryFunctions",{C_POINTER,C_POINTER,C_POINTER,C_POINTER}),
+				xSDL_SetMemoryFunctions = define_c_func(sdl2,"+SDL_SetMemoryFunctions",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xSDL_GetNumAllocations = define_c_func(sdl2,"+SDL_GetNumAllocations",{},C_INT),
+				xSDL_getenv = define_c_func(sdl2,"+SDL_getenv",{C_POINTER},C_POINTER),
+				xSDL_setenv = define_c_func(sdl2,"+SDL_setenv",{C_POINTER,C_POINTER,C_INT},C_INT)
 				
 public procedure SDL_GetMemoryFunctions(atom x,atom x2,atom x3,atom x4)
 
@@ -3560,16 +3560,16 @@ end function
 
 --SDL Thread Functions
 
-public constant xSDL_CreateThread = define_c_func(sdl2,"SDL_CreateThread",{C_POINTER,C_POINTER,C_POINTER},C_POINTER),
-				xSDL_DetachThread = define_c_proc(sdl2,"SDL_DetachThread",{C_POINTER}),
-				xSDL_GetThreadID = define_c_func(sdl2,"SDL_GetThreadID",{C_POINTER},C_POINTER),
-				xSDL_GetThreadName = define_c_func(sdl2,"SDL_GetThreadName",{C_POINTER},C_POINTER),
-				xSDL_SetThreadPriority = define_c_func(sdl2,"SDL_SetThreadPriority",{C_POINTER},C_INT),
-				xSDL_TLSCreate = define_c_func(sdl2,"SDL_TLSCreate",{},C_POINTER),
-				xSDL_TLSGet = define_c_proc(sdl2,"SDL_TLSGet",{C_POINTER}),
-				xSDL_TLSSet = define_c_func(sdl2,"SDL_TLSSet",{C_POINTER,C_POINTER,C_POINTER},C_INT),
-				xSDL_ThreadID = define_c_func(sdl2,"SDL_ThreadID",{},C_POINTER),
-				xSDL_WaitThread = define_c_proc(sdl2,"SDL_WaitThread",{C_POINTER,C_POINTER})
+public constant xSDL_CreateThread = define_c_func(sdl2,"+SDL_CreateThread",{C_POINTER,C_POINTER,C_POINTER},C_POINTER),
+				xSDL_DetachThread = define_c_proc(sdl2,"+SDL_DetachThread",{C_POINTER}),
+				xSDL_GetThreadID = define_c_func(sdl2,"+SDL_GetThreadID",{C_POINTER},C_POINTER),
+				xSDL_GetThreadName = define_c_func(sdl2,"+SDL_GetThreadName",{C_POINTER},C_POINTER),
+				xSDL_SetThreadPriority = define_c_func(sdl2,"+SDL_SetThreadPriority",{C_POINTER},C_INT),
+				xSDL_TLSCreate = define_c_func(sdl2,"+SDL_TLSCreate",{},C_POINTER),
+				xSDL_TLSGet = define_c_proc(sdl2,"+SDL_TLSGet",{C_POINTER}),
+				xSDL_TLSSet = define_c_func(sdl2,"+SDL_TLSSet",{C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xSDL_ThreadID = define_c_func(sdl2,"+SDL_ThreadID",{},C_POINTER),
+				xSDL_WaitThread = define_c_proc(sdl2,"+SDL_WaitThread",{C_POINTER,C_POINTER})
 				
 public function SDL_CreateThread(atom fn,sequence name,atom dat)
 
@@ -3636,24 +3636,24 @@ end procedure
 
 --SDL Mutex Functions
 
-public constant xSDL_CondBroadcast = define_c_func(sdl2,"SDL_CondBroadcast",{C_POINTER},C_INT),
-				xSDL_CondSignal = define_c_func(sdl2,"SDL_CondSignal",{C_POINTER},C_INT),
-				xSDL_CondWait = define_c_func(sdl2,"SDL_CondWait",{C_POINTER,C_POINTER},C_INT),
-				xSDL_CondWaitTimeout = define_c_func(sdl2,"SDL_CondWaitTimeout",{C_POINTER,C_POINTER,C_UINT},C_INT),
-				xSDL_CreateCond = define_c_func(sdl2,"SDL_CreateCond",{},C_POINTER),
-				xSDL_CreateMutex = define_c_func(sdl2,"SDL_CreateMutex",{},C_POINTER),
-				xSDL_CreateSemaphore = define_c_func(sdl2,"SDL_CreateSemaphore",{C_UINT},C_POINTER),
-				xSDL_DestroyCond = define_c_proc(sdl2,"SDL_DestroyCond",{C_POINTER}),
-				xSDL_DestroyMutex = define_c_proc(sdl2,"SDL_DestroyMutex",{C_POINTER}),
-				xSDL_DestroySemaphore = define_c_proc(sdl2,"SDL_DestroySemaphore",{C_POINTER}),
-				xSDL_LockMutex = define_c_func(sdl2,"SDL_LockMutex",{C_POINTER},C_INT),
-				xSDL_SemPost = define_c_func(sdl2,"SDL_SemPost",{C_POINTER},C_INT),
-				xSDL_SemTryWait = define_c_func(sdl2,"SDL_SemTryWait",{C_POINTER},C_INT),
-				xSDL_SemValue = define_c_func(sdl2,"SDL_SemValue",{C_POINTER},C_UINT),
-				xSDL_SemWait = define_c_func(sdl2,"SDL_SemWait",{C_POINTER},C_INT),
-				xSDL_SemWaitTimeout = define_c_func(sdl2,"SDL_SemWaitTimeout",{C_POINTER,C_UINT},C_INT),
-				xSDL_TryLockMutex = define_c_func(sdl2,"SDL_TryLockMutex",{C_POINTER},C_INT),
-				xSDL_UnlockMutex = define_c_func(sdl2,"SDL_UnlockMutex",{C_POINTER},C_INT)
+public constant xSDL_CondBroadcast = define_c_func(sdl2,"+SDL_CondBroadcast",{C_POINTER},C_INT),
+				xSDL_CondSignal = define_c_func(sdl2,"+SDL_CondSignal",{C_POINTER},C_INT),
+				xSDL_CondWait = define_c_func(sdl2,"+SDL_CondWait",{C_POINTER,C_POINTER},C_INT),
+				xSDL_CondWaitTimeout = define_c_func(sdl2,"+SDL_CondWaitTimeout",{C_POINTER,C_POINTER,C_UINT},C_INT),
+				xSDL_CreateCond = define_c_func(sdl2,"+SDL_CreateCond",{},C_POINTER),
+				xSDL_CreateMutex = define_c_func(sdl2,"+SDL_CreateMutex",{},C_POINTER),
+				xSDL_CreateSemaphore = define_c_func(sdl2,"+SDL_CreateSemaphore",{C_UINT},C_POINTER),
+				xSDL_DestroyCond = define_c_proc(sdl2,"+SDL_DestroyCond",{C_POINTER}),
+				xSDL_DestroyMutex = define_c_proc(sdl2,"+SDL_DestroyMutex",{C_POINTER}),
+				xSDL_DestroySemaphore = define_c_proc(sdl2,"+SDL_DestroySemaphore",{C_POINTER}),
+				xSDL_LockMutex = define_c_func(sdl2,"+SDL_LockMutex",{C_POINTER},C_INT),
+				xSDL_SemPost = define_c_func(sdl2,"+SDL_SemPost",{C_POINTER},C_INT),
+				xSDL_SemTryWait = define_c_func(sdl2,"+SDL_SemTryWait",{C_POINTER},C_INT),
+				xSDL_SemValue = define_c_func(sdl2,"+SDL_SemValue",{C_POINTER},C_UINT),
+				xSDL_SemWait = define_c_func(sdl2,"+SDL_SemWait",{C_POINTER},C_INT),
+				xSDL_SemWaitTimeout = define_c_func(sdl2,"+SDL_SemWaitTimeout",{C_POINTER,C_UINT},C_INT),
+				xSDL_TryLockMutex = define_c_func(sdl2,"+SDL_TryLockMutex",{C_POINTER},C_INT),
+				xSDL_UnlockMutex = define_c_func(sdl2,"+SDL_UnlockMutex",{C_POINTER},C_INT)
 				
 public function SDL_CondBroadcast(atom cond)
 
@@ -3765,19 +3765,19 @@ end function
 
 --SDL Atomic Functions
 
-public constant xSDL_AtomicAdd = define_c_func(sdl2,"SDL_AtomicAdd",{C_POINTER,C_INT},C_INT),
-				xSDL_AtomicCAS = define_c_func(sdl2,"SDL_AtomicCAS",{C_POINTER,C_INT,C_INT},C_BOOL),
-				xSDL_AtomicCASPtr = define_c_func(sdl2,"SDL_AtomicCASPtr",{C_POINTER,C_POINTER,C_POINTER},C_BOOL),
-				xSDL_AtomicDecRef = define_c_func(sdl2,"SDL_AtomicDecRef",{C_POINTER},C_BOOL),
-				xSDL_AtomicGet = define_c_func(sdl2,"SDL_AtomicGet",{C_POINTER},C_INT),
-				xSDL_AtomicGetPtr = define_c_proc(sdl2,"SDL_AtomicGetPtr",{C_POINTER}),
-				xSDL_AtomicIncRef = define_c_proc(sdl2,"SDL_AtomicIncRef",{C_POINTER}),
-				xSDL_AtomicLock = define_c_proc(sdl2,"SDL_AtomicLock",{C_POINTER}),
-				xSDL_AtomicSet = define_c_func(sdl2,"SDL_AtomicSet",{C_POINTER,C_INT},C_INT),
-				xSDL_AtomicSetPtr = define_c_proc(sdl2,"SDL_AtomicSetPtr",{C_POINTER,C_POINTER}),
-				xSDL_AtomicTryLock = define_c_func(sdl2,"SDL_AtomicTryLock",{C_POINTER},C_BOOL),
-				xSDL_AtomicUnlock = define_c_proc(sdl2,"SDL_AtomicUnlock",{C_POINTER}),
-				xSDL_CompilerBarrier = define_c_proc(sdl2,"SDL_CompilerBarrier",{})
+public constant xSDL_AtomicAdd = define_c_func(sdl2,"+SDL_AtomicAdd",{C_POINTER,C_INT},C_INT),
+				xSDL_AtomicCAS = define_c_func(sdl2,"+SDL_AtomicCAS",{C_POINTER,C_INT,C_INT},C_BOOL),
+				xSDL_AtomicCASPtr = define_c_func(sdl2,"+SDL_AtomicCASPtr",{C_POINTER,C_POINTER,C_POINTER},C_BOOL),
+				xSDL_AtomicDecRef = define_c_func(sdl2,"+SDL_AtomicDecRef",{C_POINTER},C_BOOL),
+				xSDL_AtomicGet = define_c_func(sdl2,"+SDL_AtomicGet",{C_POINTER},C_INT),
+				xSDL_AtomicGetPtr = define_c_proc(sdl2,"+SDL_AtomicGetPtr",{C_POINTER}),
+				xSDL_AtomicIncRef = define_c_proc(sdl2,"+SDL_AtomicIncRef",{C_POINTER}),
+				xSDL_AtomicLock = define_c_proc(sdl2,"+SDL_AtomicLock",{C_POINTER}),
+				xSDL_AtomicSet = define_c_func(sdl2,"+SDL_AtomicSet",{C_POINTER,C_INT},C_INT),
+				xSDL_AtomicSetPtr = define_c_proc(sdl2,"+SDL_AtomicSetPtr",{C_POINTER,C_POINTER}),
+				xSDL_AtomicTryLock = define_c_func(sdl2,"+SDL_AtomicTryLock",{C_POINTER},C_BOOL),
+				xSDL_AtomicUnlock = define_c_proc(sdl2,"+SDL_AtomicUnlock",{C_POINTER}),
+				xSDL_CompilerBarrier = define_c_proc(sdl2,"+SDL_CompilerBarrier",{})
 				
 public function SDL_AtomicAdd(atom a,integer v)
 
@@ -3859,13 +3859,13 @@ end procedure
 
 --SDL Timer Functions
 
-public constant xSDL_AddTimer = define_c_func(sdl2,"SDL_AddTimer",{C_UINT,C_POINTER,C_POINTER},C_POINTER),
-				xSDL_Delay = define_c_proc(sdl2,"SDL_Delay",{C_UINT}),
-				xSDL_GetPerformanceCounter = define_c_func(sdl2,"SDL_GetPerformanceCounter",{},C_UINT),
-				xSDL_GetPerformanceFrequency = define_c_func(sdl2,"SDL_GetPerformanceFrequency",{},C_UINT),
-				xSDL_GetTicks = define_c_func(sdl2,"SDL_GetTicks",{},C_UINT),
-				xSDL_RemoveTimer = define_c_func(sdl2,"SDL_RemoveTimer",{C_POINTER},C_BOOL),
-				xSDL_TICKS_PASSED = define_c_proc(sdl2,"SDL_TICKS_PASSED",{C_POINTER,C_POINTER})
+public constant xSDL_AddTimer = define_c_func(sdl2,"+SDL_AddTimer",{C_UINT,C_POINTER,C_POINTER},C_POINTER),
+				xSDL_Delay = define_c_proc(sdl2,"+SDL_Delay",{C_UINT}),
+				xSDL_GetPerformanceCounter = define_c_func(sdl2,"+SDL_GetPerformanceCounter",{},C_UINT),
+				xSDL_GetPerformanceFrequency = define_c_func(sdl2,"+SDL_GetPerformanceFrequency",{},C_UINT),
+				xSDL_GetTicks = define_c_func(sdl2,"+SDL_GetTicks",{},C_UINT),
+				xSDL_RemoveTimer = define_c_func(sdl2,"+SDL_RemoveTimer",{C_POINTER},C_BOOL),
+				xSDL_TICKS_PASSED = define_c_proc(sdl2,"+SDL_TICKS_PASSED",{C_POINTER,C_POINTER})
 				
 public function SDL_AddTimer(atom its,atom cb,sequence par)
 
@@ -3911,9 +3911,9 @@ end procedure
 
 --SDL Shared Object Functions
 
-public constant xSDL_LoadFunction = define_c_proc(sdl2,"SDL_LoadFunction",{C_POINTER,C_POINTER}),
-				xSDL_LoadObject = define_c_proc(sdl2,"SDL_LoadObject",{C_POINTER}),
-				xSDL_UnloadObject = define_c_proc(sdl2,"SDL_UnloadObject",{C_POINTER})
+public constant xSDL_LoadFunction = define_c_proc(sdl2,"+SDL_LoadFunction",{C_POINTER,C_POINTER}),
+				xSDL_LoadObject = define_c_proc(sdl2,"+SDL_LoadObject",{C_POINTER}),
+				xSDL_UnloadObject = define_c_proc(sdl2,"+SDL_UnloadObject",{C_POINTER})
 				
 public procedure SDL_LoadFunction(atom handle,sequence name)
 
@@ -3937,7 +3937,7 @@ end procedure
 
 --SDL Platform Functions
 
-public constant xSDL_GetPlatform = define_c_func(sdl2,"SDL_GetPlatform",{},C_POINTER)
+public constant xSDL_GetPlatform = define_c_func(sdl2,"+SDL_GetPlatform",{},C_POINTER)
 
 public function SDL_GetPlatform()
 
@@ -3947,23 +3947,23 @@ end function
 
 --SDL CPU Functions
 
-public constant xSDL_GetCPUCacheLineSize = define_c_func(sdl2,"SDL_GetCPUCacheLineSize",{},C_INT),
-				xSDL_GetCPUCount = define_c_func(sdl2,"SDL_GetCPUCount",{},C_INT),
-				xSDL_GetSystemRAM = define_c_func(sdl2,"SDL_GetSystemRAM",{},C_INT),
-				xSDL_Has3DNow = define_c_func(sdl2,"SDL_Has3DNow",{},C_BOOL),
-				xSDL_HasAVX = define_c_func(sdl2,"SDL_HasAVX",{},C_BOOL),
-				xSDL_HasAVX2 = define_c_func(sdl2,"SDL_HasAVX2",{},C_BOOL),
-				xSDL_HasAltiVec = define_c_func(sdl2,"SDL_HasAltiVec",{},C_BOOL),
-				xSDL_HasMMX = define_c_func(sdl2,"SDL_HasMMX",{},C_BOOL),
-				xSDL_HasRDTSC = define_c_func(sdl2,"SDL_HasRDTSC",{},C_BOOL),
-				xSDL_HasSSE = define_c_func(sdl2,"SDL_HasSSE",{},C_BOOL),
-				xSDL_HasSSE2 = define_c_func(sdl2,"SDL_HasSSE2",{},C_BOOL),
-				xSDL_HasSSE3 = define_c_func(sdl2,"SDL_HasSSE3",{},C_BOOL),
-				xSDL_HasSSE41 = define_c_func(sdl2,"SDL_HasSSE41",{},C_BOOL),
-				xSDL_HasSSE42 = define_c_func(sdl2,"SDL_HasSSE42",{},C_BOOL),
-				xSDL_HasNEON = define_c_func(sdl2,"SDL_HasNEON",{},C_BOOL),
-				xSDL_HasAVX512F = define_c_func(sdl2,"SDL_HasAVX512F",{},C_BOOL),
-				xSDL_IsTablet = define_c_func(sdl2,"SDL_IsTablet",{},C_BOOL)
+public constant xSDL_GetCPUCacheLineSize = define_c_func(sdl2,"+SDL_GetCPUCacheLineSize",{},C_INT),
+				xSDL_GetCPUCount = define_c_func(sdl2,"+SDL_GetCPUCount",{},C_INT),
+				xSDL_GetSystemRAM = define_c_func(sdl2,"+SDL_GetSystemRAM",{},C_INT),
+				xSDL_Has3DNow = define_c_func(sdl2,"+SDL_Has3DNow",{},C_BOOL),
+				xSDL_HasAVX = define_c_func(sdl2,"+SDL_HasAVX",{},C_BOOL),
+				xSDL_HasAVX2 = define_c_func(sdl2,"+SDL_HasAVX2",{},C_BOOL),
+				xSDL_HasAltiVec = define_c_func(sdl2,"+SDL_HasAltiVec",{},C_BOOL),
+				xSDL_HasMMX = define_c_func(sdl2,"+SDL_HasMMX",{},C_BOOL),
+				xSDL_HasRDTSC = define_c_func(sdl2,"+SDL_HasRDTSC",{},C_BOOL),
+				xSDL_HasSSE = define_c_func(sdl2,"+SDL_HasSSE",{},C_BOOL),
+				xSDL_HasSSE2 = define_c_func(sdl2,"+SDL_HasSSE2",{},C_BOOL),
+				xSDL_HasSSE3 = define_c_func(sdl2,"+SDL_HasSSE3",{},C_BOOL),
+				xSDL_HasSSE41 = define_c_func(sdl2,"+SDL_HasSSE41",{},C_BOOL),
+				xSDL_HasSSE42 = define_c_func(sdl2,"+SDL_HasSSE42",{},C_BOOL),
+				xSDL_HasNEON = define_c_func(sdl2,"+SDL_HasNEON",{},C_BOOL),
+				xSDL_HasAVX512F = define_c_func(sdl2,"+SDL_HasAVX512F",{},C_BOOL),
+				xSDL_IsTablet = define_c_func(sdl2,"+SDL_IsTablet",{},C_BOOL)
 				
 public function SDL_GetCPUCacheLineSize()
 
@@ -4069,18 +4069,18 @@ end function
 
 --SDL Endian Functions
 
-public constant xSDL_Swap16 = define_c_func(sdl2,"SDL_Swap16",{C_UINT},C_UINT),
-				xSDL_Swap32 = define_c_func(sdl2,"SDL_Swap32",{C_UINT},C_UINT),
-				xSDL_Swap64 = define_c_func(sdl2,"SDL_Swap64",{C_UINT},C_UINT),
-				xSDL_SwapBE16 = define_c_func(sdl2,"SDL_SwapBE16",{C_UINT},C_UINT),
-				xSDL_SwapBE32 = define_c_func(sdl2,"SDL_SwapBE32",{C_UINT},C_UINT),
-				xSDL_SwapBE64 = define_c_func(sdl2,"SDL_SwapBE64",{C_UINT},C_UINT),
-				xSDL_SwapFloat = define_c_func(sdl2,"SDL_SwapFloat",{C_FLOAT},C_FLOAT),
-				xSDL_SwapFloatBE = define_c_func(sdl2,"SDL_SwapFloatBE",{C_FLOAT},C_FLOAT),
-				xSDL_SwapFloatLE = define_c_func(sdl2,"SDL_SwapFloatLE",{C_FLOAT},C_FLOAT),
-				xSDL_SwapLE16 = define_c_func(sdl2,"SDL_SwapLE16",{C_UINT},C_UINT),
-				xSDL_SwapLE32 = define_c_func(sdl2,"SDL_SwapLE32",{C_UINT},C_UINT),
-				xSDL_SwapLE64 = define_c_func(sdl2,"SDL_SwapLE64",{C_UINT},C_UINT)
+public constant xSDL_Swap16 = define_c_func(sdl2,"+SDL_Swap16",{C_UINT},C_UINT),
+				xSDL_Swap32 = define_c_func(sdl2,"+SDL_Swap32",{C_UINT},C_UINT),
+				xSDL_Swap64 = define_c_func(sdl2,"+SDL_Swap64",{C_UINT},C_UINT),
+				xSDL_SwapBE16 = define_c_func(sdl2,"+SDL_SwapBE16",{C_UINT},C_UINT),
+				xSDL_SwapBE32 = define_c_func(sdl2,"+SDL_SwapBE32",{C_UINT},C_UINT),
+				xSDL_SwapBE64 = define_c_func(sdl2,"+SDL_SwapBE64",{C_UINT},C_UINT),
+				xSDL_SwapFloat = define_c_func(sdl2,"+SDL_SwapFloat",{C_FLOAT},C_FLOAT),
+				xSDL_SwapFloatBE = define_c_func(sdl2,"+SDL_SwapFloatBE",{C_FLOAT},C_FLOAT),
+				xSDL_SwapFloatLE = define_c_func(sdl2,"+SDL_SwapFloatLE",{C_FLOAT},C_FLOAT),
+				xSDL_SwapLE16 = define_c_func(sdl2,"+SDL_SwapLE16",{C_UINT},C_UINT),
+				xSDL_SwapLE32 = define_c_func(sdl2,"+SDL_SwapLE32",{C_UINT},C_UINT),
+				xSDL_SwapLE64 = define_c_func(sdl2,"+SDL_SwapLE64",{C_UINT},C_UINT)
 				
 public function SDL_Swap16(atom x)
 
@@ -4156,7 +4156,7 @@ end function
 
 --SDL Bit Manipulation Functions
 
-public constant xSDL_MostSignificantBitIndex32 = define_c_func(sdl2,"SDL_MostSignificantBitIndex32",{C_UINT},C_INT)
+public constant xSDL_MostSignificantBitIndex32 = define_c_func(sdl2,"+SDL_MostSignificantBitIndex32",{C_UINT},C_INT)
 
 public function SDL_MostSignificantBitIndex32(atom x)
 
@@ -4166,7 +4166,7 @@ end function
 
 --SDL Power Functions
 
-public constant xSDL_GetPowerInfo = define_c_func(sdl2,"SDL_GetPowerInfo",{C_POINTER,C_POINTER},C_POINTER)
+public constant xSDL_GetPowerInfo = define_c_func(sdl2,"+SDL_GetPowerInfo",{C_POINTER,C_POINTER},C_POINTER)
 
 public function SDL_GetPowerInfo(atom secs,atom pct)
 
@@ -4176,18 +4176,18 @@ end function
 
 --SDL System/Platform Functions
 
-public constant xSDL_AndroidGetActivity = define_c_proc(sdl2,"SDL_AndroidGetActivity",{}),
-				xSDL_AndroidGetExternalStoragePath = define_c_func(sdl2,"SDL_AndroidGetExternalStoragePath",{},C_POINTER),
-				xSDL_AndroidGetExternalStorageState = define_c_func(sdl2,"SDL_AndroidGetExternalStorageState",{},C_INT),
-				xSDL_AndroidGetInternalStoragePath = define_c_func(sdl2,"SDL_AndroidGetInternalStoragePath",{},C_POINTER),
-				xSDL_AndroidGetJNIEnv = define_c_proc(sdl2,"SDL_AndroidGetJNIEnv",{}),
-				xSDL_DXGIGetOutputInfo = define_c_func(sdl2,"SDL_DXGIGetOutputInfo",{C_INT,C_POINTER,C_POINTER},C_BOOL),
-				xSDL_Direct3D9GetAdapterIndex = define_c_func(sdl2,"SDL_Direct3D9GetAdapterIndex",{C_INT},C_INT),
-				xSDL_RenderGetD3D9Device = define_c_func(sdl2,"SDL_RenderGetD3D9Device",{C_POINTER},C_POINTER),
-				xSDL_SetWindowsMessageHook = define_c_proc(sdl2,"SDL_SetWindowsMessageHook",{C_POINTER,C_POINTER}),
-				xSDL_WinRTGetFSPathUNICODE = define_c_func(sdl2,"SDL_WinRTGetFSPathUNICODE",{C_POINTER},C_POINTER),
-				xSDL_WinRTGetFSPathUTF8 = define_c_func(sdl2,"SDL_WinRTGetFSPathUTF8",{C_POINTER},C_POINTER),
-				xSDL_WinRTGetDeviceFamily = define_c_func(sdl2,"SDL_WinRTGetDeviceFamily",{},C_POINTER)
+public constant xSDL_AndroidGetActivity = define_c_proc(sdl2,"+SDL_AndroidGetActivity",{}),
+				xSDL_AndroidGetExternalStoragePath = define_c_func(sdl2,"+SDL_AndroidGetExternalStoragePath",{},C_POINTER),
+				xSDL_AndroidGetExternalStorageState = define_c_func(sdl2,"+SDL_AndroidGetExternalStorageState",{},C_INT),
+				xSDL_AndroidGetInternalStoragePath = define_c_func(sdl2,"+SDL_AndroidGetInternalStoragePath",{},C_POINTER),
+				xSDL_AndroidGetJNIEnv = define_c_proc(sdl2,"+SDL_AndroidGetJNIEnv",{}),
+				xSDL_DXGIGetOutputInfo = define_c_func(sdl2,"+SDL_DXGIGetOutputInfo",{C_INT,C_POINTER,C_POINTER},C_BOOL),
+				xSDL_Direct3D9GetAdapterIndex = define_c_func(sdl2,"+SDL_Direct3D9GetAdapterIndex",{C_INT},C_INT),
+				xSDL_RenderGetD3D9Device = define_c_func(sdl2,"+SDL_RenderGetD3D9Device",{C_POINTER},C_POINTER),
+				xSDL_SetWindowsMessageHook = define_c_proc(sdl2,"+SDL_SetWindowsMessageHook",{C_POINTER,C_POINTER}),
+				xSDL_WinRTGetFSPathUNICODE = define_c_func(sdl2,"+SDL_WinRTGetFSPathUNICODE",{C_POINTER},C_POINTER),
+				xSDL_WinRTGetFSPathUTF8 = define_c_func(sdl2,"+SDL_WinRTGetFSPathUTF8",{C_POINTER},C_POINTER),
+				xSDL_WinRTGetDeviceFamily = define_c_func(sdl2,"+SDL_WinRTGetDeviceFamily",{},C_POINTER)
 				
 public procedure SDL_AndroidGetActivity()
 
@@ -4263,32 +4263,32 @@ end function
 
 --SDL Additional Functions
 
-public constant xSDL_acos = define_c_func(sdl2,"SDL_acos",{C_DOUBLE},C_DOUBLE),
-				xSDL_asin = define_c_func(sdl2,"SDL_asin",{C_DOUBLE},C_DOUBLE),
-				xSDL_atan = define_c_func(sdl2,"SDL_atan",{C_DOUBLE},C_DOUBLE),
-				xSDL_atan2 = define_c_func(sdl2,"SDL_atan2",{C_DOUBLE,C_DOUBLE},C_DOUBLE),
-				xSDL_ceil = define_c_func(sdl2,"SDL_ceil",{C_DOUBLE},C_DOUBLE),
-				xSDL_copysign = define_c_func(sdl2,"SDL_copysign",{C_DOUBLE,C_DOUBLE},C_DOUBLE),
-				xSDL_cos = define_c_func(sdl2,"SDL_cos",{C_DOUBLE},C_DOUBLE),
-				xSDL_cosf = define_c_func(sdl2,"SDL_cosf",{C_FLOAT},C_FLOAT),
-				xSDL_fabs = define_c_func(sdl2,"SDL_fabs",{C_DOUBLE},C_DOUBLE),
-				xSDL_floor = define_c_func(sdl2,"SDL_floor",{C_DOUBLE},C_DOUBLE),
-				xSDL_log = define_c_func(sdl2,"SDL_log",{C_DOUBLE},C_DOUBLE),
-				xSDL_pow = define_c_func(sdl2,"SDL_pow",{C_DOUBLE,C_DOUBLE},C_DOUBLE),
-				xSDL_scalbn = define_c_func(sdl2,"SDL_scalbn",{C_DOUBLE,C_INT},C_DOUBLE),
-				xSDL_sin = define_c_func(sdl2,"SDL_sin",{C_DOUBLE},C_DOUBLE),
-				xSDL_sinf = define_c_func(sdl2,"SDL_sinf",{C_FLOAT},C_FLOAT),
-				xSDL_sqrt = define_c_func(sdl2,"SDL_sqrt",{C_DOUBLE},C_DOUBLE),
-				xSDL_sqrtf = define_c_func(sdl2,"SDL_sqrtf",{C_FLOAT},C_FLOAT),
-				xSDL_tan = define_c_func(sdl2,"SDL_tan",{C_DOUBLE},C_DOUBLE),
-				xSDL_tanf = define_c_func(sdl2,"SDL_tanf",{C_FLOAT},C_FLOAT),
-				xSDL_abs = define_c_func(sdl2,"SDL_abs",{C_INT},C_INT),
-				xSDL_isdigit = define_c_func(sdl2,"SDL_isdigit",{C_INT},C_INT),
-				xSDL_isspace = define_c_func(sdl2,"SDL_isspace",{C_INT},C_INT),
-				xSDL_toupper = define_c_func(sdl2,"SDL_toupper",{C_INT},C_INT),
-				xSDL_tolower = define_c_func(sdl2,"SDL_tolower",{C_INT},C_INT),
-				xSDL_fmod = define_c_func(sdl2,"SDL_fmod",{C_DOUBLE,C_DOUBLE},C_DOUBLE),
-				xSDL_fmodf = define_c_func(sdl2,"SDL_fmodf",{C_FLOAT,C_FLOAT},C_FLOAT)
+public constant xSDL_acos = define_c_func(sdl2,"+SDL_acos",{C_DOUBLE},C_DOUBLE),
+				xSDL_asin = define_c_func(sdl2,"+SDL_asin",{C_DOUBLE},C_DOUBLE),
+				xSDL_atan = define_c_func(sdl2,"+SDL_atan",{C_DOUBLE},C_DOUBLE),
+				xSDL_atan2 = define_c_func(sdl2,"+SDL_atan2",{C_DOUBLE,C_DOUBLE},C_DOUBLE),
+				xSDL_ceil = define_c_func(sdl2,"+SDL_ceil",{C_DOUBLE},C_DOUBLE),
+				xSDL_copysign = define_c_func(sdl2,"+SDL_copysign",{C_DOUBLE,C_DOUBLE},C_DOUBLE),
+				xSDL_cos = define_c_func(sdl2,"+SDL_cos",{C_DOUBLE},C_DOUBLE),
+				xSDL_cosf = define_c_func(sdl2,"+SDL_cosf",{C_FLOAT},C_FLOAT),
+				xSDL_fabs = define_c_func(sdl2,"+SDL_fabs",{C_DOUBLE},C_DOUBLE),
+				xSDL_floor = define_c_func(sdl2,"+SDL_floor",{C_DOUBLE},C_DOUBLE),
+				xSDL_log = define_c_func(sdl2,"+SDL_log",{C_DOUBLE},C_DOUBLE),
+				xSDL_pow = define_c_func(sdl2,"+SDL_pow",{C_DOUBLE,C_DOUBLE},C_DOUBLE),
+				xSDL_scalbn = define_c_func(sdl2,"+SDL_scalbn",{C_DOUBLE,C_INT},C_DOUBLE),
+				xSDL_sin = define_c_func(sdl2,"+SDL_sin",{C_DOUBLE},C_DOUBLE),
+				xSDL_sinf = define_c_func(sdl2,"+SDL_sinf",{C_FLOAT},C_FLOAT),
+				xSDL_sqrt = define_c_func(sdl2,"+SDL_sqrt",{C_DOUBLE},C_DOUBLE),
+				xSDL_sqrtf = define_c_func(sdl2,"+SDL_sqrtf",{C_FLOAT},C_FLOAT),
+				xSDL_tan = define_c_func(sdl2,"+SDL_tan",{C_DOUBLE},C_DOUBLE),
+				xSDL_tanf = define_c_func(sdl2,"+SDL_tanf",{C_FLOAT},C_FLOAT),
+				xSDL_abs = define_c_func(sdl2,"+SDL_abs",{C_INT},C_INT),
+				xSDL_isdigit = define_c_func(sdl2,"+SDL_isdigit",{C_INT},C_INT),
+				xSDL_isspace = define_c_func(sdl2,"+SDL_isspace",{C_INT},C_INT),
+				xSDL_toupper = define_c_func(sdl2,"+SDL_toupper",{C_INT},C_INT),
+				xSDL_tolower = define_c_func(sdl2,"+SDL_tolower",{C_INT},C_INT),
+				xSDL_fmod = define_c_func(sdl2,"+SDL_fmod",{C_DOUBLE,C_DOUBLE},C_DOUBLE),
+				xSDL_fmodf = define_c_func(sdl2,"+SDL_fmodf",{C_FLOAT,C_FLOAT},C_FLOAT)
 				
 public function SDL_acos(atom x)
 
@@ -4448,12 +4448,12 @@ end function
 
 --Vulkan SDL2 Functions
 
-public constant xSDL_Vulkan_LoadLibrary = define_c_func(sdl2,"SDL_Vulkan_LoadLibrary",{C_POINTER},C_INT),
-				xSDL_Vulkan_GetVkGetInstanceProcAddr = define_c_proc(sdl2,"SDL_Vulkan_GetVkGetInstanceProcAddr",{}),
-				xSDL_Vulkan_UnloadLibrary = define_c_proc(sdl2,"SDL_Vulkan_UnloadLibrary",{}),
-				xSDL_Vulkan_GetInstanceExtensions = define_c_func(sdl2,"SDL_Vulkan_GetInstanceExtensions",{C_POINTER,C_POINTER,C_POINTER},C_BOOL),
-				xSDL_Vulkan_CreateSurface = define_c_func(sdl2,"SDL_Vulkan_CreateSurface",{C_POINTER,C_POINTER,C_POINTER},C_BOOL),
-				xSDL_Vulkan_GetDrawableSize = define_c_proc(sdl2,"SDL_Vulkan_GetDrawableSize",{C_POINTER,C_POINTER,C_POINTER})
+public constant xSDL_Vulkan_LoadLibrary = define_c_func(sdl2,"+SDL_Vulkan_LoadLibrary",{C_POINTER},C_INT),
+				xSDL_Vulkan_GetVkGetInstanceProcAddr = define_c_proc(sdl2,"+SDL_Vulkan_GetVkGetInstanceProcAddr",{}),
+				xSDL_Vulkan_UnloadLibrary = define_c_proc(sdl2,"+SDL_Vulkan_UnloadLibrary",{}),
+				xSDL_Vulkan_GetInstanceExtensions = define_c_func(sdl2,"+SDL_Vulkan_GetInstanceExtensions",{C_POINTER,C_POINTER,C_POINTER},C_BOOL),
+				xSDL_Vulkan_CreateSurface = define_c_func(sdl2,"+SDL_Vulkan_CreateSurface",{C_POINTER,C_POINTER,C_POINTER},C_BOOL),
+				xSDL_Vulkan_GetDrawableSize = define_c_proc(sdl2,"+SDL_Vulkan_GetDrawableSize",{C_POINTER,C_POINTER,C_POINTER})
 				
 public function SDL_Vulkan_LoadLibrary(sequence path)
 
@@ -4499,7 +4499,7 @@ end procedure
 
 --CustomBlendMode
 
-public constant xSDL_ComposeCustomBlendMode = define_c_func(sdl2,"SDL_ComposeCustomBlendMode",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_POINTER)
+public constant xSDL_ComposeCustomBlendMode = define_c_func(sdl2,"+SDL_ComposeCustomBlendMode",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_POINTER)
 
 public function SDL_ComposeCustomBlendMode(SDL_BLENDFACTOR srcColorFactor,SDL_BLENDFACTOR dstColorFactor,SDL_BLENDOPERATION colorOperation,SDL_BLENDFACTOR srcAlphaFactor,SDL_BLENDFACTOR dstAlphaFactor,SDL_BLENDOPERATION alphaOperation)
 
@@ -4509,20 +4509,20 @@ end function
 
 --SDL Sensor
 
-public constant xSDL_NumSensors = define_c_func(sdl2,"SDL_NumSensors",{},C_INT),
-				xSDL_SensorGetDeviceName = define_c_func(sdl2,"SDL_SensorGetDeviceName",{C_INT},C_POINTER),
-				xSDL_SensorGetDeviceType = define_c_func(sdl2,"SDL_SensorGetDeviceType",{C_INT},C_POINTER),
-				xSDL_SensorGetDeviceNonPortableType = define_c_func(sdl2,"SDL_SensorGetDeviceNonPortableType",{C_INT},C_INT),
-				xSDL_SensorGetDeviceInstanceID = define_c_func(sdl2,"SDL_SensorGetDeviceInstanceID",{C_INT},C_POINTER),
-				xSDL_SensorOpen = define_c_func(sdl2,"SDL_SensorOpen",{C_INT},C_POINTER),
-				xSDL_SensorFromInstanceID = define_c_func(sdl2,"SDL_SensorFromInstanceID",{C_POINTER},C_POINTER),
-				xSDL_SensorGetName = define_c_func(sdl2,"SDL_SensorGetName",{C_POINTER},C_POINTER),
-				xSDL_SensorGetType = define_c_func(sdl2,"SDL_SensorGetType",{C_POINTER},C_POINTER),
-				xSDL_SensorGetNonPortableType = define_c_func(sdl2,"SDL_SensorGetNonPortableType",{C_POINTER},C_INT),
-				xSDL_SensorGetInstanceID = define_c_func(sdl2,"SDL_SensorGetInstanceID",{C_POINTER},C_POINTER),
-				xSDL_SensorGetData = define_c_func(sdl2,"SDL_SensorGetData",{C_POINTER,C_POINTER,C_FLOAT},C_INT),
-				xSDL_SensorClose = define_c_proc(sdl2,"SDL_SensorClose",{C_POINTER}),
-				xSDL_SensorUpdate = define_c_proc(sdl2,"SDL_SensorUpdate",{})
+public constant xSDL_NumSensors = define_c_func(sdl2,"+SDL_NumSensors",{},C_INT),
+				xSDL_SensorGetDeviceName = define_c_func(sdl2,"+SDL_SensorGetDeviceName",{C_INT},C_POINTER),
+				xSDL_SensorGetDeviceType = define_c_func(sdl2,"+SDL_SensorGetDeviceType",{C_INT},C_POINTER),
+				xSDL_SensorGetDeviceNonPortableType = define_c_func(sdl2,"+SDL_SensorGetDeviceNonPortableType",{C_INT},C_INT),
+				xSDL_SensorGetDeviceInstanceID = define_c_func(sdl2,"+SDL_SensorGetDeviceInstanceID",{C_INT},C_POINTER),
+				xSDL_SensorOpen = define_c_func(sdl2,"+SDL_SensorOpen",{C_INT},C_POINTER),
+				xSDL_SensorFromInstanceID = define_c_func(sdl2,"+SDL_SensorFromInstanceID",{C_POINTER},C_POINTER),
+				xSDL_SensorGetName = define_c_func(sdl2,"+SDL_SensorGetName",{C_POINTER},C_POINTER),
+				xSDL_SensorGetType = define_c_func(sdl2,"+SDL_SensorGetType",{C_POINTER},C_POINTER),
+				xSDL_SensorGetNonPortableType = define_c_func(sdl2,"+SDL_SensorGetNonPortableType",{C_POINTER},C_INT),
+				xSDL_SensorGetInstanceID = define_c_func(sdl2,"+SDL_SensorGetInstanceID",{C_POINTER},C_POINTER),
+				xSDL_SensorGetData = define_c_func(sdl2,"+SDL_SensorGetData",{C_POINTER,C_POINTER,C_FLOAT},C_INT),
+				xSDL_SensorClose = define_c_proc(sdl2,"+SDL_SensorClose",{C_POINTER}),
+				xSDL_SensorUpdate = define_c_proc(sdl2,"+SDL_SensorUpdate",{})
 				
 public function SDL_NumSensors()
 
@@ -4601,4 +4601,4 @@ public procedure SDL_SensorUpdate()
  c_proc(xSDL_SensorUpdate,{})
 	
 end procedure
-­3020.48
+­4534.0
