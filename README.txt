@@ -19,7 +19,7 @@ per uses the 32 bit version of SDL2 as to provide for more compatibility between
 
 Updates:
 
-This wrapper has been updated for SDL 2.0.8 and has included new functions. 
+This wrapper has been updated for SDL 2.0.9 and has included new functions. 
 9/27/17 - Fixed a couple of functions, all demos now working.
 10/24/17 - Added new functions for 2.0.7
 3-1-18 - Added new functions for 2.0.8
