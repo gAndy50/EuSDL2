@@ -1,4 +1,4 @@
-#TITLE
+###TITLE
 ```
 Title: EuSDL2 - Wrapper of SDL2 for Euphoria Programming Language
 Written by: Andy P.
@@ -12,7 +12,7 @@ Date Finished: 1/12/16
 Contact/Paypal: g_andy <at> live.com
 ```
 
-#About
+###About
 ```
 This is a wrapper of the SDL2 multimedia library for the Euphoria programming language. All major and
 minor functions have been wrapped. You'll need a good understanding of the Euphoria programming lang-
@@ -21,7 +21,7 @@ per uses the 32 bit version of SDL2 as to provide for more compatibility between
 32-bit version of Euphoria 4.0.5 was used to also provide better compatbility between systems. 
 ```
 
-#Updates
+###Updates
 ```
 This wrapper has been updated for SDL 2.0.9 and has included new functions. 
 9/27/17 - Fixed a couple of functions, all demos now working.
@@ -34,7 +34,7 @@ Note: All demos written by author of EuSDL2 unless otherwise noted.
 Donations are kindly accepted if you find this software useful or would like to support the developer.
 ```
 
-#License
+###License
 ```
 This software is provided as-is. There is no warranty for this software. You may not blame the author
 or Euphoria community for any wrong-doing using this software. You use this software at your own risk.
