@@ -1,10 +1,10 @@
 -------------------------------------
---EuSDL2		           --	
+--EuSDL2						   --	
 --Wrapper of SDL2 for Euphoria     --
---Author: Andy Patterson           --
---SDL Version Wrapped: 2.0.8	   --
+--Author: Andy Patterson		   --
+--SDL Version Wrapped: 2.0.10	   --
 --Euphoria Version: 4.1.0 Beta 2   --
---Date Started: 1/2/16		   --
+--Date Started: 1/2/16			   --
 --Date Finished: 1/12/16           --
 -------------------------------------
 
@@ -1079,7 +1079,8 @@ public constant xSDL_CreateRenderer = define_c_func(sdl2,"+SDL_CreateRenderer",{
 				xSDL_UnlockTexture = define_c_proc(sdl2,"+SDL_UnlockTexture",{C_POINTER}),
 				xSDL_UpdateTexture = define_c_func(sdl2,"+SDL_UpdateTexture",{C_POINTER,C_POINTER,C_POINTER,C_INT},C_INT),
 				xSDL_UpdateYUVTexture = define_c_func(sdl2,"+SDL_UpdateYUVTexture",{C_POINTER,C_POINTER,C_POINTER,C_INT,C_POINTER,C_INT,C_POINTER,C_INT},C_INT),
-				xSDL_RenderSetIntegerScale = define_c_func(sdl2,"+SDL_RenderSetIntegerScale",{C_POINTER,C_BOOL},C_INT)
+				xSDL_RenderSetIntegerScale = define_c_func(sdl2,"+SDL_RenderSetIntegerScale",{C_POINTER,C_BOOL},C_INT),
+				xSDL_RenderFlush = define_c_func(sdl2,"+SDL_RenderFlush",{C_POINTER},C_INT)
 				
 public function SDL_CreateRenderer(atom win,integer idx,SDL_RENDERERFLAGS flags)
 
@@ -1408,6 +1409,85 @@ end function
 public function SDL_RenderSetIntegerScale(atom ren,integer enable)
 
  return c_func(xSDL_RenderSetIntegerScale,{ren,enable})
+	
+end function
+
+public function SDL_RenderFlush(atom ren)
+
+ return c_func(xSDL_RenderFlush,{ren})
+	
+end function
+
+--SDL Render Functions F(Float 2.0.10)
+
+public constant xSDL_RenderDrawPointF = define_c_func(sdl2,"+SDL_RenderDrawPointF",{C_POINTER,C_FLOAT,C_FLOAT},C_INT),
+				xSDL_RenderDrawPointsF = define_c_func(sdl2,"+SDL_RenderDrawPointsF",{C_POINTER,C_POINTER,C_INT},C_INT),
+				xSDL_RenderDrawLineF = define_c_func(sdl2,"+SDL_RenderDrawLineF",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT},C_INT),
+				xSDL_RenderDrawLinesF = define_c_func(sdl2,"+SDL_RenderDrawLinesF",{C_POINTER,C_POINTER,C_INT},C_INT),
+				xSDL_RenderDrawRectF = define_c_func(sdl2,"+SDL_RenderDrawRectF",{C_POINTER,C_POINTER},C_INT),
+				xSDL_RenderDrawRectsF = define_c_func(sdl2,"+SDL_RenderDrawRectsF",{C_POINTER,C_POINTER,C_INT},C_INT),
+				xSDL_RenderFillRectF = define_c_func(sdl2,"+SDL_RenderFillRectF",{C_POINTER,C_POINTER},C_INT),
+				xSDL_RenderFillRectsF = define_c_func(sdl2,"+SDL_RenderFillRectsF",{C_POINTER,C_POINTER,C_INT},C_INT),
+				xSDL_RenderCopyF = define_c_func(sdl2,"+SDL_RenderCopyF",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xSDL_RenderCopyExF = define_c_func(sdl2,"+SDL_RenderCopyExF",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_DOUBLE,C_POINTER,C_UINT},C_INT)
+				
+public function SDL_RenderDrawPointF(atom ren,atom pts,atom count)
+
+ return c_func(xSDL_RenderDrawPointF,{ren,pts,count})
+	
+end function
+
+public function SDL_RenderDrawPointsF(atom ren,atom pts,atom count)
+
+ return c_func(xSDL_RenderDrawPointsF,{ren,pts,count})
+	
+end function
+
+public function SDL_RenderDrawLineF(atom ren,atom x,atom y,atom x2,atom y2)
+
+ return c_func(xSDL_RenderDrawLineF,{ren,x,y,x2,y2})
+	
+end function
+
+public function SDL_RenderDrawLinesF(atom ren,atom pts,atom count)
+
+ return c_func(xSDL_RenderDrawLinesF,{ren,pts,count})
+	
+end function
+
+public function SDL_RenderDrawRectF(atom ren,atom rect)
+
+ return c_func(xSDL_RenderDrawRectF,{ren,rect})
+	
+end function
+
+public function SDL_RenderDrawRectsF(atom ren,atom rects,atom count)
+
+ return c_func(xSDL_RenderDrawRectsF,{ren,rects,count})
+	
+end function
+
+public function SDL_RenderFillRectF(atom ren,atom rect)
+
+ return c_func(xSDL_RenderFillRectF,{ren,rect})
+	
+end function
+
+public function SDL_RenderFillRectsF(atom ren,atom rect,atom count)
+
+ return c_func(xSDL_RenderFillRectsF,{ren,rect,count})
+	
+end function
+
+public function SDL_RenderCopyF(atom ren,atom tex,atom src,atom dst)
+
+ return c_func(xSDL_RenderCopyF,{ren,tex,src,dst})
+	
+end function
+
+public function SDL_RenderCopyExF(atom ren,atom tex,atom src,atom dst,atom angle,atom cen,atom flip)
+
+ return c_func(xSDL_RenderCopyExF,{ren,tex,src,dst,angle,cen,flip})
 	
 end function
 
@@ -2127,7 +2207,8 @@ public constant xSDL_AddEventWatch = define_c_proc(sdl2,"+SDL_AddEventWatch",{C_
 				xSDL_SaveDollarTemplate = define_c_func(sdl2,"+SDL_SaveDollarTemplate",{C_POINTER,C_POINTER},C_INT),
 				xSDL_SetEventFilter = define_c_proc(sdl2,"+SDL_SetEventFilter",{C_POINTER,C_POINTER}),
 				xSDL_WaitEvent = define_c_func(sdl2,"+SDL_WaitEvent",{C_POINTER},C_INT),
-				xSDL_WaitEventTimeout = define_c_func(sdl2,"+SDL_WaitEventTimeout",{C_POINTER,C_INT},C_INT)
+				xSDL_WaitEventTimeout = define_c_func(sdl2,"+SDL_WaitEventTimeout",{C_POINTER,C_INT},C_INT),
+				xSDL_GetTouchDeviceType = define_c_func(sdl2,"+SDL_GetTouchDeviceType",{C_POINTER},C_POINTER)
 				
 public procedure SDL_AddEventWatch(atom filter,atom dat)
 
@@ -2288,6 +2369,12 @@ end function
 public function SDL_WaitEventTimeout(atom evt,integer xtime)
 
  return c_func(xSDL_WaitEventTimeout,{evt,xtime})
+	
+end function
+
+public function SDL_GetTouchDeviceType(atom id)
+
+ return c_func(xSDL_GetTouchDeviceType,{id})
 	
 end function
 
@@ -4067,6 +4154,30 @@ public function SDL_IsTablet()
 	
 end function
 
+--SDL CPU Functions New(SDL 2.0.10)
+
+public constant xSDL_SIMDGetAlignment = define_c_func(sdl2,"SDL_SIMDGetAlignment",{},C_SIZE_T),
+				xSDL_SIMDAlloc = define_c_func(sdl2,"SDL_SIMDAlloc",{C_SIZE_T},C_POINTER),
+				xSDL_SIMDFree = define_c_proc(sdl2,"SDL_SIMDFree",{C_POINTER})
+				
+public function SDL_SIMDGetAlignment()
+
+ return c_func(xSDL_SIMDGetAlignment,{})
+	
+end function
+
+public function SDL_SIMDAlloc(atom len)
+
+ return c_func(xSDL_SIMDAlloc,{len})
+	
+end function
+
+public procedure SDL_SIMDFree(atom ptr)
+
+ c_proc(xSDL_SIMDFree,{ptr})
+	
+end procedure
+
 --SDL Endian Functions
 
 public constant xSDL_Swap16 = define_c_func(sdl2,"+SDL_Swap16",{C_UINT},C_UINT),
@@ -4601,4 +4712,4 @@ public procedure SDL_SensorUpdate()
  c_proc(xSDL_SensorUpdate,{})
 	
 end procedure
-Â­4534.0
+­1432.46
