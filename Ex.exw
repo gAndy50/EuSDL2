@@ -1,0 +1,85 @@
+without warning
+
+include std/machine.e
+
+include EuSDL2.ew
+include EuSDLTTF.ew
+
+include flags.e
+
+atom x = SDL_Init(SDL_INIT_VIDEO)
+
+atom win = SDL_CreateWindow("Font Example",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,640,480,SDL_WINDOW_SHOWN)
+atom ren = SDL_CreateRenderer(win,-1,SDL_RENDERER_ACCELERATED)
+
+atom running = 1
+atom key = 0
+
+
+atom f = TTF_Init()
+
+if f = 1 then
+	puts(1,"Failed to init TTF!\n")
+	abort(0)
+end if
+
+f = TTF_OpenFont("arial.ttf",20) 
+
+procedure calc_rect(atom rect,integer sx,integer sy,integer tx,integer ty)
+
+	poke4(rect,sx)
+	poke4(rect+4,sy)
+	poke4(rect+8,tx)
+	poke4(rect+12,ty)
+	
+end procedure
+
+atom h = TTF_RenderText_Solid(f,"Hello World",255,255,0,0)
+atom ht = SDL_CreateTextureFromSurface(ren,h)
+
+function renderTexture(atom tex,atom ren,atom x,atom y)
+
+ atom r = allocate(16)
+ poke4(r,{x,y,0,0})
+ SDL_QueryTexture(tex,0,0,r+8,r+12)
+ return r
+	
+end function
+
+atom r = renderTexture(ht,ren,0,0)
+atom w = peek4u(r+8)
+atom ih = peek4u(r+12)
+atom ix = floor((640 / 2) - (w/2))
+atom y = floor((480 / 2) - (ih/2))
+poke4(r,{ix,y})
+
+while running = 1 do
+	
+	SDL_PumpEvents()
+	
+	key = SDL_GetKeyboardState(key)
+	
+	if peek(key+SDL_SCANCODE_ESCAPE) > 0 then
+		running = 0
+	end if
+	
+	SDL_RenderClear(ren)
+	
+	SDL_RenderCopy(ren,ht,0,r)
+	
+	SDL_RenderPresent(ren)
+
+end while
+
+SDL_DestroyRenderer(ren)
+SDL_DestroyWindow(win)
+
+TTF_CloseFont(f)
+
+SDL_DestroyTexture(ht)
+SDL_FreeSurface(h)
+
+TTF_Quit()
+
+SDL_Quit()
+­80.18

@@ -1,0 +1,446 @@
+----------------------------------------
+--EuSDLTTF							  --
+--Written by Andy P. (Icy_Viking)	  --
+--Euphoria Ver: 4.1.0 Beta 2		  --
+--SDL2 TTF Ver: 2.0.15				  --
+--Icy Viking Games					  --
+--Contact/Paypal g_andy <at> live.com --
+----------------------------------------
+without warning
+
+include std/machine.e
+include std/dll.e
+include std/os.e
+
+atom ttf
+
+ifdef WINDOWS then
+	ttf = open_dll("SDL2_ttf.dll")
+	elsifdef LINUX or FREEBSD then
+	ttf = open_dll("SDL2_ttf.so")
+end ifdef
+
+if ttf = -1 then
+	puts(1,"Failed to open SDL_ttf!\n")
+	abort(0)
+end if
+
+--Flags
+
+public constant SDL_TTF_MAJOR_VERSION = 2,
+				SDL_TTF_MINOR_VERSION = 0,
+				SDL_TTF_PATCHLEVEL = 15
+				
+public constant UNICODE_BOM_NATIVE = 65279,
+				UNICODE_BOM_SWAPPED = 65534
+				
+public constant TTF_STYLE_NORMAL = 0,
+				TTF_STYLE_BOLD = 1,
+				TTF_STYLE_ITALIC = 2,
+				TTF_STYLE_UNDERLINE = 4,
+				TTF_STYLE_STRIKETHROUGH = 8
+				
+public constant TTF_HINTING_NORMAL = 0,
+				TTF_HINTING_LIGHT = 1,
+				TTF_HINTING_MONO = 2,
+				TTF_HINTING_NONE = 3
+				
+public constant TTF_SetError = "SDL_SetError",
+				TTF_GetError = "SDL_GetError"
+				
+--Functions
+
+include flags.e -- from EuSDL2
+include EuSDL2.ew
+
+public constant xTTF_Linked_Version = define_c_func(ttf,"+TTF_Linked_Version",{},C_POINTER)
+
+public function TTF_Linked_Version()
+
+ return c_func(xTTF_Linked_Version,{})
+	
+end function
+
+public constant xTTF_ByteSwappedUNICODE = define_c_proc(ttf,"+TTF_ByteSwappedUNICODE",{C_INT})
+
+public procedure TTF_ByteSwappedUNICODE(atom swapped)
+
+ c_proc(xTTF_ByteSwappedUNICODE,{swapped})
+	
+end procedure
+
+public constant xTTF_Init = define_c_func(ttf,"+TTF_Init",{},C_INT)
+
+public function TTF_Init()
+
+ return c_func(xTTF_Init,{})
+	
+end function
+
+public constant xTTF_OpenFont = define_c_func(ttf,"+TTF_OpenFont",{C_POINTER,C_INT},C_POINTER),
+				xTTF_OpenFontIndex = define_c_func(ttf,"+TTF_OpenFontIndex",{C_POINTER,C_INT,C_LONG},C_POINTER),
+				xTTF_OpenFontRW = define_c_func(ttf,"+TTF_OpenFontRW",{C_POINTER,C_INT,C_INT},C_POINTER),
+				xTTF_OpenFontIndexRW = define_c_func(ttf,"+TTF_OpenFontIndexRW",{C_POINTER,C_INT,C_INT,C_LONG},C_POINTER)
+				
+public function TTF_OpenFontRW(atom src,atom xfree,atom size,atom idx)
+
+ return c_func(xTTF_OpenFontRW,{src,xfree,size,idx})
+	
+end function
+
+public function TTF_OpenFontIndexRW(atom src,atom xfree,atom size,atom idx)
+
+ return c_func(xTTF_OpenFontIndexRW,{src,xfree,size,idx})
+	
+end function
+				
+public function TTF_OpenFont(sequence file,integer size)
+
+ atom str = allocate_string(file,1)
+ 
+ return c_func(xTTF_OpenFont,{str,size})
+	
+end function
+
+public function TTF_OpenFontIndex(sequence file,atom size,atom idx)
+
+ atom str = allocate_string(file,1)
+ 
+ return TTF_OpenFontIndexRW(SDL_RWFromFile(str,"rb"),1,10,1)
+	
+end function
+
+public constant xTTF_GetFontStyle = define_c_func(ttf,"+TTF_GetFontStyle",{C_POINTER},C_INT),
+				xTTF_SetFontStyle = define_c_proc(ttf,"+TTF_SetFontStyle",{C_POINTER,C_INT}),
+				xTTF_GetFontOutline = define_c_func(ttf,"+TTF_GetFontOutline",{C_POINTER},C_INT),
+				xTTF_SetFontOutline = define_c_proc(ttf,"+TTF_SetFontOutline",{C_POINTER,C_INT})
+				
+public function TTF_GetFontStyle(atom font)
+
+ return c_func(xTTF_GetFontStyle,{font})
+	
+end function
+
+public procedure TTF_SetFontStyle(atom font,atom style)
+
+ c_proc(xTTF_SetFontStyle,{font,style})
+	
+end procedure
+
+public function TTF_GetFontOutline(atom font)
+
+ return c_func(xTTF_GetFontOutline,{font})
+	
+end function
+
+public procedure TTF_SetFontOutline(atom font,atom outline)
+
+ c_proc(xTTF_SetFontOutline,{font,outline})
+	
+end procedure
+
+public constant xTTF_GetFontHinting = define_c_func(ttf,"+TTF_GetFontHinting",{C_POINTER},C_INT),
+				xTTF_SetFontHinting = define_c_proc(ttf,"+TTF_SetFontHinting",{C_POINTER,C_INT})
+				
+public function TTF_GetFontHinting(atom font)
+
+ return c_func(xTTF_GetFontHinting,{font})
+	
+end function
+
+public procedure TTF_SetFontHinting(atom font,atom hint)
+
+ c_proc(xTTF_SetFontHinting,{font,hint})
+	
+end procedure
+
+public constant xTTF_FontHeight = define_c_func(ttf,"+TTF_FontHeight",{C_POINTER},C_INT)
+
+public function TTF_FontHeight(atom font)
+
+ return c_func(xTTF_FontHeight,{font})
+	
+end function
+
+public constant xTTF_FontDescent = define_c_func(ttf,"+TTF_FontDescent",{C_POINTER},C_INT)
+
+public function TTF_FontDescent(atom font)
+
+ return c_func(xTTF_FontDescent,{font})
+	
+end function
+
+public constant xTTF_FontLineSkip = define_c_func(ttf,"+TTF_FontLineSkip",{C_POINTER},C_INT)
+
+public function TTF_FontLineSkip(atom font)
+
+ return c_func(xTTF_FontLineSkip,{font})
+	
+end function
+
+public constant xTTF_GetFontKerning = define_c_func(ttf,"+TTF_GetFontKerning",{C_POINTER},C_INT),
+				xTTF_SetFontKerning = define_c_proc(ttf,"+TTF_SetFontKerning",{C_POINTER,C_INT})
+				
+public function TTF_GetFontKerning(atom font)
+
+ return c_func(xTTF_GetFontKerning,{font})
+	
+end function
+
+public procedure TTF_SetFontKerning(atom font,atom allow)
+
+ c_proc(xTTF_SetFontKerning,{font,allow})
+	
+end procedure
+
+public constant xTTF_FontFaces = define_c_func(ttf,"+TTF_FontFaces",{C_POINTER},C_LONG)
+
+public function TTF_FontFaces(atom font)
+
+ return c_func(xTTF_FontFaces,{font})
+	
+end function
+
+public constant xTTF_FontFaceIsFixedWidth = define_c_func(ttf,"+TTF_FontFaceIsFixedWidth",{C_POINTER},C_INT),
+				xTTF_FontFaceFamilyName = define_c_func(ttf,"+TTF_FontFaceFamilyName",{C_POINTER},C_POINTER),
+				xTTF_FontFaceStyleName = define_c_func(ttf,"+TTF_FontFaceStyleName",{C_POINTER},C_POINTER)
+				
+public function TTF_FontFaceIsFixedWidth(atom font)
+
+ return c_func(xTTF_FontFaceIsFixedWidth,{font})
+	
+end function
+
+public function TTF_FontFaceFamilyName(atom font)
+
+ return c_func(xTTF_FontFaceFamilyName,{font})
+	
+end function
+
+public function TTF_FontFaceStyleName(atom font)
+
+ return c_func(xTTF_FontFaceStyleName,{font})
+	
+end function
+
+public constant xTTF_GlyphIsProvided = define_c_func(ttf,"+TTF_GlyphIsProvided",{C_POINTER,C_UINT},C_INT)
+
+public function TTF_GlyphIsProvided(atom font,atom ch)
+
+ return c_func(xTTF_GlyphIsProvided,{font,ch})
+	
+end function
+
+public constant xTTF_GlyphMetrics = define_c_func(ttf,"+TTF_GlyphMetrics",{C_POINTER,C_UINT,C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT)
+
+public function TTF_GlyphMetrics(atom font,atom ch,atom x,atom mx,atom y,atom my,atom adv)
+
+ return c_func(xTTF_GlyphMetrics,{font,ch,x,mx,y,my,adv})
+	
+end function
+
+public constant xTTF_SizeText = define_c_func(ttf,"+TTF_SizeText",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xTTF_SizeUTF8 = define_c_func(ttf,"+TTF_SizeUTF8",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xTTF_SizeUNICODE = define_c_func(ttf,"+TTF_SizeUNICODE",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT)
+				
+public function TTF_SizeText(atom font,sequence text,atom w,atom h)
+
+ atom str = allocate_string(text,1)
+ 
+ return c_func(xTTF_SizeText,{font,str,w,h})
+	
+end function
+
+public function TTF_SizeUTF8(atom font,sequence text,atom w,atom h)
+
+ atom str = allocate_string(text,1)
+ 
+ return c_func(xTTF_SizeUTF8,{font,str,w,h})
+	
+end function
+
+public function TTF_SizeUNICODE(atom font,sequence text,atom w,atom h)
+
+ atom str = allocate_string(text,1)
+ 
+ return c_func(xTTF_SizeUNICODE,{font,str,w,h})
+	
+end function
+
+public constant xTTF_RenderText_Solid = define_c_func(ttf,"+TTF_RenderText_Solid",{C_POINTER,C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT},C_POINTER),
+				xTTF_RenderUTF8_Solid = define_c_func(ttf,"+TTF_RenderUTF8_Solid",{C_POINTER,C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT},C_POINTER),
+				xTTF_RenderUNICODE_Solid = define_c_func(ttf,"+TTF_RenderUNICODE_Solid",{C_POINTER,C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT},C_POINTER)
+
+--SDLColor is a struct, so it is declared as 4 separate C_UINT's (r,g,b,u)
+public function TTF_RenderText_Solid(atom font,sequence text,atom r,atom g,atom b,atom u)
+
+ atom str = allocate_string(text,1)
+ 
+ return c_func(xTTF_RenderText_Solid,{font,str,r,g,b,u})
+	
+end function
+
+public function TTF_RenderUTF8_Solid(atom font,sequence text,atom r,atom g,atom b,atom u)
+
+ atom str = allocate_string(text,1)
+ 
+ return c_func(xTTF_RenderUTF8_Solid,{font,str,r,g,b,u})
+	
+end function
+
+public function TTF_RenderUNICODE_Solid(atom font,sequence text,atom r,atom g,atom b,atom u)
+
+ atom str = allocate_string(text,1)
+ 
+ return c_func(xTTF_RenderUNICODE_Solid,{font,str,r,g,b,u})
+	
+end function
+
+public constant xTTF_RenderGlyph_Solid = define_c_func(ttf,"+TTF_RenderGlyph_Solid",{C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT,C_UINT},C_POINTER)
+
+public function TTF_RenderGlyph_Solid(atom font,atom ch,atom r,atom g,atom b,atom u)
+
+ return c_func(xTTF_RenderGlyph_Solid,{font,ch,r,g,b,u})
+	
+end function
+
+public constant xTTF_RenderText_Shaded = define_c_func(ttf,"+TTF_RenderText_Shaded",{C_POINTER,C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT,C_UINT,C_UINT,C_UINT,C_UINT},C_POINTER),
+				xTTF_RenderUTF8_Shaded = define_c_func(ttf,"+TTF_RenderUTF8_Shaded",{C_POINTER,C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT,C_UINT,C_UINT,C_UINT,C_UINT},C_POINTER),
+				xTTF_RenderUNICODE_Shaded = define_c_func(ttf,"+TTF_RenderUNICODE_Shaded",{C_POINTER,C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT,C_UINT,C_UINT,C_UINT,C_UINT},C_POINTER)
+				
+public function TTF_RenderText_Shaded(atom font,sequence text,atom fr,atom fg,atom fb,atom fu,atom br,atom bg,atom bb,atom bu)
+
+ atom str = allocate_string(text,1)
+ 
+ return c_func(xTTF_RenderText_Shaded,{font,str,fr,fg,fb,fu,br,bg,bb,bu})
+	
+end function
+
+public function TTF_RenderUTF8_Shaded(atom font,sequence text,atom fr,atom fg,atom fb,atom fu,atom br,atom bg,atom bb,atom bu)
+
+ atom str = allocate_string(text,1)
+ 
+ return c_func(xTTF_RenderUTF8_Shaded,{font,str,fr,fg,fb,fu,br,bg,bb,bu})
+	
+end function
+
+public function TTF_RenderUNICODE_Shaded(atom font,sequence text,atom fr,atom fg,atom fb,atom fu,atom br,atom bg,atom bb,atom bu)
+
+ atom str = allocate_string(text,1)
+ 
+ return c_func(xTTF_RenderUNICODE_Shaded,{font,str,fr,fg,fb,fu,br,bg,bb,bu})
+	
+end function
+
+public constant xTTF_RenderGlyph_Shaded = define_c_func(ttf,"+TTF_RenderGlyph_Shaded",{C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT,C_UINT,C_UINT,C_UINT,C_UINT,C_UINT},C_POINTER)
+
+public function TTF_RenderGlyph_Shaded(atom font,atom ch,atom fr,atom fg,atom fb,atom fu,atom br,atom bg,atom bb,atom bu)
+
+ return c_func(xTTF_RenderGlyph_Shaded,{font,ch,fr,fg,fb,fu,br,bg,bb,bu})
+	
+end function
+
+public constant xTTF_RenderText_Blended = define_c_func(ttf,"+TTF_RenderText_Blended",{C_POINTER,C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT},C_POINTER),
+				xTTF_RenderUTF8_Blended = define_c_func(ttf,"+TTF_RenderUTF8_Blended",{C_POINTER,C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT},C_POINTER),
+				xTTF_RenderUNICODE_Blended = define_c_func(ttf,"+TTF_RenderUNICODE_Blended",{C_POINTER,C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT},C_POINTER)
+				
+public function TTF_RenderText_Blended(atom font,sequence text,atom r,atom g,atom b,atom u)
+
+ atom str = allocate_string(text,1)
+ 
+ return c_func(xTTF_RenderText_Blended,{font,str,r,g,b,u})
+	
+end function
+
+public function TTF_RenderUTF8_Blended(atom font,sequence text,atom r,atom g,atom b,atom u)
+
+ atom str = allocate_string(text,1)
+ 
+ return c_func(xTTF_RenderUTF8_Blended,{font,str,r,g,b,u})
+	
+end function
+
+public function TTF_RenderUNICODE_Blended(atom font,sequence text,atom r,atom g,atom b,atom u)
+
+ atom str = allocate_string(text,1)
+ 
+ return c_func(xTTF_RenderUNICODE_Blended,{font,str,r,g,b,u})
+	
+end function
+
+public constant xTTF_RenderText_Blended_Wrapped = define_c_func(ttf,"+TTF_RenderText_Blended_Wrapped",{C_POINTER,C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT,C_UINT},C_POINTER),
+				xTTF_RenderUTF8_Blended_Wrapped = define_c_func(ttf,"+TTF_RenderUTF8_Blended_Wrapped",{C_POINTER,C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT,C_UINT},C_POINTER),
+				xTTF_RenderUNICODE_Blended_Wrapped = define_c_func(ttf,"+TTF_RenderUNICODE_Blended_Wrapped",{C_POINTER,C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT,C_UINT},C_POINTER)
+				
+public function TTF_RenderText_Blended_Wrapped(atom font,sequence text,atom r,atom g,atom b,atom u,atom len)
+
+ atom str = allocate_string(text,1)
+ 
+ return c_func(xTTF_RenderText_Blended_Wrapped,{font,str,r,g,b,u,len})
+	
+end function
+
+public function TTF_RenderUTF8_Blended_Wrapped(atom font,sequence text,atom r,atom g,atom b,atom u,atom len)
+
+ atom str = allocate_string(text,1)
+ 
+ return c_func(xTTF_RenderUTF8_Blended_Wrapped,{font,str,r,g,b,u,len})
+	
+end function
+
+public function TTF_RenderUNICODE_Blended_Wrapped(atom font,sequence text,atom r,atom g,atom b,atom u,atom len)
+
+ atom str = allocate_string(text,1)
+ 
+ return c_func(xTTF_RenderUNICODE_Blended_Wrapped,{font,str,r,g,b,u,len})
+	
+end function
+
+public constant xTTF_RenderGlyph_Blended = define_c_func(ttf,"+TTF_RenderGlyph_Blended",{C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT,C_UINT},C_POINTER)
+
+public function TTF_RenderGlyph_Blended(atom font,atom ch,atom r,atom g,atom b,atom u)
+
+ return c_func(xTTF_RenderGlyph_Blended,{font,ch,r,g,b,u})
+	
+end function
+
+public constant xTTF_CloseFont = define_c_proc(ttf,"+TTF_CloseFont",{C_POINTER})
+
+public procedure TTF_CloseFont(atom font)
+
+ c_proc(xTTF_CloseFont,{font})
+	
+end procedure
+
+public constant xTTF_Quit = define_c_proc(ttf,"+TTF_Quit",{})
+
+public procedure TTF_Quit()
+
+ c_proc(xTTF_Quit,{})
+	
+end procedure
+
+public constant xTTF_WasInit = define_c_func(ttf,"+TTF_WasInit",{},C_INT)
+
+public function TTF_WasInit()
+
+ return c_func(xTTF_WasInit,{})
+	
+end function
+
+public constant xTTF_GetFontKerningSize = define_c_func(ttf,"+TTF_GetFontKerningSize",{C_POINTER,C_INT,C_INT},C_INT)
+
+public function TTF_GetFontKerningSize(atom font,atom prev,atom idx)
+
+ return c_func(xTTF_GetFontKerningSize,{font,prev,idx})
+	
+end function
+
+public constant xTTF_GetFontKerningSizeGlyphs = define_c_func(ttf,"+TTF_GetFontKerningSizeGlyphs",{C_POINTER,C_UINT,C_UINT},C_INT)
+
+public function TTF_GetFontKerningSizeGlyphs(atom font,atom prev,atom ch)
+
+ return c_func(xTTF_GetFontKerningSizeGlyphs,{font,prev,ch})
+	
+end function
+­101.1
