@@ -1,4 +1,4 @@
-# Title: EuSDL2 - Wrapper of SDL2 for Euphoria Programming Language
+# EuSDL2 - Wrapper of SDL2 for Euphoria Programming Language
 1. Written by: Andy P.
 2. SDL2 Version Wrapped: 2.0.10
 3. Euphoria Version: 4.1.0 Beta 2
