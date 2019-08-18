@@ -1,7 +1,7 @@
 -------------------------------------
 --EuSDL2						   --	
 --Wrapper of SDL2 for Euphoria     --
---Author: Andy Patterson		   --
+--Author: Andy P.		   		   --
 --SDL Version Wrapped: 2.0.10	   --
 --Euphoria Version: 4.1.0 Beta 2   --
 --Date Started: 1/2/16			   --
@@ -1029,7 +1029,7 @@ public constant xSDL_CreateRenderer = define_c_func(sdl2,"+SDL_CreateRenderer",{
 				xSDL_CreateSoftwareRenderer = define_c_func(sdl2,"+SDL_CreateSoftwareRenderer",{C_POINTER},C_POINTER),
 				xSDL_CreateTexture = define_c_func(sdl2,"+SDL_CreateTexture",{C_POINTER,C_UINT,C_INT,C_INT,C_INT},C_POINTER),
 				xSDL_CreateTextureFromSurface = define_c_func(sdl2,"+SDL_CreateTextureFromSurface",{C_POINTER,C_POINTER},C_POINTER),
-				--xSDL_CreateWindowAndRenderer = define_c_func(sdl2,"SDL_CreateWindowAndRenderer",{C_INT,C_INT,C_UINT,C_POINTER,C_POINTER},C_INT),
+				--xSDL_CreateWindowAndRenderer = define_c_func(sdl2,"+SDL_CreateWindowAndRenderer",{C_INT,C_INT,C_UINT,C_POINTER,C_POINTER},C_INT),
 				xSDL_DestroyRenderer = define_c_proc(sdl2,"+SDL_DestroyRenderer",{C_POINTER}),
 				xSDL_DestroyTexture = define_c_proc(sdl2,"+SDL_DestroyTexture",{C_POINTER}),
 				xSDL_GL_BindTexture = define_c_func(sdl2,"+SDL_GL_BindTexture",{C_POINTER,C_POINTER,C_POINTER},C_INT),
@@ -4712,4 +4712,4 @@ public procedure SDL_SensorUpdate()
  c_proc(xSDL_SensorUpdate,{})
 	
 end procedure
-­1432.46
+­4.27
