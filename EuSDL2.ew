@@ -1909,7 +1909,9 @@ public constant xSDL_BlitScaled = define_c_func(sdl2,"+SDL_BlitScaled",{C_POINTE
 				xSDL_UpperBlitScaled = define_c_func(sdl2,"+SDL_UpperBlitScaled",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
 				xSDL_SetYUVConversionMode = define_c_proc(sdl2,"+SDL_SetYUVConversionMode",{C_POINTER}),
 				xSDL_GetYUVConversionMode = define_c_func(sdl2,"+SDL_GetYUVConversionMode",{},C_POINTER),
-				xSDL_HasColorKey = define_c_func(sdl2,"+SDL_HasColorKey",{C_POINTER},C_BOOL)
+				xSDL_HasColorKey = define_c_func(sdl2,"+SDL_HasColorKey",{C_POINTER},C_BOOL),
+				--xSDL_CreateRGBSurfaceFrom = define_c_func(sdl2,"+SDL_CreateRGBSurfaceFrom",{C_POINTER,C_INT,C_INT,C_INT,C_INT,C_UINT,C_UINT,C_UINT,C_UINT},C_POINTER),
+				xSDL_CreateRGBSurfaceWithFormatFrom = define_c_func(sdl2,"+SDL_CreateRGBSurfaceWithFormatForm",{C_POINTER,C_INT,C_INT,C_INT,C_INT,C_UINT},C_POINTER)
 				
 public function SDL_BlitScaled(atom src,atom srcr,atom dst,atom dstr)
  
@@ -2138,6 +2140,12 @@ end function
 public function SDL_HasColorKey(atom surf)
 
  return c_func(xSDL_HasColorKey,{surf})
+	
+end function
+
+public function SDL_CreateRGBSurfaceWithFormatFrom(atom pix,atom w,atom h,atom d,atom p,atom mat)
+
+ return c_func(xSDL_CreateRGBSurfaceWithFormatFrom,{pix,w,h,d,p,mat})
 	
 end function
 
@@ -4712,4 +4720,4 @@ public procedure SDL_SensorUpdate()
  c_proc(xSDL_SensorUpdate,{})
 	
 end procedure
-­4.27
+­2148.69
