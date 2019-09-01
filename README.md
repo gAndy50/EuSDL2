@@ -7,7 +7,7 @@
 
 (c) EusDL2 2019
 
-Contact/Paypal: g_andy <at> live.com
+Contact/Paypal: g_andy at live.com
 
 # ABOUT:
 
