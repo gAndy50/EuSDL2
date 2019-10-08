@@ -41,7 +41,8 @@ Donations are kindly accepted if you find this software useful or would like to 
 This software is provided as-is. There is no warranty for this software. You may not blame the author
 or Euphoria community for any wrong-doing using this software. You use this software at your own risk.
 You may use this software to write Euphoria programs using the SDL2 wrapper. You may distribute the
-software you make using this wrapper as you please, whether gratis or for a fee.
+software you make using this wrapper as you please, whether gratis or for a fee. You may not claim you wrote the original
+EuSFML2 wrapper. While not required an aknowledgement of the original author would be nice.
 
 Thank you for using EuSDL2!
 
