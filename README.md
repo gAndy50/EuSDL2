@@ -52,3 +52,5 @@ Special thanks to openEuphoria community!
 [SDL](https://www.libsdl.org/)
 
 [Euphoria](https://openeuphoria.org/index.wc)
+
+[Paypal](paypal.me/IcyViking)
