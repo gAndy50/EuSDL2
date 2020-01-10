@@ -16,8 +16,10 @@ include std/math.e
 include std/dll.e
 include std/os.e
 
+--global SDL variable
 atom sdl2
 
+--OS check
 ifdef WIN32 then
   sdl2 = open_dll("SDL2.dll")
  elsifdef LINUX or FREEBSD then
@@ -4720,4 +4722,4 @@ public procedure SDL_SensorUpdate()
  c_proc(xSDL_SensorUpdate,{})
 	
 end procedure
-­2148.69
+­22.10
