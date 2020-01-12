@@ -6,6 +6,9 @@
 --Euphoria Version: 4.1.0 Beta 2   --
 --Date Started: 1/2/16			   --
 --Date Finished: 1/12/16           --
+--Contact: g_andy <at> live.com	   --
+--Paypal: paypal.me/IcyViking      --
+--Patreon: CrazyVikingGamer        --
 -------------------------------------
 
 without warning
@@ -15,6 +18,36 @@ include std/machine.e
 include std/math.e
 include std/dll.e
 include std/os.e
+
+------------------------------------------------------
+--HOW TO READ THIS CODE:							--
+--Most functions are self explantory, however there --
+--may be some things that come off as confusing.    --
+--If you see allocate_string, this is because Eu    --
+--needs to allocate text to memory before it can be --
+--used. A legend for variables is explained below.  --
+--DATE ADDED: 1-11-2020								--
+------------------------------------------------------
+
+----------------------------
+--LEGEND:				  --
+--W = Width				  --
+--H = Height			  --
+--X = X Position		  --
+--Y = Y Position		  --
+--L = Left Position		  --
+--R = Right Position	  --
+--T = Top Position		  --
+--B = Bottom Position	  --
+--Joy = JoyStick		  --
+--Pad = Gamepad			  --
+--Btn = Button			  --
+--R = Red				  --
+--G = Green				  --
+--B = Blue				  --
+--A = Alpha				  --
+--DATE: 1-11-2020		  --
+----------------------------
 
 --global SDL variable
 atom sdl2
@@ -4722,4 +4755,4 @@ public procedure SDL_SensorUpdate()
  c_proc(xSDL_SensorUpdate,{})
 	
 end procedure
-­22.10
+­11.37
