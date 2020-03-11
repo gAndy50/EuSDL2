@@ -2,7 +2,7 @@
 --EuSDL2						   --	
 --Wrapper of SDL2 for Euphoria     --
 --Author: Andy P.		   		   --
---SDL Version Wrapped: 2.0.10	   --
+--SDL Version Wrapped: 2.0.12	   --
 --Euphoria Version: 4.1.0 Beta 2   --
 --Date Started: 1/2/16			   --
 --Date Finished: 1/12/16           --
@@ -1526,6 +1526,23 @@ public function SDL_RenderCopyExF(atom ren,atom tex,atom src,atom dst,atom angle
 	
 end function
 
+--SDL Render/Texture Functions (2.0.12)
+
+public constant xSDL_SetTextureScaleMode = define_c_func(sdl2,"+SDL_SetTextureScaleMode",{C_POINTER,C_UINT},C_INT),
+				xSDL_GetTextureScaleMode = define_c_func(sdl2,"+SDL_GetTextureSCaleMode",{C_POINTER,C_POINTER},C_INT)
+				
+public function SDL_SetTextureScaleMode(atom tex,atom mode)
+
+ return c_func(xSDL_SetTextureScaleMode,{tex,mode})
+	
+end function
+
+public function SDL_GetTextureScaleMode(atom tex,atom mode)
+
+ return c_func(xSDL_GetTextureScaleMode,{tex,mode})
+	
+end function
+
 --SDL Pixel Functions
 
 public constant xSDL_AllocFormat = define_c_func(sdl2,"+SDL_AllocFormat",{C_UINT},C_POINTER),
@@ -2931,6 +2948,23 @@ public function SDL_JoystickRumble(atom joy,atom low,atom high,atom duration)
 	
 end function
 
+--SDL Joystick Functions Ext (2.0.12)
+
+public constant xSDL_JoystickFromPlayerIndex = define_c_func(sdl2,"+SDL_JoystickFromPlayerIndex",{C_INT},C_UINT),
+				xSDL_JoystickSetPlayerIndex = define_c_proc(sdl2,"+SDL_JoystickSetPlayerIndex",{C_POINTER,C_INT})
+				
+public function SDL_JoystickFromPlayerIndex(atom joy)
+
+ return c_func(xSDL_JoystickFromPlayerIndex,{joy})
+	
+end function
+
+public procedure SDL_JoystickSetPlayerIndex(atom joy,atom idx)
+
+ c_proc(xSDL_JoystickSetPlayerIndex,{joy,idx})
+	
+end procedure
+
 --SDL Gamecontroller Functions
 
 public constant xSDL_GameControllerAddMapping = define_c_func(sdl2,"+SDL_GameControllerAddMapping",{C_POINTER},C_INT),
@@ -3162,6 +3196,37 @@ public function SDL_GameControllerMappingForDeviceIndex(atom con)
  return c_func(xSDL_GameControllerMappingForDeviceIndex,{con})
 	
 end function
+
+--SDL Controller Functions Ext (2.0.12)
+
+public constant xSDL_GameControllerTypeForIndex = define_c_func(sdl2,"+SDL_GameControllerTypeForIndex",{C_INT},C_UINT),
+				xSDL_GameControllerGetType = define_c_func(sdl2,"+SDL_GameControllerGetType",{C_POINTER},C_UINT),
+				xSDL_GameControllerFromPlayerIndex = define_c_func(sdl2,"+SDL_GameControllerFromPlayerIndex",{C_INT},C_UINT),
+				xSDL_GameControllerSetPlayerIndex = define_c_proc(sdl2,"+SDL_GameControllerSetPlayerIndex",{C_POINTER,C_INT})
+				
+public function SDL_GameControllerTypeForIndex(atom control)
+
+ return c_func(xSDL_GameControllerTypeForIndex,{control})
+	
+end function
+
+public function SDL_GameControllerGetType(atom control)
+
+ return c_func(xSDL_GameControllerGetType,{control})
+	
+end function
+
+public function SDL_GameControllerFromPlayerIndex(atom control)
+
+ return c_func(xSDL_GameControllerFromPlayerIndex,{control})
+	
+end function
+
+public procedure SDL_GameControllerSetPlayerIndex(atom control,atom index)
+
+ c_proc(xSDL_GameControllerSetPlayerIndex,{control,index})
+	
+end procedure
 
 --SDL Forcefeedback Functions
 
@@ -4093,7 +4158,8 @@ public constant xSDL_GetCPUCacheLineSize = define_c_func(sdl2,"+SDL_GetCPUCacheL
 				xSDL_HasSSE42 = define_c_func(sdl2,"+SDL_HasSSE42",{},C_BOOL),
 				xSDL_HasNEON = define_c_func(sdl2,"+SDL_HasNEON",{},C_BOOL),
 				xSDL_HasAVX512F = define_c_func(sdl2,"+SDL_HasAVX512F",{},C_BOOL),
-				xSDL_IsTablet = define_c_func(sdl2,"+SDL_IsTablet",{},C_BOOL)
+				xSDL_IsTablet = define_c_func(sdl2,"+SDL_IsTablet",{},C_BOOL),
+				xSDL_HasARMSIMD = define_c_func(sdl2,"+SDL_HasARMSIMD",{},C_BOOL)
 				
 public function SDL_GetCPUCacheLineSize()
 
@@ -4194,6 +4260,12 @@ end function
 public function SDL_IsTablet()
 
  return c_func(xSDL_IsTablet,{})
+	
+end function
+
+public function SDL_HasARMSIMD()
+
+ return c_func(xSDL_HasARMSIMD,{})
 	
 end function
 
@@ -4755,4 +4827,4 @@ public procedure SDL_SensorUpdate()
  c_proc(xSDL_SensorUpdate,{})
 	
 end procedure
-­11.37
+­3200.38
