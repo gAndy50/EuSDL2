@@ -23,6 +23,11 @@ if win = -1 then
 	abort(0)
 end if
 
+if ren = -1 then
+	puts(1,"Failed to create renderer!\n")
+	abort(0)
+end if
+
 procedure calc_rect(atom rect,integer sx,integer sy,integer tx,integer ty)
 
  poke4(rect,sx)
@@ -75,4 +80,4 @@ SDL_DestroyRenderer(ren)
 SDL_DestroyWindow(win)
 
 SDL_Quit()
-Â­61.34
+­28.9
