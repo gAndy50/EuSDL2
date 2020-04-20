@@ -1,0 +1,32 @@
+include std/machine.e
+include std/get.e
+
+include EuSDL2.ew
+include EuSDLGPU.ew
+
+include flags.e
+
+atom screen = 0
+
+atom run = 1
+atom key = 0
+
+screen = GPU_Init(800,600,GPU_DEFAULT_INIT_FLAGS)
+
+while run = 1 do
+	
+	SDL_PumpEvents()
+	key = SDL_GetKeyboardState(key)
+	
+	if peek(key+SDL_SCANCODE_ESCAPE) > 0 then
+		run = 0
+	end if
+	
+	GPU_Clear(screen)
+	
+	GPU_Flip(screen)
+
+end while
+
+GPU_Quit()
+­14.42
