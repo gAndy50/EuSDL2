@@ -1,0 +1,2578 @@
+--------------------------------------
+--EuSDL GPU                         --
+--Written By Andy P. (Icy Viking)   --
+--Written in Euphoria 4.1.0 Beta 2  --
+--Wrapper for SDL GPU 2             --
+--Icy Viking Games                  --
+--Date: 4-14-20                     --
+--------------------------------------
+without warning
+
+include std/machine.e
+include std/math.e
+include std/dll.e
+include std/os.e
+
+--load the DLL/Library file
+atom gpu
+
+--load correct file for platform being developed on
+ifdef WIN32 then
+	gpu = open_dll("SDL2_gpu.dll")
+	elsifdef LINUX or FREEBSD then
+	gpu = open_dll("SDL2_gpu.so")
+end ifdef
+
+if gpu < 1 then
+	puts(1,"Failed to load SDL2_gpu library!\n")
+	abort(0)
+end if
+
+include EuSDL2.ew
+
+--Flags/Globals
+
+public constant SDL_GPU_VERSION_MAJOR = 0,
+				SDL_GPU_VERSION_MINOR = 11,
+				SDL_GPU_VERSION_PATCH = 0
+				
+public constant GPU_FLASE = 0,
+  				GPU_TRUE = 1
+  				
+-----------------
+--GPU Rect     --
+--X,Y (float)  --
+--W,H (float)  --
+-----------------
+
+--^^ GPU Rect will be modified to be more Euphoria friendly
+--The struct will be four separate float vars
+
+public constant GPU_RENDERER_UNKNOWN = 0,
+				GPU_RENDERER_OPENGL_1_BASE = 1,
+				GPU_RENDERER_OPENGL_1 = 2,
+ 				GPU_RENDERER_OPENGL_2 = 3,
+ 				GPU_RENDERER_OPENGL_3 = 4,
+				GPU_RENDERER_OPENGL_4 = 5,
+ 				GPU_RENDERER_GLES_1 = 11,
+				GPU_RENDERER_GLES_2 = 12,
+ 				GPU_RENDERER_GLES_3 = 13,
+ 				GPU_RENDERER_D3D9 = 21,
+ 				GPU_RENDERER_D3D10 = 22,
+ 				GPU_RENDERER_D3D11 = 23
+ 				
+public enum type GPU_ComparisonEnum
+
+ GPU_NEVER = 512,
+ GPU_LESS = 513,
+ GPU_EQUAL = 514,
+ GPU_LEQUAL = 515,
+ GPU_GREATER = 516,
+ GPU_NOTEQUAL = 517,
+ GPU_GEQUAL = 518,
+ GPU_ALWAYS = 519
+	
+end type
+
+GPU_ComparisonEnum GPUEnum --used for the enum type (GPUEnum)
+
+public enum type GPU_BlendFuncEnum
+
+	GPU_FUNC_ZERO = 0,
+	GPU_FUNC_ONE = 1,
+	GPU_FUNC_SRC_COLOR = 768,
+	GPU_FUNC_DST_COLOR = 774,
+	GPU_FUNC_ONE_MINUS_SRC = 769,
+	GPU_FUNC_ONE_MINUS_DST = 775,
+	GPU_FUNC_SRC_ALPHA = 770,
+	GPU_FUNC_DST_ALPHA = 772,
+	GPU_FUNC_ONE_MINUS_SRC_ALPHA = 771,
+	GPU_FUNC_ONE_MINUS_DST_ALPHA = 773
+	
+end type
+
+GPU_BlendFuncEnum GPU_BlendFunc
+
+public enum type GPU_BlendEqEnum
+
+ GPU_EQ_ADD = 32774,
+ GPU_EQ_SUBTRACT = 32778,
+ GPU_EQ_REVERSE_SUBTRACT = 32779
+	
+end type
+
+GPU_BlendEqEnum GPU_BlendEq
+
+public enum type GPU_BlendPresetEnum
+
+ GPU_BLEND_NORMAL = 0,
+ GPU_BLEND_PREMULTIPLIED_ALPHA = 1,
+ GPU_BLEND_MULTIPLY = 2,
+ GPU_BLEND_ADD = 3,
+ GPU_BLEND_SUBTRACT = 4,
+ GPU_BLEND_MOD_ALPHA = 5,
+ GPU_BLEND_SET_ALPHA = 6,
+ GPU_BLEND_SET = 7,
+ GPU_BLEND_NORMAL_KEEP_ALPHA = 8,
+ GPU_BLEND_NORMAL_ADD_ALPHA = 9,
+ GPU_BLEND_NORMAL_FACTOR_ALPHA = 10
+	
+end type
+
+GPU_BlendPresetEnum GPU_BlendPreset
+
+public enum type GPU_FilterEnum
+
+ GPU_FILTER_NEAREST = 0,
+ GPU_FILTER_LINEAR = 1,
+ GPU_FILTER_LINEAR_MIPMAP = 2
+	
+end type
+
+GPU_FilterEnum GPUFilter
+
+public enum type GPU_SnapEnum
+
+ GPU_SNAP_NONE = 0,
+ GPU_SNAP_POSITION = 1,
+ GPU_SNAP_DIMENSIONS = 2,
+ GPU_SNAP_POSITION_AND_DIMENSIONS = 3
+	
+end type
+
+GPU_SnapEnum GPU_Snap
+
+public enum type GPU_WrapEnum
+
+ GPU_WRAP_NONE = 0,
+ GPU_WRAP_REPEAT = 1,
+ GPU_WRAP_MIRRORED = 2
+	
+end type
+
+GPU_WrapEnum GPU_Wrap
+
+public enum type GPU_FormatEnum
+
+ GPU_FORMAT_LUMINANCE = 1,
+ GPU_FORMAT_LUMINANCE_ALPHA = 2,
+ GPU_FORMAT_RGB = 3,
+ GPU_FORMAT_RGBA = 4,
+ GPU_FORMAT_ALPHA = 5,
+ GPU_FORMAT_RG = 6,
+ GPU_FORMAT_YCBCR422 = 7,
+ GPU_FORMAT_YCBCR420P = 8,
+ GPU_FORMAT_BGR = 9,
+ GPU_FORMAT_BGRA = 10,
+ GPU_FORMAT_ABGR = 11
+	
+end type
+
+GPU_FormatEnum GPU_Format
+
+public enum type GPU_FileFormatEnum
+
+ GPU_FILE_AUTO = 0,
+ GPU_FILE_PNG,
+ GPU_FILE_BMP,
+ GPU_FILE_TGA
+	
+end type
+
+GPU_FileFormatEnum GPUFileFormat
+
+-------------------------------
+--GPU Camera Rect(Struct)    --
+--X,Y,Z (float)				 --
+--angle (float)				 --
+--zoom_x,zoom_y (float)		 --
+--z_near,z_far (float)		 --
+--use_centered_origin (bool) --
+-------------------------------
+
+--^^ This will be converted to be more Euphoria friendly
+
+----------------------------------
+--GPU ShaderBlock Struct		--
+--position_loc (int)			--
+--texcoord_loc (int)			--
+--color_loc (int)				--
+--modelViewProjection_loc (int) --
+----------------------------------
+
+--^^ This will be converted to be more Euphoria friendly
+
+----------------------------------
+--GPU_MatrixStack Struct        --
+--storage_size (uint)			--
+--size (uint)					--
+--matrix (float ptr) 			--
+---------------------------------- 
+
+--^^ This will be converted to be more Euphoria friendly
+
+--------------------------------------------------------
+--GPU_Context Struct
+--context void ptr
+--failed GPU_Bool
+--windowID uint32
+--window_w int
+--window_h int
+--drawable_w int
+--drawable_h int
+--stored_window_w int
+--stored_window_h int
+--actie_target ptr
+--current_shader_program uint32
+--default_textured_shader_program uint32
+--default_untextured_shader_program uint32
+--current_shader_block uint
+--default_textured_shader_block uint
+--default_untextured_shader_block uint
+--shapes_use_blending bool
+--shapes_blend_mode blendmode enum
+--line_thickness float
+--use_texturing bool
+--refcount int
+--data ptr (void)
+----------------------------------------------------------
+
+----------------------------------------------------------
+--GPU Target Struct
+--renderer struct
+--context_target ptr
+--image ptr
+--data void ptr
+--w,h uint
+--using_virtual_res - bool
+--base_w,base_h uint
+--use_clip_rect bool
+--clip_rect rect
+--use_color bool
+--color SDL_Color
+
+--viewport rect
+--matrix_mode int
+--projection_matrix uint
+--view_matrix - uint
+--model_matrix - uint
+
+--camera uint
+--use_camera bool
+--use_depth_test bool
+--use_depth_write bool
+--depth_function --comparison enum
+--context ptr
+--refcount int
+--is_alias bool
+------------------------------------------------------
+
+public constant GPU_FEATURE_NON_POWER_OF_TWO = 1,
+				GPU_FEATURE_RENDER_TARGETS = 2,
+				GPU_FEATURE_BLEND_EQUATIONS = 4,
+				GPU_FEATURE_BLEND_FUNC_SEPARATE = 8,
+				GPU_FEATURE_BLEND_EQUATIONS_SEPARATE = 16,
+				GPU_FEATURE_GL_BGR = 32,
+				GPU_FEATURE_GL_BGRA = 64,
+				GPU_FEATURE_GL_ABGR = 128,
+				GPU_FEATURE_VERTEX_SHADER = 256,
+				GPU_FEATURE_FRAGMENT_SHADER = 512,
+				GPU_FEATURE_PIXEL_SHADER = 512,
+				GPU_FEATURE_GEOMETRY_SHADER = 1024,
+				GPU_FEATURE_WRAP_REPEAT_MIRRORED = 2048,
+				GPU_FEATURE_CORE_FRAMEBUFFER_OBJECTS = 4096
+				
+public constant GPU_INIT_ENABLE_VSYNC = 1,
+				GPU_INIT_DISABLE_VSYNC = 2,
+				GPU_INIT_DISABLE_DOUBLE_BUFFER = 4,
+				GPU_INIT_DISABLE_AUTO_VIRTUAL_RESOLUTION = 8,
+				GPU_INIT_REQUEST_COMPATBILITY_PROFILE = 16,
+				GPU_INIT_USE_ROW_BY_ROW_TEXTURE_UPLOAD_FALLBACK = 32,
+				GPU_INIT_USE_COPY_TEXTURE_UPLOAD_FALLBACK = 64
+				
+public constant GPU_NONE = 0
+
+public constant GPU_POINTS = 0,
+				GPU_LINES = 1,
+				GPU_LINE_LOOP = 2,
+				GPU_LINE_STRIP = 3,
+				GPU_TRIANGLES = 4,
+				GPU_TRIANGLE_STRIP = 5,
+				GPU_TRIANGLE_FAN = 6
+				
+public constant GPU_BATCH_XY = 1,
+				GPU_BATCH_XYZ = 2,
+				GPU_BATCH_ST = 4,
+				GPU_BATCH_RGB = 8,
+				GPU_BATCH_RGBA = 16,
+				GPU_BATCH_RGB8 = 32,
+				GPU_BATCH_RGBA8 = 64
+				
+public constant GPU_BATCH_XY_ST = or_all({GPU_BATCH_XY,GPU_BATCH_ST})
+public constant GPU_BATCH_XYZ_ST = or_all({GPU_BATCH_XYZ,GPU_BATCH_ST})
+public constant GPU_BATCH_XY_RGB = or_all({GPU_BATCH_XY,GPU_BATCH_RGB})
+public constant GPU_BATCH_XYZ_RGB = or_all({GPU_BATCH_XYZ,GPU_BATCH_RGB})
+public constant GPU_BATCH_XY_RGBA = or_all({GPU_BATCH_XY,GPU_BATCH_RGBA})
+public constant GPU_BATCH_XYZ_RGBA = or_all({GPU_BATCH_XYZ,GPU_BATCH_RGBA})
+public constant GPU_BATCH_XY_ST_RGBA = or_all({GPU_BATCH_XY,GPU_BATCH_ST,GPU_BATCH_RGBA})
+public constant GPU_BATCH_XYZ_ST_RGBA = or_all({GPU_BATCH_XYZ,GPU_BATCH_ST,GPU_BATCH_RGBA})
+public constant GPU_BATCH_XY_RGB8 = or_all({GPU_BATCH_XY,GPU_BATCH_RGB8})
+public constant GPU_BATCH_XYZ_RGB8 = or_all({GPU_BATCH_XYZ,GPU_BATCH_RGB8})
+public constant GPU_BATCH_XY_RGBA8 = or_all({GPU_BATCH_XY,GPU_BATCH_RGBA8})
+public constant GPU_BATCH_XYZ_RGBA8 = or_all({GPU_BATCH_XYZ,GPU_BATCH_RGBA8})
+public constant GPU_BATCH_XY_ST_RGBA8 = or_all({GPU_BATCH_XY,GPU_BATCH_ST,GPU_BATCH_RGBA8})
+public constant GPU_BATCH_XYZ_ST_RGBA8 = or_all({GPU_BATCH_XYZ,GPU_BATCH_ST,GPU_BATCH_RGBA8})
+				
+public constant GPU_FLIP_NONE = 0,
+				GPU_FLIP_HORIZONTAL = 1,
+				GPU_FLIP_VERTICAL = 2
+				
+public constant GPU_TYPE_BYTE = 5120,
+				GPU_TYPE_UNSIGNED_BYTE = 5121,
+				GPU_TYPE_SHORT = 5122,
+				GPU_TYPE_UNSIGNED_SHORT = 5123,
+				GPU_TYPE_INT = 5124,
+				GPU_TYPE_UNSIGNED_INT = 5125,
+				GPU_TYPE_TYPE_FLOAT = 5126,
+				GPU_TYPE_DOUBLE = 5130
+				
+public constant GPU_DEFAULT_INIT_FLAGS = 0
+				
+public enum type GPU_ShaderEnum
+
+	GPU_VERTEX_SHADER = 0,
+	GPU_FRAGMENT_SHADER = 1,
+	GPU_PIXEL_SHADER = 1,
+	GPU_GEOMATRY_SHADER = 2
+	
+end type
+
+GPU_ShaderEnum GPU_Shader
+
+public enum type GPU_ShaderLanguageEnum
+
+	GPU_LANGUAGE_NONE = 0,
+	GPU_LANGUAGE_ARB_ASSEMBLY = 1,
+	GPU_LANGUAGE_GLSL = 2,
+	GPU_LANGUAGE_GLSLES = 3,
+	GPU_LANGUAGE_HLSL = 4,
+	GPU_LANGUAGE_CG = 5
+	
+end type
+
+GPU_ShaderLanguageEnum GPU_ShaderLanguage
+
+
+------------------------------------
+--GPU AttributeFormat Struct
+--is_per_sprite bool
+--num_elems_per_value int
+--type enum
+--normalize bool
+--stride_bytes int
+--offset_bytes int
+-----------------------------------
+
+-----------------------------------
+--GPU Attributes Struct
+--location int
+--values void ptr
+--format gpu_attributeformat
+-----------------------------------
+
+----------------------------------
+--GPU AttributeSource Struct
+--enabled bool
+--num_values int
+--next_value potr void
+--per_vertex_storage_stride_bytes int
+--per_vertex_storage_offset_bytes int
+--per_vertex_storage_size int
+--per_vertex_storage void ptr
+--attribute gpu_attribute
+---------------------------------
+
+public enum type GPU_ErrorEnum
+
+	GPU_ERROR_NONE = 0,
+	GPU_ERROR_BACKEND_ERROR = 1,
+	GPU_ERROR_DATA_ERROR = 2,
+	GPU_ERROR_USER_ERROR = 3,
+	GPU_ERROR_UNSUPPORTED_FUNCTION = 4,
+	GPU_ERROR_NULL_ARGUMENT = 5,
+	GPU_ERROR_FILE_NOT_FOUND = 6
+	
+end type
+
+------------------------
+--GPU ErrorObject
+--function char ptr
+--error gpu_errorenum
+--details char ptr
+------------------------
+
+public enum type GPU_DebugLevelEnum
+
+ GPU_DEBUG_LEVEL_0 = 0,
+ GPU_DEBUG_LEVEL_1 = 1,
+ GPU_DEBUG_LEVEL_2 = 2,
+ GPU_DEBUG_LEVEL_3 = 3,
+ GPU_DEBUG_LEVEL_MAX = 3
+	
+end type
+
+GPU_DebugLevelEnum GPU_DebugLevel
+
+public enum type GPU_LogLevelEnum
+
+ GPU_LOG_INFO = 0,
+ GPU_LOG_WARNING,
+ GPU_LOG_ERROR
+	
+end type
+
+GPU_LogLevelEnum GPU_LogLevel
+
+------------------------------
+--GPU Renderer Struct
+--GPU_RendererID id
+--	GPU_RendererID requested_id
+--	GPU_WindowFlagEnum SDL_init_flags
+--	GPU_InitFlagEnum GPU_init_flags
+	
+--	GPU_ShaderLanguageEnum shader_language
+--	int min_shader_version
+--	int max_shader_version
+  --  GPU_FeatureEnum enabled_features
+	
+--	
+--	GPU_Target* current_context_target
+	
+--	
+--	GPU_bool coordinate_mode
+	
+--	
+--	float default_image_anchor_x
+--	float default_image_anchor_y
+	
+--	struct GPU_RendererImpl* impl
+---------------------------------------------
+
+--Functions
+
+public constant xGPU_GetLinkedVersion = define_c_func(gpu,"+GPU_GetLinkedVersion",{},C_UINT)
+
+public function GPU_GetLinkedVersion()
+
+ return c_func(xGPU_GetLinkedVersion,{})
+	
+end function
+
+public constant xGPU_SetInitWindow = define_c_proc(gpu,"+GPU_SetInitWindow",{C_UINT})
+
+public procedure GPU_SetInitWindow(atom win)
+
+ c_proc(xGPU_SetInitWindow,{win})
+	
+end procedure
+
+public constant xGPU_GetInitWindow = define_c_func(gpu,"+GPU_GetInitWindow",{},C_UINT)
+
+public function GPU_GetInitWindow()
+
+ return c_func(xGPU_GetInitWindow,{})
+	
+end function
+
+public constant xGPU_SetPreInitFlags = define_c_proc(gpu,"+GPU_SetPreInitFlags",{C_UINT})
+
+public procedure GPU_SetPreInitFlags(atom flag)
+
+ c_proc(xGPU_SetPreInitFlags,{flag})
+	
+end procedure
+
+public constant xGPU_GetPreInitFlags = define_c_func(gpu,"+GPU_GetPreInitFlags",{},C_UINT)
+
+public function GPU_GetPreInitFlags()
+
+ return c_func(xGPU_GetPreInitFlags,{})
+	
+end function
+
+public constant xGPU_SetRequiredFeatures = define_c_proc(gpu,"+GPU_SetRequiredFeatures",{C_UINT})
+
+public procedure GPU_SetRequiredFeatures(atom feature)
+
+ c_proc(xGPU_SetRequiredFeatures,{feature})
+	
+end procedure
+
+public constant xGPU_GetRequiredFeatures = define_c_func(gpu,"+GPU_GetRequiredFeatures",{},C_UINT)
+
+public function GPU_GetRequiredFeatures()
+
+ return c_func(xGPU_GetRequiredFeatures,{})
+	
+end function
+
+public constant xGPU_GetDefaultRendererOrder = define_c_proc(gpu,"+GPU_GetDefaultRendererOrder",{C_POINTER,C_POINTER})
+
+public procedure GPU_GetDefaultRendererOrder(atom size,atom order)
+
+ c_proc(xGPU_GetDefaultRendererOrder,{size,order})
+	
+end procedure
+
+public constant xGPU_GetRendererOrder = define_c_proc(gpu,"+GPU_GetRendererOrder",{C_POINTER,C_POINTER})
+
+public procedure GPU_GetRendererOrder(atom size,atom order)
+
+ c_proc(xGPU_GetRendererOrder,{size,order})
+	
+end procedure
+
+public constant xGPU_SetRendererOrder = define_c_proc(gpu,"+GPU_SetRendererOrder",{C_INT,C_POINTER})
+
+public procedure GPU_SetRendererOrder(atom size,atom order)
+
+ c_proc(xGPU_SetRendererOrder,{size,order})
+	
+end procedure
+
+public constant xGPU_Init = define_c_func(gpu,"+GPU_Init",{C_UINT,C_UINT,C_UINT},C_UINT)
+
+public function GPU_Init(atom w,atom h,atom flag)
+
+ return c_func(xGPU_Init,{w,h,flag})
+	
+end function
+
+public constant xGPU_InitRenderer = define_c_func(gpu,"+GPU_InitRenderer",{C_UINT,C_UINT,C_UINT,C_UINT},C_UINT)
+
+public function GPU_InitRenderer(atom render,atom w,atom h,atom flag)
+
+ return c_func(xGPU_InitRenderer,{render,w,h,flag})
+	
+end function
+
+public constant xGPU_InitRendererByID = define_c_func(gpu,"+GPU_InitRendererByID",{C_UINT,C_UINT,C_UINT,C_UINT},C_UINT)
+
+public function GPU_InitRendererByID(atom render,atom w,atom h,atom flag)
+
+ return c_func(xGPU_InitRendererByID,{render,w,h,flag})
+	
+end function
+
+public constant xGPU_IsFeatureEnabled = define_c_func(gpu,"+GPU_IsFeatureEnabled",{C_UINT},C_BOOL)
+
+public function GPU_IsFeatureEnabled(atom feature)
+
+ return c_func(xGPU_IsFeatureEnabled,{feature})
+	
+end function
+
+public constant xGPU_CloseCurrentRenderer = define_c_proc(gpu,"+GPU_CloseCurrentRenderer",{})
+
+public procedure GPU_CloseCurrentRenderer()
+
+ c_proc(xGPU_CloseCurrentRenderer,{})
+	
+end procedure
+
+public constant xGPU_Quit = define_c_proc(gpu,"+GPU_Quit",{})
+
+public procedure GPU_Quit()
+
+ c_proc(xGPU_Quit,{})
+	
+end procedure
+
+public constant xGPU_SetDebugLevel = define_c_proc(gpu,"+GPU_SetDebugLevel",{C_UINT})
+
+public procedure GPU_SetDebugLevel(atom x)
+
+ c_proc(xGPU_SetDebugLevel,{x})
+	
+end procedure
+
+public constant xGPU_GetDebugLevel = define_c_func(gpu,"+GPU_GetDebugLevel",{},C_UINT)
+
+public function GPU_GetDebugLevel()
+
+ return c_func(xGPU_GetDebugLevel,{})
+	
+end function
+
+public constant xGPU_LogInfo = define_c_proc(gpu,"+GPU_LogInfo",{C_POINTER})
+
+public procedure GPU_LogInfo(sequence format)
+
+ atom str = allocate_string(format,1)
+ 
+ c_proc(xGPU_LogInfo,{str})
+	
+end procedure
+
+public constant xGPU_LogWarning = define_c_proc(gpu,"+GPU_LogWarning",{C_POINTER})
+
+public procedure GPU_LogWarning(sequence format)
+
+ atom str = allocate_string(format,1)
+  
+ c_proc(xGPU_LogWarning,{str})
+	
+end procedure
+
+public constant xGPU_LogError = define_c_proc(gpu,"+GPU_LogError",{C_POINTER})
+
+public procedure GPU_LogError(sequence format)
+
+ atom str = allocate_string(format,1)
+ 
+ c_proc(xGPU_LogError,{str})
+	
+end procedure
+
+public constant xGPU_SetLogCallback = define_c_proc(gpu,"+GPU_SetLogCallback",{C_UINT,C_POINTER,C_UINT})
+
+public procedure GPU_SetLogCallback(atom xlog,sequence format,atom args)
+
+ atom str = allocate_string(format,1)
+ 
+ c_proc(xGPU_SetLogCallback,{xlog,str,args})
+	
+end procedure
+
+public constant xGPU_PushErrorCode = define_c_proc(gpu,"+GPU_PushErrorCode",{C_POINTER,C_UINT,C_POINTER})
+
+public procedure GPU_PushErrorCode(sequence func,atom e,sequence details)
+
+ atom str = allocate_string(func,1)
+ atom str2 = allocate_string(details,1)
+ 
+ c_proc(xGPU_PushErrorCode,{str,e,str2})
+	
+end procedure
+
+public constant xGPU_PopErrorCode = define_c_func(gpu,"+GPU_PopErrorCode",{},C_UINT)
+
+public function GPU_PopErrorCode()
+
+ return c_func(xGPU_PopErrorCode,{})
+	
+end function
+
+public constant xGPU_GetErrorString = define_c_func(gpu,"+GPU_GetErrorString",{C_UINT},C_POINTER)
+
+public function GPU_GetErrorString(atom e)
+
+ return c_func(xGPU_GetErrorString,{e})
+	
+end function
+
+public constant xGPU_SetErrorQueueMax = define_c_proc(gpu,"+GPU_SetErrorQueueMax",{C_UINT})
+
+public procedure GPU_SetErrorQueueMax(atom max)
+
+ c_proc(xGPU_SetErrorQueueMax,{max})
+	
+end procedure
+
+public constant xGPU_MakeRendererID = define_c_func(gpu,"+GPU_MakeRendererID",{C_POINTER,C_UINT,C_INT,C_INT},C_UINT)
+
+public function GPU_MakeRendererID(sequence name,atom ren,atom major,atom minor)
+
+ atom str = allocate_string(name,1)
+ 
+ return c_func(xGPU_MakeRendererID,{str,ren,major,minor})
+	
+end function
+
+public constant xGPU_GetRendererID = define_c_func(gpu,"+GPU_GetRendererID",{C_UINT},C_UINT)
+
+public function GPU_GetRendererID(atom ren)
+
+ return c_func(xGPU_GetRendererID,{ren})
+	
+end function
+
+public constant xGPU_GetNumRegisteredRenderers = define_c_func(gpu,"+GPU_GetNumRegisteredRenderers",{},C_INT)
+
+public function GPU_GetNumRegisteredRenderers()
+
+ return c_func(xGPU_GetNumRegisteredRenderers,{})
+	
+end function
+
+public constant xGPU_GetRegisteredRendererList = define_c_proc(gpu,"+GPU_GetRegisteredRendererList",{C_POINTER})
+
+public procedure GPU_GetRegisteredRendererList(atom ren)
+
+ c_proc(xGPU_GetRegisteredRendererList,{ren})
+	
+end procedure
+
+public constant xGPU_RegisterRenderer = define_c_proc(gpu,"+GPU_RegisterRenderer",{C_UINT,C_POINTER,C_POINTER})
+
+public procedure GPU_RegisterRenderer(atom id,atom ren,atom x)
+
+ c_proc(xGPU_RegisterRenderer,{id,ren,x})
+	
+end procedure
+
+public constant xGPU_ReserveNextRendererEnum = define_c_func(gpu,"+GPU_ReserverNextRendererEnum",{},C_UINT)
+
+public function GPU_ReserveNextRendererEnum()
+
+ return c_func(xGPU_ReserveNextRendererEnum,{})
+	
+end function
+
+public constant xGPU_GetNumActiveRenderers = define_c_func(gpu,"+GPU_GetNumActiveRenderers",{},C_INT)
+
+public function GPU_GetNumActiveRenderers()
+
+ return c_func(xGPU_GetNumActiveRenderers,{})
+	
+end function
+
+public constant xGPU_GetActiveRendererList = define_c_proc(gpu,"+GPU_GetActiveRendererList",{C_POINTER})
+
+public procedure GPU_GetActiveRendererList(atom ren)
+
+ c_proc(xGPU_GetActiveRendererList,{ren})
+	
+end procedure
+
+public constant xGPU_GetCurrentRenderer = define_c_func(gpu,"+GPU_GetCurrentRenderer",{},C_POINTER)
+
+public function GPU_GetCurrentRenderer()
+
+ return c_func(xGPU_GetCurrentRenderer,{})
+	
+end function
+
+public constant xGPU_SetCurrentRenderer = define_c_proc(gpu,"+GPU_SetCurrentRenderer",{C_UINT})
+
+public procedure GPU_SetCurrentRenderer(atom id)
+
+ c_proc(xGPU_SetCurrentRenderer,{id})
+	
+end procedure
+
+public constant xGPU_GetRenderer = define_c_func(gpu,"+GPU_GetRenderer",{C_UINT},C_POINTER)
+
+public function GPU_GetRenderer(atom id)
+
+ return c_func(xGPU_GetRenderer,{id})
+	
+end function
+
+public constant xGPU_FreeRenderer = define_c_proc(gpu,"+GPU_FreeRenderer",{C_POINTER})
+
+public procedure GPU_FreeRenderer(atom ren)
+
+ c_proc(xGPU_FreeRenderer,{ren})
+	
+end procedure
+
+public constant xGPU_ResetRendererState = define_c_proc(gpu,"+GPU_ResetRendererState",{})
+
+public procedure GPU_ResetRendererState()
+
+ c_proc(xGPU_ResetRendererState,{})
+	
+end procedure
+
+public constant xGPU_SetCoordinateMode = define_c_proc(gpu,"+GPU_SetCoordinateMode",{C_BOOL})
+
+public procedure GPU_SetCoordinateMode(atom coord)
+
+ c_proc(xGPU_SetCoordinateMode,{coord})
+	
+end procedure
+
+public constant xGPU_GetCoordinateMode = define_c_func(gpu,"+GPU_GetCoordinateMode",{},C_BOOL)
+
+public function GPU_GetCoordinateMode()
+
+ return c_func(xGPU_GetCoordinateMode,{})
+	
+end function
+
+public constant xGPU_SetDefaultAnchor = define_c_proc(gpu,"+GPU_SetDefaultAnchor",{C_FLOAT,C_FLOAT})
+
+public procedure GPU_SetDefaultAnchor(atom x,atom y)
+
+ c_proc(xGPU_SetDefaultAnchor,{x,y})
+	
+end procedure
+
+public constant xGPU_GetDefaultAnchor = define_c_proc(gpu,"+GPU_GetDefaultAnchor",{C_POINTER,C_POINTER})
+
+public procedure GPU_GetDefaultAnchor(atom x,atom y)
+ 
+ c_proc(xGPU_GetDefaultAnchor,{x,y})
+	
+end procedure
+
+public constant xGPU_GetContextTarget = define_c_func(gpu,"+GPU_GetContextTarget",{},C_POINTER)
+
+public function GPU_GetContextTarget()
+
+ return c_func(xGPU_GetContextTarget,{})
+	
+end function
+
+public constant xGPU_GetWindowTarget = define_c_func(gpu,"+GPU_GetWindowTarget",{C_UINT},C_POINTER)
+
+public function GPU_GetWindowTarget(atom id)
+
+ return c_func(xGPU_GetWindowTarget,{id})
+	
+end function
+
+public constant xGPU_CreateTargetFromWindow = define_c_func(gpu,"+GPU_CreateTargetFromWindow",{C_UINT},C_POINTER)
+
+public function GPU_CreateTargetFromWindow(atom id)
+
+ return c_func(xGPU_CreateTargetFromWindow,{id})
+	
+end function
+
+public constant xGPU_MakeCurrent = define_c_proc(gpu,"+GPU_MakeCurrent",{C_POINTER,C_UINT})
+
+public procedure GPU_MakeCurrent(atom tar,atom id)
+
+ c_proc(xGPU_MakeCurrent,{tar,id})
+	
+end procedure
+
+public constant xGPU_SetWindowResolution = define_c_func(gpu,"+GPU_SetWindowResolution",{C_UINT,C_UINT},C_BOOL)
+
+public function GPU_SetWindowResolution(atom w,atom h)
+
+ return c_func(xGPU_SetWindowResolution,{w,h})
+	
+end function
+
+public constant xGPU_SetFullscreen = define_c_func(gpu,"+GPU_SetFullscreen",{C_BOOL,C_BOOL},C_BOOL)
+
+public function GPU_SetFullscreen(atom enable,atom desktop)
+
+ return c_func(xGPU_SetFullscreen,{enable,desktop})
+	
+end function
+
+public constant xGPU_GetFullscreen = define_c_func(gpu,"+GPU_GetFullscreen",{},C_BOOL)
+
+public function GPU_GetFulscreen()
+
+ return c_func(xGPU_GetFullscreen,{})
+	
+end function
+
+public constant xGPU_GetActiveTarget = define_c_func(gpu,"+GPU_GetActiveTarget",{},C_POINTER)
+
+public function GPU_GetActiveTarget()
+
+ return c_func(xGPU_GetActiveTarget,{})
+	
+end function
+
+public constant xGPU_SetActiveTarget = define_c_func(gpu,"+GPU_SetActiveTarget",{C_POINTER},C_BOOL)
+
+public function GPU_SetActiveTarget(atom tar)
+
+ return c_func(xGPU_SetActiveTarget,{tar})
+	
+end function
+
+public constant xGPU_SetShapeBlending = define_c_proc(gpu,"+GPU_SetShapeBlending",{C_BOOL})
+
+public procedure GPU_SetShapeBlending(atom en)
+
+ c_proc(xGPU_SetShapeBlending,{en})
+	
+end procedure
+
+public constant xGPU_GetBlendModeFromPreset = define_c_func(gpu,"+GPU_GetBlendModeFromPreset",{C_UINT},C_UINT)
+
+public function GPU_GetBlendModeFromPreset(atom pre)
+
+ return c_func(xGPU_GetBlendModeFromPreset,{pre})
+	
+end function
+
+public constant xGPU_SetShapeBlendFunction = define_c_proc(gpu,"+GPU_SetShapeBlendFunction",{C_UINT,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_SetShapeBlendFunction(atom src,atom dst,atom src2,atom dst2)
+
+ c_proc(xGPU_SetShapeBlendFunction,{src,dst,src2,dst2})
+	
+end procedure
+
+public constant xGPU_SetShapeBlendEquation = define_c_proc(gpu,"+GPU_SetShapeBlendEquation",{C_UINT,C_UINT})
+
+public procedure GPU_SetShapeBlendEquation(atom col,atom al)
+
+ c_proc(xGPU_SetShapeBlendEquation,{col,al})
+	
+end procedure
+
+public constant xGPU_SetShapeBlendMode = define_c_proc(gpu,"+GPU_SetShapeBlendMode",{C_UINT})
+
+public procedure GPU_SetShapeBlendMode(atom mode)
+
+ c_proc(xGPU_SetShapeBlendMode,{mode})
+	
+end procedure
+
+public constant xGPU_SetLineThickness = define_c_func(gpu,"+GPU_SetLineThickness",{C_FLOAT},C_FLOAT)
+
+public function GPU_SetLineThickness(atom thick)
+
+ return c_func(xGPU_SetLineThickness,{thick})
+	
+end function
+
+public constant xGPU_GetLineThickness = define_c_func(gpu,"+GPU_GetLineThickness",{},C_FLOAT)
+
+public function GPU_GetLineThickness()
+
+ return c_func(xGPU_GetLineThickness,{})
+	
+end function
+
+public constant xGPU_CreateAliasTarget = define_c_func(gpu,"+GPU_CreateAliasTarget",{C_POINTER},C_POINTER)
+
+public function GPU_CreateAliasTarget(atom tar)
+
+ return c_func(xGPU_CreateAliasTarget,{tar})
+	
+end function
+
+public constant xGPU_LoadTarget = define_c_func(gpu,"+GPU_LoadTarget",{C_POINTER},C_POINTER)
+
+public function GPU_LoadTarget(atom tar)
+
+ return c_func(xGPU_LoadTarget,{tar})
+	
+end function
+
+public constant xGPU_GetTarget = define_c_func(gpu,"+GPU_GetTarget",{C_POINTER},C_POINTER)
+
+public function GPU_GetTarget(atom tar)
+
+ return c_func(xGPU_GetTarget,{tar})
+	
+end function
+
+public constant xGPU_FreeTarget = define_c_proc(gpu,"+GPU_FreeTarget",{C_POINTER})
+
+public procedure GPU_FreeTarget(atom tar)
+
+ c_proc(xGPU_FreeTarget,{tar})
+	
+end procedure
+
+public constant xGPU_SetVirtualResolution = define_c_proc(gpu,"+GPU_SetVirtualResolution",{C_POINTER,C_UINT,C_UINT})
+
+public procedure GPU_SetVirtualResolution(atom tar,atom w,atom h)
+
+ c_proc(xGPU_SetVirtualResolution,{tar,w,h})
+	
+end procedure
+
+public constant xGPU_GetVirtualResolution = define_c_proc(gpu,"+GPU_GetVirtualResolution",{C_POINTER,C_POINTER,C_POINTER})
+
+public procedure GPU_GetVirtualResolution(atom tar,atom w,atom h)
+
+ c_proc(xGPU_GetVirtualResolution,{tar,w,h})
+	
+end procedure
+
+public constant xGPU_GetVirtualCoords = define_c_proc(gpu,"+GPU_GetVirtualCoords",{C_POINTER,C_POINTER,C_POINTER,C_POINTER})
+
+public procedure GPU_GetVirtualCoords(atom tar,atom x,atom y,atom dx,atom dy)
+
+ c_proc(xGPU_GetVirtualCoords,{tar,x,y,dx,dy})
+	
+end procedure
+
+public constant xGPU_UnsetVirtualResolution = define_c_proc(gpu,"+GPU_UnsetVirtualResolution",{C_POINTER})
+
+public procedure GPU_UnsetVirtualResolution(atom tar)
+
+ c_proc(xGPU_UnsetVirtualResolution,{tar})
+	
+end procedure
+
+public constant xGPU_MakeRect = define_c_func(gpu,"+GPU_MakeRect",{C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT},C_UINT)
+
+public function GPU_MakeRect(atom x,atom y,atom w,atom h)
+
+ return c_func(xGPU_MakeRect,{x,y,w,h})
+	
+end function
+
+public constant xGPU_MakeColor = define_c_func(gpu,"+GPU_MakeColor",{C_UINT,C_UINT,C_UINT,C_UINT},C_UINT)
+
+public function GPU_MakeColor(atom r,atom g,atom b,atom a)
+
+ return c_func(xGPU_MakeColor,{r,g,b,a})
+	
+end function
+
+public constant xGPU_SetViewport = define_c_proc(gpu,"+GPU_SetViewport",{C_POINTER,C_UINT})
+
+public procedure GPU_SetViewport(atom tar,atom rect)
+
+ c_proc(xGPU_SetViewport,{tar,rect})
+	
+end procedure
+
+public constant xGPU_UnsetViewport = define_c_proc(gpu,"+GPU_UnsetViewport",{C_POINTER})
+
+public procedure GPU_UnsetViewport(atom tar)
+
+ c_proc(xGPU_UnsetViewport,{tar})
+	
+end procedure
+
+public constant xGPU_GetDefaultCamera = define_c_func(gpu,"+GPU_GetDefaultCamera",{},C_UINT)
+
+public function GPU_GetDefaultCamera()
+
+ return c_func(xGPU_GetDefaultCamera,{})
+	
+end function
+
+public constant xGPU_GetCamera = define_c_func(gpu,"+GPU_GetCamera",{C_POINTER},C_UINT)
+
+public function GPU_GetCamera(atom tar)
+
+ return c_func(xGPU_GetCamera,{tar})
+	
+end function
+
+public constant xGPU_SetCamera = define_c_func(gpu,"+GPU_SetCamera",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_BOOL},C_UINT)
+
+public function GPU_SetCamera(atom tar,atom x,atom y,atom z,atom angle,atom zx,atom zy,atom zn,atom zf,atom use)
+
+ return c_func(xGPU_SetCamera,{tar,x,y,z,angle,zx,zy,zn,zf,use})
+	
+end function
+
+public constant xGPU_EnableCamera = define_c_proc(gpu,"+GPU_EnableCamera",{C_POINTER,C_BOOL})
+
+public procedure GPU_EnableCamera(atom tar,atom cam)
+
+ c_proc(xGPU_EnableCamera,{tar,cam})
+	
+end procedure
+
+public constant xGPU_IsCameraEnabled = define_c_func(gpu,"+GPU_IsCameraEnabled",{C_POINTER},C_BOOL)
+
+public function GPU_IsCameraEnabled(atom tar)
+
+ return c_func(xGPU_IsCameraEnabled,{tar})
+	
+end function
+
+public constant xGPU_AddDepthBuffer = define_c_func(gpu,"+GPU_AddDepthBuffer",{C_POINTER},C_BOOL)
+
+public function GPU_AddDepthBuffer(atom tar)
+
+ return c_func(xGPU_AddDepthBuffer,{tar})
+	
+end function
+
+public constant xGPU_SetDepthTest = define_c_proc(gpu,"+GPU_SetDepthTest",{C_POINTER,C_BOOL})
+
+public procedure GPU_SetDepthTest(atom tar,atom en)
+
+ c_proc(xGPU_SetDepthTest,{tar,en})
+	
+end procedure
+
+public constant xGPU_SetDepthWrite = define_c_proc(gpu,"+GPU_SetDepthWrite",{C_POINTER,C_BOOL})
+
+public procedure GPU_SetDepthWrite(atom tar,atom en)
+
+ c_proc(xGPU_SetDepthWrite,{tar,en})
+	
+end procedure
+
+public constant xGPU_SetDepthFunction = define_c_proc(gpu,"+GPU_SetDepthFunction",{C_POINTER,C_UINT})
+
+public procedure GPU_SetDepthFunction(atom tar,atom comp)
+
+ c_proc(xGPU_SetDepthFunction,{tar,comp})
+	
+end procedure
+
+public constant xGPU_GetPixel = define_c_func(gpu,"+GPU_GetPixel",{C_POINTER,C_INT,C_INT},C_UINT)
+
+public function GPU_GetPixel(atom tar,atom x,atom y)
+
+ return c_func(xGPU_GetPixel,{tar,x,y})
+	
+end function
+
+public constant xGPU_SetClipRect = define_c_func(gpu,"+GPU_SetClipRect",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT},C_FLOAT)
+
+public function GPU_SetClipRect(atom tar,atom x,atom y,atom w,atom h)
+
+ return c_func(xGPU_SetClipRect,{tar,x,y,w,h})
+	
+end function
+
+public constant xGPU_SetClip = define_c_func(gpu,"+GPU_SetClip",{C_POINTER,C_INT,C_INT,C_UINT,C_UINT},C_FLOAT)
+
+public function GPU_SetClip(atom tar,atom x,atom y,atom w,atom h)
+
+ return c_func(xGPU_SetClip,{tar,x,y,w,h})
+	
+end function
+
+public constant xGPU_UnsetClip = define_c_proc(gpu,"+GPU_UnsetClip",{C_POINTER})
+
+public procedure GPU_UnsetClip(atom tar)
+
+ c_proc(xGPU_UnsetClip,{tar})
+	
+end procedure
+
+public constant xGPU_IntersectRect = define_c_func(gpu,"+GPU_IntersectRect",{C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_POINTER},C_BOOL)
+
+public function GPU_IntersectRect(atom x,atom y,atom w,atom h,atom x2,atom y2,atom w2,atom h2,atom res)
+
+ return c_func(xGPU_IntersectRect,{x,y,w,h,x2,y2,w2,h2,res})
+	
+end function
+
+public constant xGPU_IntersectClipRect = define_c_func(gpu,"GPU_IntersectClipRect",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_POINTER},C_BOOL)
+
+public function GPU_IntersectClipRect(atom tar,atom x,atom y,atom w,atom h,atom res)
+
+ return c_func(xGPU_IntersectClipRect,{tar,x,y,w,h,res})
+	
+end function
+
+public constant xGPU_SetTargetColor = define_c_proc(gpu,"+GPU_SetTargetColor",{C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_SetTargetColor(atom tar,atom r,atom g,atom b,atom a)
+
+ c_proc(xGPU_SetTargetColor,{tar,r,g,b,a})
+	
+end procedure
+
+public constant xGPU_SetTargetRGB = define_c_proc(gpu,"+GPU_SetTargetRGB",{C_POINTER,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_SetTargetRGB(atom tar,atom r,atom g,atom b)
+
+ c_proc(xGPU_SetTargetRGB,{tar,r,g,b})
+	
+end procedure
+
+public constant xGPU_SetTargetRGBA = define_c_proc(gpu,"+GPU_SetTargetRGBA",{C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_SetTargetRGBA(atom tar,atom r,atom g,atom b,atom a)
+
+ c_proc(xGPU_SetTargetRGBA,{tar,r,g,b,a})
+	
+end procedure
+
+public constant xGPU_UnsetTargetColor = define_c_proc(gpu,"+GPU_UnsetTargetColor",{C_POINTER})
+
+public procedure GPU_UnsetTargetColor(atom tar)
+
+ c_proc(xGPU_UnsetTargetColor,{tar})
+	
+end procedure
+
+public constant xGPU_LoadSurface = define_c_func(gpu,"+GPU_LoadSurface",{C_POINTER},C_POINTER)
+
+public function GPU_LoadSurface(sequence file)
+
+ atom str = allocate_string(file,1)
+ 
+ return c_func(xGPU_LoadSurface,{str})
+	
+end function
+
+public constant xGPU_LoadSurface_RW = define_c_func(gpu,"+GPU_LoadSurface_RW",{C_POINTER,C_BOOL},C_POINTER)
+
+public function GPU_LoadSurface_RW(atom r,atom f)
+
+ return c_func(xGPU_LoadSurface_RW,{r,f})
+	
+end function
+
+public constant xGPU_SaveSurface = define_c_func(gpu,"+GPU_SaveSurface",{C_POINTER,C_POINTER,C_UINT},C_BOOL)
+
+public function GPU_SaveSurface(atom surf,sequence file,atom mat)
+
+ atom str = allocate_string(file,1)
+ 
+ return c_func(xGPU_SaveSurface,{surf,str,mat})
+	
+end function
+
+public constant xGPU_SaveSurface_RW = define_c_func(gpu,"+GPU_SaveSurface_RW",{C_POINTER,C_POINTER,C_BOOL,C_UINT},C_BOOL)
+
+public function GPU_SaveSurface_RW(atom surf,atom r,atom f,atom mat)
+
+ return c_func(xGPU_SaveSurface_RW,{surf,r,f,mat})
+	
+end function
+
+public constant xGPU_CreateImage = define_c_func(gpu,"+GPU_CreateImage",{C_UINT,C_UINT,C_UINT},C_POINTER)
+
+public function GPU_CreateImage(atom w,atom h,GPU_FormatEnum e)
+
+ return c_func(xGPU_CreateImage,{w,h,e})
+	
+end function
+
+public constant xGPU_CreateImageUsingTexture = define_c_func(gpu,"+GPU_CreateImageUsingTexture",{C_UINT,C_BOOL},C_POINTER)
+
+public function GPU_CreateImageUsingTexture(atom hand,atom owner)
+
+ return c_func(xGPU_CreateImageUsingTexture,{hand,owner})
+	
+end function
+
+public constant xGPU_LoadImage = define_c_func(gpu,"+GPU_LoadImage",{C_POINTER},C_POINTER)
+
+public function GPU_LoadImage(sequence file)
+
+ atom str = allocate_string(file,1)
+ 
+ return c_func(xGPU_LoadImage,{str})
+	
+end function
+
+public constant xGPU_LoadImage_RW = define_c_func(gpu,"+GPU_LoadImage_RW",{C_POINTER,C_BOOL},C_POINTER)
+
+public function GPU_LoadImage_RW(atom r,atom f)
+
+ return c_func(xGPU_LoadImage_RW,{r,f})
+	
+end function
+
+public constant xGPU_CreateAliasImage = define_c_func(gpu,"+GPU_CreateAliasImage",{C_POINTER},C_POINTER)
+
+public function GPU_CreateAliasImage(atom img)
+
+ return c_func(xGPU_CreateAliasImage,{img})
+	
+end function
+
+public constant xGPU_CopyImage = define_c_func(gpu,"+GPU_CopyImage",{C_POINTER},C_POINTER)
+
+public function GPU_CopyImage(atom img)
+
+ return c_func(xGPU_CopyImage,{img})
+	
+end function
+
+public constant xGPU_FreeImage = define_c_proc(gpu,"+GPU_FreeImage",{C_POINTER})
+
+public procedure GPU_FreeImage(atom img)
+
+ c_proc(xGPU_FreeImage,{img})
+	
+end procedure
+
+public constant xGPU_SetImageVirtualResolution = define_c_proc(gpu,"+GPU_SetImageVirtualResolution",{C_POINTER,C_UINT,C_UINT})
+
+public procedure GPU_SetImageVirtualResolution(atom img,atom w,atom h)
+
+ c_proc(xGPU_SetImageVirtualResolution,{img,w,h})
+	
+end procedure
+
+public constant xGPU_UnsetImageVirtualResolution = define_c_proc(gpu,"+GPU_UnsetImageVirtualResolution",{C_POINTER})
+
+public procedure GPU_UnsetImageVirtualResolution(atom img)
+
+ c_proc(xGPU_UnsetImageVirtualResolution,{img})
+	
+end procedure
+
+public constant xGPU_UpdateImage = define_c_proc(gpu,"+GPU_UpdateImage",{C_POINTER,C_POINTER,C_POINTER,C_POINTER})
+
+public procedure GPU_UpdateImage(atom img,atom img_rect,atom surf,atom surf_rect)
+
+ c_proc(xGPU_UpdateImage,{img,img_rect,surf,surf_rect})
+	
+end procedure
+
+public constant xGPU_UpdateImageBytes = define_c_proc(gpu,"+GPU_UpdateImageBytes",{C_POINTER,C_POINTER,C_POINTER,C_INT})
+
+public procedure GPU_UpdateImageBytes(atom img,atom rect,sequence bytes,atom row)
+
+ atom str = allocate_string(bytes,1)
+ 
+ c_proc(xGPU_UpdateImageBytes,{img,rect,str,row})
+	
+end procedure
+
+public constant xGPU_ReplaceImage = define_c_func(gpu,"+GPU_ReplaceImage",{C_POINTER,C_POINTER,C_POINTER},C_BOOL)
+
+public function GPU_ReplaceImage(atom img,atom surf,atom rect)
+
+ return c_func(xGPU_ReplaceImage,{img,surf,rect})
+	
+end function
+
+public constant xGPU_SaveImage = define_c_func(gpu,"+GPU_SaveImage",{C_POINTER,C_POINTER,C_UINT},C_BOOL)
+
+public function GPU_SaveImage(atom img,sequence file,GPU_FileFormatEnum f)
+
+ atom str = allocate_string(file,1)
+ 
+ return c_func(xGPU_SaveImage,{img,str,f})
+	
+end function
+
+public constant xGPU_SaveImage_RW = define_c_func(gpu,"+GPU_SaveImage_RW",{C_POINTER,C_POINTER,C_BOOL,C_UINT},C_BOOL)
+
+public function GPU_SaveImage_RW(atom img,atom r,atom f,GPU_FileFormatEnum fe)
+
+ return c_func(xGPU_SaveImage_RW,{img,r,f,fe})
+	
+end function
+
+public constant xGPU_GenerateMipmaps = define_c_proc(gpu,"+GPU_GenerateMipmaps",{C_POINTER})
+
+public procedure GPU_GenerateMipmaps(atom img)
+
+ c_proc(xGPU_GenerateMipmaps,{img})
+	
+end procedure
+
+public constant xGPU_SetColor = define_c_proc(gpu,"+GPU_SetColor",{C_POINTER,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_SetColor(atom img,atom r,atom g,atom b)
+
+ c_proc(xGPU_SetColor,{img,r,g,b})
+	
+end procedure
+
+public constant xGPU_SetRGB = define_c_proc(gpu,"+GPU_SetRGB",{C_POINTER,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_SetRGB(atom img,atom r,atom g,atom b)
+
+ c_proc(xGPU_SetRGB,{img,r,g,b})
+	
+end procedure
+
+public constant xGPU_SetRGBA = define_c_proc(gpu,"+GPU_SetRGBA",{C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_SetRGBA(atom img,atom r,atom g,atom b,atom a)
+
+ c_proc(xGPU_SetRGBA,{img,r,g,b,a})
+	
+end procedure
+
+public constant xGPU_UnsetColor = define_c_proc(gpu,"+GPU_UnsetColor",{C_POINTER})
+
+public procedure GPU_UnsetColor(atom img)
+
+ c_proc(xGPU_UnsetColor,{img})
+	
+end procedure
+
+public constant xGPU_GetBlending = define_c_func(gpu,"+GPU_GetBlending",{C_POINTER},C_BOOL)
+
+public function GPU_GetBlending(atom img)
+
+ return c_func(xGPU_GetBlending,{img})
+	
+end function
+
+public constant xGPU_SetBlending = define_c_proc(gpu,"+GPU_SetBlending",{C_POINTER,C_BOOL})
+
+public procedure GPU_SetBlending(atom img,atom en)
+
+ c_proc(xGPU_SetBlending,{img,en})
+	
+end procedure
+
+public constant xGPU_SetBlendFunction = define_c_proc(gpu,"+GPU_SetBlendFunction",{C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_SetBlendFunction(atom img,GPU_BlendFuncEnum src,GPU_BlendFuncEnum dst,GPU_BlendFuncEnum sa,GPU_BlendFuncEnum da)
+
+ c_proc(xGPU_SetBlendFunction,{img,src,dst,sa,da})
+	
+end procedure
+
+public constant xGPU_SetBlendEquation = define_c_proc(gpu,"+GPU_SetBlendEquation",{C_POINTER,C_UINT,C_UINT})
+
+public procedure GPU_SetBlendEquation(atom img,GPU_BlendEqEnum c,GPU_BlendEqEnum a)
+
+ c_proc(xGPU_SetBlendEquation,{img,c,a})
+	
+end procedure
+
+public constant xGPU_SetBlendMode = define_c_proc(gpu,"+GPU_SetBlendMode",{C_POINTER,C_UINT})
+
+public procedure GPU_SetBlendMode(atom img,GPU_BlendPresetEnum m)
+
+ c_proc(xGPU_SetBlendMode,{img,m})
+	
+end procedure
+
+public constant xGPU_SetImageFilter = define_c_proc(gpu,"+GPU_SetImageFilter",{C_POINTER,C_UINT})
+
+public procedure GPU_SetImageFilter(atom img,GPU_FilterEnum f)
+
+ c_proc(xGPU_SetImageFilter,{img,f})
+	
+end procedure
+
+public constant xGPU_SetAnchor = define_c_proc(gpu,"+GPU_SetAnchor",{C_POINTER,C_FLOAT,C_FLOAT})
+
+public procedure GPU_SetAnchor(atom img,atom x,atom y)
+
+ c_proc(xGPU_SetAnchor,{img,x,y})
+	
+end procedure
+
+public constant xGPU_GetAnchor = define_c_proc(gpu,"+GPU_GetAnchor",{C_POINTER,C_POINTER,C_POINTER})
+
+public procedure GPU_GetAnchor(atom img,atom x,atom y)
+
+ c_proc(xGPU_GetAnchor,{img,x,y})
+	
+end procedure
+
+public constant xGPU_GetSnapEnum = define_c_func(gpu,"+GPU_SnapEnum",{C_POINTER},C_UINT)
+
+public function GPU_GetSnapEnum(atom img)
+
+ return c_func(xGPU_GetSnapEnum,{img})
+	
+end function
+
+public constant xGPU_SetSnapMode = define_c_proc(gpu,"+GPU_SetSnapMode",{C_POINTER,C_UINT})
+
+public procedure GPU_SetSnapMode(atom img,GPU_SnapEnum m)
+
+ c_proc(xGPU_SetSnapMode,{img,m})
+	
+end procedure
+
+public constant xGPU_SetWrapMode = define_c_proc(gpu,"+GPU_SetWrapMode",{C_POINTER,C_UINT,C_UINT})
+
+public procedure GPU_SetWrapMode(atom img,GPU_WrapEnum x,GPU_WrapEnum y)
+
+ c_proc(xGPU_SetWrapMode,{img,x,y})
+	
+end procedure
+
+public constant xGPU_GetTextureHandle = define_c_func(gpu,"+GPU_GetTextureHandle",{C_POINTER},C_UINT)
+
+public function GPU_GetTextureHandle(atom img)
+
+ return c_func(xGPU_GetTextureHandle,{img})
+	
+end function
+
+public constant xGPU_CopyImageFromSurface = define_c_func(gpu,"+GPU_CopyImageFromSurface",{C_POINTER},C_POINTER)
+
+public function GPU_CopyImageFromSurface(atom surf)
+
+ return c_func(xGPU_CopyImageFromSurface,{surf})
+	
+end function
+
+public constant xGPU_CopyImageFromTarget = define_c_func(gpu,"+GPU_CopyImageFromTarget",{C_POINTER},C_POINTER)
+
+public function GPU_CopyImageFromTarget(atom tar)
+
+ return c_func(xGPU_CopyImageFromTarget,{tar})
+	
+end function
+
+public constant xGPU_CopySurfaceFromTarget = define_c_func(gpu,"+GPU_CopySurfaceFromTarget",{C_POINTER},C_POINTER)
+
+public function GPU_CopySurfaceFromTarget(atom tar)
+
+ return c_func(xGPU_CopySurfaceFromTarget,{tar})
+	
+end function
+
+public constant xGPU_CopySurfaceFromImage = define_c_func(gpu,"+GPU_CopySurfaceFromImage",{C_POINTER},C_POINTER)
+
+public function GPU_CopySurfaceFromImage(atom img)
+
+ return c_func(xGPU_CopySurfaceFromImage,{img})
+	
+end function
+
+public constant xGPU_VectorLength = define_c_func(gpu,"+GPU_VectorLength",{C_POINTER,C_POINTER,C_POINTER},C_FLOAT)
+
+public function GPU_VectorLength(atom x,atom y,atom z)
+
+ return c_func(xGPU_VectorLength,{x,y,z})
+	
+end function
+
+public constant xGPU_VectorNormalize = define_c_proc(gpu,"+GPU_VectorNormalize",{C_POINTER,C_POINTER,C_POINTER})
+
+public procedure GPU_VectorNormalize(atom x,atom y,atom z)
+
+ c_proc(xGPU_VectorNormalize,{x,y,z})
+	
+end procedure
+
+public constant xGPU_VectorDot = define_c_func(gpu,"+GPU_VectorDot",{C_POINTER,C_POINTER},C_FLOAT)
+
+public function GPU_VectorDot(atom a,atom b)
+
+ return c_func(xGPU_VectorDot,{a,b})
+	
+end function
+
+public constant xGPU_VectorCross = define_c_proc(gpu,"+GPU_VectorCross",{C_POINTER,C_POINTER,C_POINTER})
+
+public procedure GPU_VectorCross(atom res,atom a,atom b)
+
+ c_proc(xGPU_VectorCross,{res,a,b})
+	
+end procedure
+
+public constant xGPU_VectorCopy = define_c_proc(gpu,"+GPU_VectorCopy",{C_POINTER,C_POINTER})
+
+public procedure GPU_VectorCopy(atom res,atom a)
+
+ c_proc(xGPU_VectorCopy,{res,a})
+	
+end procedure
+
+public constant xGPU_VectorApplyMatrix = define_c_proc(gpu,"+GPU_VectorApplyMatrix",{C_POINTER,C_POINTER,C_POINTER,C_POINTER})
+
+public procedure GPU_VectorApplyMatrix(atom x,atom y,atom z,atom mat)
+
+ c_proc(xGPU_VectorApplyMatrix,{x,y,z,mat})
+	
+end procedure
+
+public constant xGPU_Vector4ApplyMatrix = define_c_proc(gpu,"+GPU_Vector4ApplyMatrix",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER})
+
+public procedure GPU_Vector4ApplyMatrix(atom x,atom y,atom z,atom w,atom mat)
+
+ c_proc(xGPU_Vector4ApplyMatrix,{x,y,z,w,mat})
+	
+end procedure
+
+public constant xGPU_MatrixCopy = define_c_proc(gpu,"+GPU_MatrixCopy",{C_POINTER,C_POINTER})
+
+public procedure GPU_MatrixCopy(atom res,atom a)
+
+ c_proc(xGPU_MatrixCopy,{res,a})
+	
+end procedure
+
+public constant xGPU_MatrixIdentity = define_c_proc(gpu,"+GPU_MatrixIdentity",{C_POINTER})
+
+public procedure GPU_MatrixIdentity(atom res)
+
+ c_proc(xGPU_MatrixIdentity,{res})
+	
+end procedure
+
+public constant xGPU_MatrixOrtho = define_c_proc(gpu,"+GPU_MatrixOrtho",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT})
+
+public procedure GPU_MatrixOrtho(atom res,atom left,atom right,atom bot,atom top,atom zn,atom zf)
+
+ c_proc(xGPU_MatrixOrtho,{res,left,right,bot,top,zn,zf})
+	
+end procedure
+
+public constant xGPU_MatrixFrustum = define_c_proc(gpu,"+GPU_MatrixFrustum",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT})
+
+public procedure GPU_MatrixFrustum(atom res,atom left,atom right,atom bot,atom top,atom zn,atom zf)
+
+ c_proc(xGPU_MatrixFrustum,{res,left,right,bot,top,zn,zf})
+	
+end procedure
+
+public constant xGPU_MatrixPerspective = define_c_proc(gpu,"+GPU_MatrixPerspective",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT})
+
+public procedure GPU_MatrixPerspective(atom res,atom fov,atom as,atom zn,atom zf)
+
+ c_proc(xGPU_MatrixPerspective,{res,fov,as,zn,zf})
+	
+end procedure
+
+public constant xGPU_MatrixLookAt = define_c_proc(gpu,"+GPU_MatrixLookAt",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT})
+
+public procedure GPU_MatrixLookAt(atom res,atom ex,atom ey,atom ez,atom tx,atom ty,atom tz,atom ux,atom uy,atom uz)
+
+ c_proc(xGPU_MatrixLookAt,{res,ex,ey,ez,tx,ty,tz,ux,uy,uz})
+	
+end procedure
+
+public constant xGPU_MatrixTranslate = define_c_proc(gpu,"+GPU_MatrixTranslate",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT})
+
+public procedure GPU_MatrixTranslate(atom res,atom x,atom y,atom z)
+
+ c_proc(xGPU_MatrixTranslate,{res,x,y,z})
+	
+end procedure
+
+public constant xGPU_MatrixScale = define_c_proc(gpu,"+GPU_MatrixScale",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT})
+
+public procedure GPU_MatrixScale(atom res,atom x,atom y,atom z)
+
+ c_proc(xGPU_MatrixScale,{res,x,y,z})
+	
+end procedure
+
+public constant xGPU_MatrixRotate = define_c_proc(gpu,"+GPU_MatrixRotate",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT})
+
+public procedure GPU_MatrixRotate(atom res,atom deg,atom x,atom y,atom z)
+
+ c_proc(xGPU_MatrixRotate,{res,deg,x,y,z})
+	
+end procedure
+
+public constant xGPU_MatrixMultiply = define_c_proc(gpu,"+GPU_MatrixMultiply",{C_POINTER,C_POINTER,C_POINTER})
+
+public procedure GPU_MatrixMultiply(atom res,atom a,atom b)
+
+ c_proc(xGPU_MatrixMultiply,{res,a,b})
+	
+end procedure
+
+public constant xGPU_MultiplyAndAssign = define_c_proc(gpu,"+GPU_MultiplyAndAssign",{C_POINTER,C_POINTER})
+
+public procedure GPU_MultiplyAndAssign(atom res,atom b)
+
+ c_proc(xGPU_MultiplyAndAssign,{res,b})
+	
+end procedure
+
+public constant xGPU_GetMatrixString = define_c_func(gpu,"+GPU_GetMatrixString",{C_POINTER},C_POINTER)
+
+public function GPU_GetMatrixString(atom a)
+
+ return c_func(xGPU_GetMatrixString,{a})
+	
+end function
+
+public constant xGPU_GetCurrentMatrix = define_c_func(gpu,"+GPU_GetCurrentMatrix",{},C_POINTER)
+
+public function GPU_GetCurrentMatrix()
+
+ return c_func(xGPU_GetCurrentMatrix,{})
+	
+end function
+
+public constant xGPU_GetTopMatrix = define_c_func(gpu,"+GPU_GetTopMatrix",{C_POINTER},C_POINTER)
+
+public function GPU_GetTopMatrix(atom st)
+
+ return c_func(xGPU_GetTopMatrix,{st})
+	
+end function
+
+public constant xGPU_GetModel = define_c_func(gpu,"+GPU_GetModel",{},C_POINTER)
+
+public function GPU_GetModel()
+
+ return c_func(xGPU_GetModel,{})
+	
+end function
+
+public constant xGPU_GetView = define_c_func(gpu,"+GPU_GetView",{},C_POINTER)
+
+public function GPU_GetView()
+
+ return c_func(xGPU_GetView,{})
+	
+end function
+
+public constant xGPU_GetProjection = define_c_func(gpu,"+GPU_GetProjection",{},C_POINTER)
+
+public function GPU_GetProjection()
+
+ return c_func(xGPU_GetProjection,{})
+	
+end function
+
+public constant xGPU_GetModelViewProjection = define_c_proc(gpu,"+GPU_GetModelViewProjection",{C_POINTER})
+
+public procedure GPU_GetModelViewProjection(atom res)
+
+ c_proc(xGPU_GetModelViewProjection,{res})
+	
+end procedure
+
+public constant xGPU_CreateMatrixStack = define_c_func(gpu,"+GPU_CreateMatrixStack",{},C_POINTER)
+
+public function GPU_CreateMatrixStack()
+
+ return c_func(xGPU_CreateMatrixStack,{})
+	
+end function
+
+public constant xGPU_FreeMatrixStack = define_c_proc(gpu,"+GPU_FreeMatrixStack",{C_POINTER})
+
+public procedure GPU_FreeMatrixStack(atom st)
+
+ c_proc(xGPU_FreeMatrixStack,{st})
+	
+end procedure
+
+public constant xGPU_CopyMatrixStack = define_c_proc(gpu,"+GPU_CopyMatrixStack",{C_POINTER,C_POINTER})
+
+public procedure GPU_CopyMatrixStack(atom src,atom dst)
+
+ c_proc(xGPU_CopyMatrixStack,{src,dst})
+	
+end procedure
+
+public constant xGPU_ClearMatrixStack = define_c_proc(gpu,"+GPU_ClearMatrixStack",{C_POINTER})
+
+public procedure GPU_ClearMatrixStack(atom st)
+
+ c_proc(xGPU_ClearMatrixStack,{st})
+	
+end procedure
+
+public constant xGPU_ResetProjection = define_c_proc(gpu,"+GPU_ResetProjection",{C_POINTER})
+
+public procedure GPU_ResetProjection(atom tar)
+
+ c_proc(xGPU_ResetProjection,{tar})
+	
+end procedure
+
+public constant xGPU_MatrixMode = define_c_proc(gpu,"+GPU_MatrixMode",{C_POINTER,C_INT})
+
+public procedure GPU_MatrixMode(atom tar,atom mod)
+
+ c_proc(xGPU_MatrixMode,{tar,mod})
+	
+end procedure
+
+public constant xGPU_SetProjection = define_c_proc(gpu,"+GPU_SetProjection",{C_POINTER})
+
+public procedure GPU_SetProjection(atom a)
+
+ c_proc(xGPU_SetProjection,{a})
+	
+end procedure
+
+public constant xGPU_SetView = define_c_proc(gpu,"+GPU_SetView",{C_POINTER})
+
+public procedure GPU_SetView(atom a)
+
+ c_proc(xGPU_SetView,{a})
+	
+end procedure
+
+public constant xGPU_SetModel = define_c_proc(gpu,"+GPU_SetModel",{C_POINTER})
+
+public procedure GPU_SetModel(atom a)
+
+ c_proc(xGPU_SetModel,{a})
+	
+end procedure
+
+public constant xGPU_SetProjectionFromStack = define_c_proc(gpu,"+GPU_SetProjectionFromStack",{C_POINTER})
+
+public procedure GPU_SetProjectionFromStack(atom st)
+
+ c_proc(xGPU_SetProjectionFromStack,{st})
+	
+end procedure
+
+public constant xGPU_SetViewFromStack = define_c_proc(gpu,"+GPU_SetViewFromStack",{C_POINTER})
+
+public procedure GPU_SetViewFromStack(atom st)
+
+ c_proc(xGPU_SetViewFromStack,{st})
+	
+end procedure
+
+public constant xGPU_SetModelFromStack = define_c_proc(gpu,"+GPU_SetModelFromStack",{C_POINTER})
+
+public procedure GPU_SetModelFromStack(atom st)
+
+ c_proc(xGPU_SetModelFromStack,{st})
+	
+end procedure
+
+public constant xGPU_PushMatrix = define_c_proc(gpu,"+GPU_PushMatrix",{})
+
+public procedure GPU_PushMatrix()
+
+ c_proc(xGPU_PushMatrix,{})
+	
+end procedure
+
+public constant xGPU_PopMatrix = define_c_proc(gpu,"+GPU_PopMatrix",{})
+
+public procedure GPU_PopMatrix()
+
+ c_proc(xGPU_PopMatrix,{})
+	
+end procedure
+
+public constant xGPU_LoadIdentity = define_c_proc(gpu,"+GPU_LoadIdentity",{})
+
+public procedure GPU_LoadIdentity()
+
+ c_proc(xGPU_LoadIdentity,{})
+	
+end procedure
+
+public constant xGPU_LoadMatrix = define_c_proc(gpu,"+GPU_LoadMatrix",{C_POINTER})
+
+public procedure GPU_LoadMatrix(atom mat)
+
+ c_proc(xGPU_LoadMatrix,{mat})
+	
+end procedure
+
+public constant xGPU_Ortho = define_c_proc(gpu,"+GPU_Ortho",{C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT})
+
+public procedure GPU_Ortho(atom left,atom right,atom bot,atom top,atom zn,atom zf)
+
+ c_proc(xGPU_Ortho,{left,right,bot,top,zn,zf})
+	
+end procedure
+
+public constant xGPU_Frustum = define_c_proc(gpu,"+GPU_Frustum",{C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT})
+
+public procedure GPU_Frustum(atom left,atom right,atom bot,atom top,atom zn,atom zf)
+
+ c_proc(xGPU_Frustum,{left,right,bot,top,zn,zf})
+	
+end procedure
+
+public constant xGPU_Perspective = define_c_proc(gpu,"+GPU_Perspective",{C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT})
+
+public procedure GPU_Perspective(atom fov,atom as,atom zn,atom zf)
+
+ c_proc(xGPU_Perspective,{fov,as,zn,zf})
+	
+end procedure
+
+public constant xGPU_LookAt = define_c_proc(gpu,"+GPU_LookAt",{C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT})
+
+public procedure GPU_LookAt(atom ex,atom ey,atom ez,atom tx,atom ty,atom tz,atom ux,atom uy,atom uz)
+
+ c_proc(xGPU_LookAt,{ex,ey,ez,tx,ty,tz,ux,uy,uz})
+	
+end procedure
+
+public constant xGPU_Translate = define_c_proc(gpu,"+GPU_Translate",{C_FLOAT,C_FLOAT,C_FLOAT})
+
+public procedure GPU_Translate(atom x,atom y,atom z)
+
+ c_proc(xGPU_Translate,{x,y,z})
+	
+end procedure
+
+public constant xGPU_Scale = define_c_proc(gpu,"+GPU_Scale",{C_FLOAT,C_FLOAT,C_FLOAT})
+
+public procedure GPU_Scale(atom x,atom y,atom z)
+
+ c_proc(xGPU_Scale,{x,y,z})
+	
+end procedure
+
+public constant xGPU_Rotate = define_c_proc(gpu,"+GPU_Rotate",{C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT})
+
+public procedure GPU_Rotate(atom deg,atom x,atom y,atom z)
+
+ c_proc(xGPU_Rotate,{deg,x,y,z})
+	
+end procedure
+
+public constant xGPU_MultMatrix = define_c_proc(gpu,"+GPU_MultMatrix",{C_POINTER})
+
+public procedure GPU_MUltMatrix(atom mat)
+
+ c_proc(xGPU_MultMatrix,{mat})
+	
+end procedure
+
+public constant xGPU_Clear = define_c_proc(gpu,"+GPU_Clear",{C_POINTER})
+
+public procedure GPU_Clear(atom tar)
+
+ c_proc(xGPU_Clear,{tar})
+	
+end procedure
+
+public constant xGPU_ClearColor = define_c_proc(gpu,"+GPU_ClearColor",{C_POINTER,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_ClearColor(atom tar,atom r,atom g,atom b)
+
+ c_proc(xGPU_ClearColor,{tar,r,g,b})
+	
+end procedure
+
+public constant xGPU_ClearRGB = define_c_proc(gpu,"+GPU_ClearRGB",{C_POINTER,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_ClearRGB(atom tar,atom r,atom g,atom b)
+
+ c_proc(xGPU_ClearRGB,{tar,r,g,b})
+	
+end procedure
+
+public constant xGPU_ClearRGBA = define_c_proc(gpu,"+GPU_ClearRGBA",{C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_ClearRGBA(atom tar,atom r,atom g,atom b,atom a)
+
+ c_proc(xGPU_ClearRGBA,{tar,r,g,b,a})
+	
+end procedure
+
+public constant xGPU_Blit = define_c_proc(gpu,"+GPU_Blit",{C_POINTER,C_POINTER,C_POINTER,C_FLOAT,C_FLOAT})
+
+public procedure GPU_Blit(atom img,atom src,atom tar,atom x,atom y)
+
+ c_proc(xGPU_Blit,{img,src,tar,x,y})
+	
+end procedure
+
+public constant xGPU_BlitRotate = define_c_proc(gpu,"+GPU_BlitRotate",{C_POINTER,C_POINTER,C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT})
+
+public procedure GPU_BlitRotate(atom img,atom src,atom tar,atom x,atom y,atom deg)
+
+ c_proc(xGPU_BlitRotate,{img,src,tar,x,y,deg})
+	
+end procedure
+
+public constant xGPU_BlitScale = define_c_proc(gpu,"+GPU_BlitScale",{C_POINTER,C_POINTER,C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT})
+
+public procedure GPU_BlitScale(atom img,atom src,atom tar,atom x,atom y,atom sx,atom sy)
+
+ c_proc(xGPU_BlitScale,{img,src,tar,x,y,sx,sy})
+	
+end procedure
+
+public constant xGPU_BlitTransform = define_c_proc(gpu,"+GPU_BlitTransform",{C_POINTER,C_POINTER,C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT})
+
+public procedure GPU_BlitTransform(atom img,atom src,atom tar,atom x,atom y,atom deg,atom sx,atom sy)
+
+ c_proc(xGPU_BlitTransform,{img,src,tar,x,y,deg,sx,sy})
+	
+end procedure
+
+public constant xGPU_BlitTransformX = define_c_proc(gpu,"+GPU_BlitTransformX",{C_POINTER,C_POINTER,C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT})
+
+public procedure GPU_BlitTransformX(atom img,atom src,atom tar,atom x,atom y,atom px,atom py,atom deg,atom sx,atom sy)
+
+ c_proc(xGPU_BlitTransformX,{img,src,tar,x,y,px,py,deg,sx,sy})
+	
+end procedure
+
+public constant xGPU_BlitRect = define_c_proc(gpu,"+GPU_BlitRect",{C_POINTER,C_POINTER,C_POINTER,C_POINTER})
+
+public procedure GPU_BlitRect(atom img,atom src,atom tar,atom dst)
+
+ c_proc(xGPU_BlitRect,{img,src,tar,dst})
+	
+end procedure
+
+public constant xGPU_BlitRectX = define_c_proc(gpu,"+GPU_BlitRectX",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_UINT})
+
+public procedure GPU_BlitRectX(atom img,atom src,atom tar,atom dst,atom deg,atom px,atom py,atom f)
+
+ c_proc(xGPU_BlitRectX,{img,src,tar,dst,deg,px,py,f})
+	
+end procedure
+
+public constant xGPU_TriangleBatch = define_c_proc(gpu,"+GPU_TriangleBatch",{C_POINTER,C_POINTER,C_USHORT,C_POINTER,C_UINT,C_POINTER,C_UINT})
+
+public procedure GPU_TriangleBatch(atom img,atom tar,atom num,atom val,atom num2,atom id,atom f)
+
+ c_proc(xGPU_TriangleBatch,{img,tar,num,val,num2,id,f})
+	
+end procedure
+
+public constant xGPU_TriangleBatchX = define_c_proc(gpu,"+GPU_TriangleBatchX",{C_POINTER,C_POINTER,C_USHORT,C_POINTER,C_UINT,C_POINTER,C_UINT})
+
+public procedure GPU_TriangleBatchX(atom img,atom tar,atom num,atom v,atom num2,atom id,atom f)
+
+ c_proc(xGPU_TriangleBatchX,{img,tar,num,v,num2,id,f})
+	
+end procedure
+
+public constant xGPU_PrimitiveBatch = define_c_proc(gpu,"+GPU_PrimitiveBatch",{C_POINTER,C_POINTER,C_UINT,C_USHORT,C_POINTER,C_UINT,C_POINTER,C_UINT})
+
+public procedure GPU_PrimitiveBatch(atom img,atom tar,atom prim,atom num,atom v,atom num2,atom id,atom f)
+
+ c_proc(xGPU_PrimitiveBatch,{img,tar,prim,num,v,num2,id,f})
+	
+end procedure
+
+public constant xGPU_PrimitiveBatchV = define_c_proc(gpu,"+GPU_PrimitiveBatchV",{C_POINTER,C_POINTER,C_UINT,C_USHORT,C_POINTER,C_UINT,C_POINTER,C_UINT})
+
+public procedure GPU_PrimitiveBatchV(atom img,atom tar,atom prim,atom num,atom v,atom num2,atom id,atom f)
+
+ c_proc(xGPU_PrimitiveBatchV,{img,tar,prim,num,v,num2,id,f})
+	
+end procedure
+
+public constant xGPU_FlushBlitBuffer = define_c_proc(gpu,"+GPU_FlushBlitBuffer",{})
+
+public procedure GPU_FlushBlitBuffer()
+
+ c_proc(xGPU_FlushBlitBuffer,{})
+	
+end procedure
+
+public constant xGPU_Flip = define_c_proc(gpu,"+GPU_Flip",{C_POINTER})
+
+public procedure GPU_Flip(atom tar)
+
+ c_proc(xGPU_Flip,{tar})
+	
+end procedure
+
+public constant xGPU_Pixel = define_c_proc(gpu,"+GPU_Pixel",{C_POINTER,C_FLOAT,C_FLOAT,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_Pixel(atom tar,atom x,atom y,atom r,atom g,atom b)
+
+ c_proc(xGPU_Pixel,{tar,x,y,r,g,b})
+	
+end procedure
+
+public constant xGPU_Line = define_c_proc(gpu,"+GPU_Line",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_Line(atom tar,atom x,atom y,atom x2,atom y2,atom r,atom g,atom b)
+
+ c_proc(xGPU_Line,{tar,x,y,x2,y2,r,g,b})
+	
+end procedure
+
+public constant xGPU_Arc = define_c_proc(gpu,"+GPU_Arc",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_Arc(atom tar,atom x,atom y,atom rad,atom sa,atom ea,atom r,atom g,atom b)
+
+ c_proc(xGPU_Arc,{tar,x,y,rad,sa,ea,r,g,b})
+	
+end procedure
+
+public constant xGPU_ArcFilled = define_c_proc(gpu,"+GPU_ArcFilled",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_ArcFilled(atom tar,atom x,atom y,atom rad,atom sa,atom ea,atom r,atom g,atom b)
+
+ c_proc(xGPU_ArcFilled,{tar,x,y,rad,sa,ea,r,g,b})
+	
+end procedure
+
+public constant xGPU_Circle = define_c_proc(gpu,"+GPU_Circle",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_Circle(atom tar,atom x,atom y,atom rad,atom r,atom g,atom b)
+
+ c_proc(xGPU_Circle,{tar,x,y,rad,r,g,b})
+	
+end procedure
+
+public constant xGPU_CircleFilled = define_c_proc(gpu,"+GPU_CircleFilled",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_CircleFilled(atom tar,atom x,atom y,atom rad,atom r,atom g,atom b)
+
+ c_proc(xGPU_CircleFilled,{tar,x,y,rad,r,g,b})
+	
+end procedure
+
+public constant xGPU_Ellipse = define_c_proc(gpu,"+GPU_Ellipse",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_Ellipse(atom tar,atom x,atom y,atom rx,atom ry,atom deg,atom r,atom g,atom b)
+
+ c_proc(xGPU_Ellipse,{tar,x,y,rx,ry,deg,r,g,b})
+	
+end procedure
+
+public constant xGPU_EllipseFilled = define_c_proc(gpu,"+GPU_EllipseFilled",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_EllipseFilled(atom tar,atom x,atom y,atom rx,atom ry,atom deg,atom r,atom g,atom b)
+
+ c_proc(xGPU_EllipseFilled,{tar,x,y,rx,ry,deg,r,g,b})
+	
+end procedure
+
+public constant xGPU_Sector = define_c_proc(gpu,"+GPU_Sector",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_Sector(atom tar,atom x,atom y,atom ir,atom orr,atom sa,atom ea,atom r,atom g,atom b)
+
+ c_proc(xGPU_Sector,{tar,x,y,ir,orr,sa,ea,r,g,b})
+	
+end procedure
+
+public constant xGPU_SectorFilled = define_c_proc(gpu,"+GPU_SectorFilled",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_SectorFilled(atom tar,atom x,atom y,atom ir,atom orr,atom sa,atom ea,atom r,atom g,atom b)
+
+ c_proc(xGPU_SectorFilled,{tar,x,y,ir,orr,sa,ea,r,g,b})
+	
+end procedure
+
+public constant xGPU_Tri = define_c_proc(gpu,"+GPU_Tri",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_Tri(atom tar,atom x,atom y,atom x2,atom y2,atom x3,atom y3,atom r,atom g,atom b)
+
+ c_proc(xGPU_Tri,{tar,x,y,x2,y2,x3,y3,r,g,b})
+	
+end procedure
+
+public constant xGPU_TriFilled = define_c_proc(gpu,"+GPU_TriFilled",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_TriFilled(atom tar,atom x,atom y,atom x2,atom y2,atom x3,atom y3,atom r,atom g,atom b)
+
+ c_proc(xGPU_TriFilled,{tar,x,y,x2,y2,x3,y3,r,g,b})
+	
+end procedure
+
+public constant xGPU_Rectangle = define_c_proc(gpu,"+GPU_Rectangle",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_Rectangle(atom tar,atom x,atom y,atom x2,atom y2,atom r,atom g,atom b)
+
+ c_proc(xGPU_Rectangle,{tar,x,y,x2,y2,r,g,b})
+	
+end procedure
+
+public constant xGPU_Rectangle2 = define_c_proc(gpu,"+GPU_Rectangle2",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_Rectangle2(atom tar,atom x,atom y,atom w,atom h,atom r,atom g,atom b)
+
+ c_proc(xGPU_Rectangle2,{tar,x,y,w,h,r,g,b})
+	
+end procedure
+
+public constant xGPU_RectangleFilled = define_c_proc(gpu,"+GPU_RectangleFilled",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_RectangleFilled(atom tar,atom x,atom y,atom x2,atom y2,atom r,atom g,atom b)
+
+ c_proc(xGPU_RectangleFilled,{tar,x,y,x2,y2,r,g,b})
+	
+end procedure
+
+public constant xGPU_RectangleFilled2 = define_c_proc(gpu,"+GPU_RectangleFilled2",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_RectangleFilled2(atom tar,atom x,atom y,atom w,atom h,atom r,atom g,atom b)
+
+ c_proc(xGPU_RectangleFilled2,{tar,x,y,w,h,r,g,b})
+	
+end procedure
+
+public constant xGPU_RectangleRound = define_c_proc(gpu,"+GPU_RectangleRound",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_RectangleRound(atom tar,atom x,atom y,atom x2,atom y2,atom rad,atom r,atom g,atom b)
+
+ c_proc(xGPU_RectangleRound,{tar,x,y,x2,y2,rad,r,g,b})
+	
+end procedure
+
+public constant xGPU_RectangleRound2 = define_c_proc(gpu,"+GPU_RectangleRound2",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_RectangleRound2(atom tar,atom x,atom y,atom w,atom h,atom r,atom g,atom b)
+
+ c_proc(xGPU_RectangleRound2,{tar,x,y,w,h,r,g,b})
+	
+end procedure
+
+public constant xGPU_RectangleRoundFilled = define_c_proc(gpu,"+GPU_RectangleRoundFilled",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_RectangleRoundFilled(atom tar,atom x,atom y,atom x2,atom y2,atom rad,atom r,atom g,atom b)
+
+ c_proc(xGPU_RectangleRoundFilled,{tar,x,y,x2,y2,rad,r,g,b})
+	
+end procedure
+
+public constant xGPU_RectangleRoundFilled2 = define_c_proc(gpu,"+GPU_RectangleRoundFilled2",{C_POINTER,C_FLOAT,C_FLOAT,C_FLOAT,C_FLOAT,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_RectangleRoundFilled2(atom tar,atom x,atom y,atom w,atom h,atom r,atom g,atom b)
+
+ c_proc(xGPU_RectangleRoundFilled2,{tar,x,y,w,h,r,g,b})
+	
+end procedure
+
+public constant xGPU_Polygon = define_c_proc(gpu,"+GPU_Polygon",{C_POINTER,C_UINT,C_POINTER,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_Polygon(atom tar,atom num,atom vert,atom r,atom g,atom b)
+
+ c_proc(xGPU_Polygon,{tar,num,vert,r,g,b})
+	
+end procedure
+
+public constant xGPU_Polyline = define_c_proc(gpu,"+GPU_Polyline",{C_POINTER,C_UINT,C_POINTER,C_UINT,C_UINT,C_UINT,C_BOOL})
+
+public procedure GPU_Polyline(atom tar,atom num,atom vert,atom r,atom g,atom b,atom clo)
+
+ c_proc(xGPU_Polyline,{tar,num,vert,r,g,b,clo})
+	
+end procedure
+
+public constant xGPU_PolygonFilled = define_c_proc(gpu,"+GPU_PolygonFilled",{C_POINTER,C_UINT,C_POINTER,C_UINT,C_UINT,C_UINT})
+
+public procedure GPU_PolygonFilled(atom tar,atom num,atom vert,atom r,atom g,atom b)
+
+ c_proc(xGPU_PolygonFilled,{tar,num,vert,r,g,b})
+	
+end procedure
+
+public constant xGPU_CreateShaderProgram = define_c_func(gpu,"+GPU_CreateShaderProgram",{},C_UINT)
+
+public function GPU_CreateShaderProgram()
+
+ return c_func(xGPU_CreateShaderProgram,{})
+	
+end function
+
+public constant xGPU_FreeShaderProgram = define_c_proc(gpu,"+GPU_FreeShaderProgram",{C_UINT})
+
+public procedure GPU_FreeShaderProgram(atom prg)
+
+ c_proc(xGPU_FreeShaderProgram,{prg})
+	
+end procedure
+
+public constant xGPU_CompileShader_RW = define_c_func(gpu,"+GPU_CompileShader_RW",{C_UINT,C_POINTER,C_BOOL},C_UINT)
+
+public function GPU_CompileShader_RW(atom shade,atom src,atom xf)
+
+ return c_func(xGPU_CompileShader_RW,{shade,src,xf})
+	
+end function
+
+public constant xGPU_CompileShader = define_c_func(gpu,"+GPU_CompileShader",{C_UINT,C_POINTER},C_UINT)
+
+public function GPU_CompileShader(atom shade,sequence src)
+
+ atom str = allocate_string(src,1)
+ 
+ return c_func(xGPU_CompileShader,{shade,str})
+	
+end function
+
+public constant xGPU_LoadShader = define_c_func(gpu,"+GPU_LoadShader",{C_UINT,C_POINTER},C_UINT)
+
+public function GPU_LoadShader(atom shad,sequence file)
+
+ atom str = allocate_string(file,1)
+ 
+ return c_func(xGPU_LoadShader,{shad,str})
+	
+end function
+
+public constant xGPU_LinkShaders = define_c_func(gpu,"+GPU_LinkShaders",{C_UINT,C_UINT},C_UINT)
+
+public function GPU_LinkShaders(atom obj,atom obj2)
+
+ return c_func(xGPU_LinkShaders,{obj,obj2})
+	
+end function
+
+public constant xGPU_LinkManyShaders = define_c_func(gpu,"+GPU_LinkManyShaders",{C_POINTER,C_INT},C_UINT)
+
+public function GPU_LinkManyShaders(atom objs,atom cnt)
+
+ return c_func(xGPU_LinkManyShaders,{objs,cnt})
+	
+end function
+
+public constant xGPU_FreeShader = define_c_proc(gpu,"+GPU_FreeShader",{C_UINT})
+
+public procedure GPU_FreeShader(atom shade)
+
+ c_proc(xGPU_FreeShader,{shade})
+	
+end procedure
+
+public constant xGPU_AttachShader = define_c_proc(gpu,"+GPU_AttachShader",{C_UINT,C_UINT})
+
+public procedure GPU_AttachShader(atom prg,atom obj)
+
+ c_proc(xGPU_AttachShader,{prg,obj})
+	
+end procedure
+
+public constant xGPU_DetachShader = define_c_proc(gpu,"+GPU_DetachShader",{C_UINT,C_UINT})
+
+public procedure GPU_DetachShader(atom prg,atom obj)
+
+ c_proc(xGPU_DetachShader,{prg,obj})
+	
+end procedure
+
+public constant xGPU_LinkShaderProgram = define_c_func(gpu,"+GPU_LinkShaderProgram",{C_UINT},C_BOOL)
+
+public function GPU_LinkShaderProgram(atom prg)
+
+ return c_func(xGPU_LinkShaderProgram,{prg})
+	
+end function
+
+public constant xGPU_GetCurrentShaderProgram = define_c_func(gpu,"+GPU_GetCurrentShaderProgram",{},C_UINT)
+
+public function GPU_GetCurrentShaderProgram()
+
+ return c_func(xGPU_GetCurrentShaderProgram,{})
+	
+end function
+
+public constant xGPU_IsDefaultShaderProgram = define_c_func(gpu,"+GPU_IsDefaultShaderProgram",{C_UINT},C_BOOL)
+
+public function GPU_IsDefaultShaderProgram(atom prg)
+
+ return c_func(xGPU_IsDefaultShaderProgram,{prg})
+	
+end function
+
+public constant xGPU_ActivateShaderProgram = define_c_proc(gpu,"+GPU_ActivateShaderProgram",{C_UINT,C_POINTER})
+
+public procedure GPU_ActivateShaderProgram(atom prg,atom blck)
+
+ c_proc(xGPU_ActivateShaderProgram,{prg,blck})
+	
+end procedure
+
+public constant xGPU_DeactivateShaderProgram = define_c_proc(gpu,"+GPU_DeactivateShaderProgram",{})
+
+public procedure GPU_DeactivateShaderProgram()
+
+ c_proc(xGPU_DeactivateShaderProgram,{})
+	
+end procedure
+
+public constant xGPU_GetShaderMessage = define_c_func(gpu,"+GPU_GetShaderMessage",{},C_POINTER)
+
+public function GPU_GetShaderMessage()
+
+ return c_func(xGPU_GetShaderMessage,{})
+	
+end function
+
+public constant xGPU_GetAttributeLocation = define_c_func(gpu,"+GPU_GetAttributeLocation",{C_UINT,C_POINTER},C_INT)
+
+public function GPU_GetAttributeLocation(atom prg,sequence name)
+
+ atom str = allocate_string(name,1)
+ 
+ return c_func(xGPU_GetAttributeLocation,{prg,str})
+	
+end function
+
+public constant xGPU_MakeAttributeFormat = define_c_func(gpu,"+GPU_MakeAttributeFormat",{C_INT,C_UINT,C_BOOL,C_INT,C_INT},C_UINT)
+
+public function GPU_MakeAttributeFormat(atom num,atom ty,atom norm,atom byt,atom off)
+
+ return c_func(xGPU_MakeAttributeFormat,{num,ty,norm,byt,off})
+	
+end function
+
+public constant xGPU_MakeAttribute = define_c_func(gpu,"+GPU_MakeAttribute",{C_INT,C_POINTER,C_UINT},C_UINT)
+
+public function GPU_MakeAttribute(atom loc,atom v,atom mat)
+
+ return c_func(xGPU_MakeAttribute,{loc,v,mat})
+	
+end function
+
+public constant xGPU_GetUniformLocation = define_c_func(gpu,"+GPU_GetUniformLocation",{C_UINT,C_POINTER},C_INT)
+
+public function GPU_GetUniformLocation(atom prg,sequence name)
+
+ atom str = allocate_string(name,1)
+ 
+ return c_func(xGPU_GetUniformLocation,{prg,str})
+	
+end function
+
+public constant xGPU_LoadShaderBlock = define_c_func(gpu,"+GPU_LoadShaderBlock",{C_UINT,C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_UINT)
+
+public function GPU_LoadShaderBlock(atom prg,sequence name,atom txname,sequence colname,sequence modname)
+
+ atom str = allocate_string(name,1)
+ atom str2 = allocate_string(txname,1)
+ atom str3 = allocate_string(colname,1)
+ atom str4 = allocate_string(modname,1)
+ 
+ return c_func(xGPU_LoadShaderBlock,{prg,str,str2,str3,str4})
+	
+end function
+
+public constant xGPU_SetShaderBlock = define_c_proc(gpu,"+GPU_SetShaderBlock",{C_UINT})
+
+public procedure GPU_SetShaderBlock(atom blk)
+
+ c_proc(xGPU_SetShaderBlock,{blk})
+	
+end procedure
+
+public constant xGPU_GetShaderBlock = define_c_func(gpu,"+GPU_GetShaderBlock",{},C_UINT)
+
+public function GPU_GetShaderBlock()
+
+ return c_func(xGPU_GetShaderBlock,{})
+	
+end function
+
+public constant xGPU_SetShaderImage = define_c_proc(gpu,"+GPU_SetShaderImage",{C_POINTER,C_INT,C_INT})
+
+public procedure GPU_SetShaderImage(atom img,atom loc,atom uni)
+
+ c_proc(xGPU_SetShaderImage,{img,loc,uni})
+	
+end procedure
+
+public constant xGPU_GetUniformiv = define_c_proc(gpu,"+GPU_GetUniformiv",{C_UINT,C_INT,C_POINTER})
+
+public procedure GPU_GetUniformiv(atom prg,atom loc,atom val)
+
+ c_proc(xGPU_GetUniformiv,{prg,loc,val})
+	
+end procedure
+
+public constant xGPU_SetUniformi = define_c_proc(gpu,"+GPU_SetUniform",{C_INT,C_INT})
+
+public procedure GPU_SetUniform(atom loc,atom val)
+
+ c_proc(xGPU_SetUniformi,{loc,val})
+	
+end procedure
+
+public constant xGPU_SetUniformiv = define_c_proc(gpu,"+GPU_SetUniformiv",{C_INT,C_INT,C_INT,C_POINTER})
+
+public procedure GPU_SetUniformiv(atom loc,atom num,atom num2,atom val)
+
+ c_proc(xGPU_SetUniformiv,{loc,num,num2,val})
+	
+end procedure
+
+public constant xGPU_SetUniformuiv = define_c_proc(gpu,"+GPU_SetUniformuiv",{C_UINT,C_INT,C_POINTER})
+
+public procedure GPU_SetUniformuiv(atom prg,atom loc,atom val)
+
+ c_proc(xGPU_SetUniformuiv,{prg,loc,val})
+	
+end procedure
+
+public constant xGPU_SetUniformui = define_c_proc(gpu,"+GPU_SetUniformui",{C_INT,C_UINT})
+
+public procedure GPU_SetUniformui(atom loc,atom val)
+
+ c_proc(xGPU_SetUniformui,{loc,val})
+	
+end procedure
+
+--public constant xGPU_SetUniformuiv = define_c_proc(gpu,"+GPU_SetUniformuiv",{C_INT,C_INT,C_INT,C_POINTER})
+
+--public procedure GPU_SetUniformuiv(atom loc,atom num,atom num2,atom val)
+
+ --c_proc(xGPU_SetUniformuiv,{loc,num,num2,val})
+	
+--end procedure
+
+public constant xGPU_GetUniformfv = define_c_proc(gpu,"+GPU_GetUniformfv",{C_UINT,C_INT,C_POINTER})
+
+public procedure GPU_GetUniformfv(atom prg,atom loc,atom val)
+
+ c_proc(xGPU_GetUniformfv,{prg,loc,val})
+	
+end procedure
+
+public constant xGPU_SetUniformf = define_c_proc(gpu,"+GPU_SetUniformf",{C_INT,C_FLOAT})
+
+public procedure GPU_SetUniformf(atom loc,atom val)
+
+ c_proc(xGPU_SetUniformf,{loc,val})
+	
+end procedure
+
+public constant xGPU_SetUniformfv = define_c_proc(gpu,"+GPU_SetUniformfv",{C_INT,C_INT,C_INT,C_POINTER})
+
+public procedure GPU_SetUniformfv(atom loc,atom num,atom num2,atom val)
+
+ c_proc(xGPU_SetUniformfv,{loc,num,num2,val})
+	
+end procedure
+
+public constant xGPU_GetUniformMatrixfv = define_c_proc(gpu,"+GPU_GetUniformMatrixfv",{C_INT,C_INT,C_POINTER})
+
+public procedure GPU_GetUniformMatrixfv(atom prg,atom loc,atom val)
+
+ c_proc(xGPU_GetUniformMatrixfv,{prg,loc,val})
+	
+end procedure
+
+public constant xGPU_SetUniformMatrixfv = define_c_proc(gpu,"+GPU_SetUniformMatrixfv",{C_INT,C_INT,C_INT,C_INT,C_BOOL,C_POINTER})
+
+public procedure GPU_SetUniformMatrixfv(atom loc,atom num,atom num2,atom num3,atom trans,atom val)
+
+ c_proc(xGPU_SetUniformMatrixfv,{loc,num,num2,num3,trans,val})
+	
+end procedure
+
+public constant xGPU_SetAttributef = define_c_proc(gpu,"+GPU_SetAttributef",{C_INT,C_FLOAT})
+
+public procedure GPU_SetAttributef(atom loc,atom val)
+
+ c_proc(xGPU_SetAttributef,{loc,val})
+	
+end procedure
+
+public constant xGPU_SetAttributei = define_c_proc(gpu,"+GPU_SetAttributei",{C_INT,C_INT})
+
+public procedure GPU_SetAttributei(atom loc,atom val)
+
+ c_proc(xGPU_SetAttributei,{loc,val})
+	
+end procedure
+
+public constant xGPU_SetAttributeui = define_c_proc(gpu,"+GPU_SetAttributeui",{C_INT,C_UINT})
+
+public procedure GPU_SetAttributeui(atom loc,atom val)
+
+ c_proc(xGPU_SetAttributeui,{loc,val})
+	
+end procedure
+
+public constant xGPU_SetAttributefv = define_c_proc(gpu,"+GPU_SetAttributefv",{C_INT,C_INT,C_POINTER})
+
+public procedure GPU_SetAttributefv(atom loc,atom num,atom val)
+
+ c_proc(xGPU_SetAttributefv,{loc,num,val})
+	
+end procedure
+
+public constant xGPU_SetAttributeiv = define_c_proc(gpu,"+GPU_SetAttributeiv",{C_INT,C_INT,C_POINTER})
+
+public procedure GPU_SetAttributeiv(atom loc,atom num,atom val)
+
+ c_proc(xGPU_SetAttributeiv,{loc,num,val})
+	
+end procedure
+
+public constant xGPU_SetAttributeuiv = define_c_proc(gpu,"+GPU_SetAttributeuiv",{C_INT,C_INT,C_POINTER})
+
+public procedure GPU_SetAttributeuiv(atom loc,atom num,atom val)
+
+ c_proc(xGPU_SetAttributeuiv,{loc,num,val})
+	
+end procedure
+
+public constant xGPU_SetAttributeSource = define_c_proc(gpu,"+GPU_SetAttributeSource",{C_INT,C_UINT})
+
+public procedure GPU_SetAttributeSource(atom num,atom src)
+
+ c_proc(xGPU_SetAttributeSource,{num,src})
+	
+end procedure
+­13.9
