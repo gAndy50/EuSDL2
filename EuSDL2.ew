@@ -1084,7 +1084,7 @@ public constant xSDL_CreateRenderer = define_c_func(sdl2,"+SDL_CreateRenderer",{
 				xSDL_QueryTexture = define_c_func(sdl2,"+SDL_QueryTexture",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
 				xSDL_RenderClear = define_c_func(sdl2,"+SDL_RenderClear",{C_POINTER},C_INT),
 				xSDL_RenderCopy = define_c_func(sdl2,"+SDL_RenderCopy",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
-				xSDL_RenderCopyEx = define_c_func(sdl2,"+SDL_RendercopyEx",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_DOUBLE,C_POINTER,C_POINTER},C_INT),
+				xSDL_RenderCopyEx = define_c_func(sdl2,"+SDL_RenderCopyEx",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_DOUBLE,C_POINTER,C_POINTER},C_INT),
 				xSDL_RenderDrawLine = define_c_func(sdl2,"+SDL_RenderDrawLine",{C_POINTER,C_INT,C_INT,C_INT,C_INT},C_INT),
 				xSDL_RenderDrawLines = define_c_func(sdl2,"+SDL_RenderDrawLines",{C_POINTER,C_POINTER,C_INT},C_INT),
 				xSDL_RenderDrawPoint = define_c_func(sdl2,"+SDL_RenderDrawPoint",{C_POINTER,C_INT,C_INT},C_INT),
@@ -1529,7 +1529,7 @@ end function
 --SDL Render/Texture Functions (2.0.12)
 
 public constant xSDL_SetTextureScaleMode = define_c_func(sdl2,"+SDL_SetTextureScaleMode",{C_POINTER,C_UINT},C_INT),
-				xSDL_GetTextureScaleMode = define_c_func(sdl2,"+SDL_GetTextureSCaleMode",{C_POINTER,C_POINTER},C_INT)
+				xSDL_GetTextureScaleMode = define_c_func(sdl2,"+SDL_GetTextureScaleMode",{C_POINTER,C_POINTER},C_INT)
 				
 public function SDL_SetTextureScaleMode(atom tex,atom mode)
 
@@ -1552,7 +1552,7 @@ public constant xSDL_AllocFormat = define_c_func(sdl2,"+SDL_AllocFormat",{C_UINT
 				xSDL_FreePalette = define_c_proc(sdl2,"+SDL_FreePalette",{C_POINTER}),
 				xSDL_GetPixelFormatName = define_c_func(sdl2,"+SDL_GetPixelFormatName",{C_UINT},C_POINTER),
 				xSDL_GetRGB = define_c_proc(sdl2,"+SDL_GetRGB",{C_UINT,C_POINTER,C_POINTER,C_POINTER,C_POINTER}),
-				xSDL_GetRGBA = define_c_proc(sdl2,"+SDL_GetRBA",{C_UINT,C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER}),
+				xSDL_GetRGBA = define_c_proc(sdl2,"+SDL_GetRGBA",{C_UINT,C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER}),
 				xSDL_MapRGB = define_c_func(sdl2,"+SDL_MapRGB",{C_POINTER,C_UINT,C_UINT,C_UINT},C_UINT),
 				xSDL_MapRGBA = define_c_func(sdl2,"+SDL_MapRGBA",{C_POINTER,C_UINT,C_UINT,C_UINT,C_UINT,C_UINT},C_UINT),
 				xSDL_MasksToPixelFormatEnum = define_c_func(sdl2,"+SDL_MasksToPixelFormatEnum",{C_INT,C_UINT,C_UINT,C_UINT,C_UINT},C_UINT),
@@ -1649,7 +1649,7 @@ end function
 public constant xSDL_EnclosePoints = define_c_func(sdl2,"+SDL_EnclosePoints",{C_POINTER,C_INT,C_POINTER,C_POINTER},C_BOOL),
 				xSDL_HasIntersection = define_c_func(sdl2,"+SDL_HasIntersection",{C_POINTER,C_POINTER},C_BOOL),
 				xSDL_IntersectRect = define_c_func(sdl2,"+SDL_IntersectRect",{C_POINTER,C_POINTER,C_POINTER},C_BOOL),
-				xSDL_IntersectRectAndLine = define_c_func(sdl2,"+SDL_IntersectRectAndLinr",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_BOOL),
+				xSDL_IntersectRectAndLine = define_c_func(sdl2,"+SDL_IntersectRectAndLine",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_BOOL),
 				xSDL_PointInRect = define_c_func(sdl2,"+SDL_PointInRect",{C_POINTER,C_POINTER},C_BOOL),
 				xSDL_RectEmpty = define_c_func(sdl2,"+SDL_RectEmpty",{C_POINTER},C_BOOL),
 				xSDL_RectEquals = define_c_func(sdl2,"+SDL_RectEquals",{C_POINTER,C_POINTER},C_BOOL),
@@ -1728,7 +1728,7 @@ public constant xSDL_AllocRW = define_c_func(sdl2,"+SDL_AllocRW",{},C_POINTER),
 				xSDL_WriteBE32 = define_c_func(sdl2,"+SDL_WriteBE32",{C_POINTER,C_UINT},C_SIZE_T),
 				xSDL_WriteBE64 = define_c_func(sdl2,"+SDL_WriteBE64",{C_POINTER,C_UINT},C_SIZE_T),
 				xSDL_WriteLE16 = define_c_func(sdl2,"+SDL_WriteLE16",{C_POINTER,C_UINT},C_SIZE_T),
-				xSDL_WriteLE32 = define_c_func(sdl2,"+SDL_writeLE32",{C_POINTER,C_UINT},C_SIZE_T),
+				xSDL_WriteLE32 = define_c_func(sdl2,"+SDL_WriteLE32",{C_POINTER,C_UINT},C_SIZE_T),
 				xSDL_WriteLE64 = define_c_func(sdl2,"+SDL_WriteLE64",{C_POINTER,C_UINT},C_SIZE_T),
 				xSDL_WriteU8 = define_c_func(sdl2,"+SDL_WriteU8",{C_POINTER,C_UINT},C_SIZE_T),
 				xSDL_LoadFile_RW = define_c_proc(sdl2,"+SDL_LoadFile_RW",{C_POINTER,C_POINTER,C_INT})
