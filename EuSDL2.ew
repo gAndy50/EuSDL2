@@ -55,8 +55,10 @@ atom sdl2
 --OS check
 ifdef WIN32 then
   sdl2 = open_dll("SDL2.dll")
- elsifdef LINUX or FREEBSD then
+ elsifdef LINUX or FREEBSD or OPENBSD then
   sdl2 = open_dll("SDL2.so")
+  elsifdef OSX then
+  sdl2 = open_dll("SDL2.dylib")
 end ifdef
 
 if sdl2 < 1 then
@@ -4827,4 +4829,4 @@ public procedure SDL_SensorUpdate()
  c_proc(xSDL_SensorUpdate,{})
 	
 end procedure
-­4385.30
+­61.31
