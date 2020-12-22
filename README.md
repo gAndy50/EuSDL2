@@ -21,7 +21,7 @@ NOTE: The Beta of Euphoria 4.1.0 Beta 2 is being used as of now. 7/25/19
 
 # UPDATES:
 
-This wrapper has been updated for SDL 2.0.6 and has included new functions. 
+This wrapper has been updated for SDL 2.0.14 and has included new functions. 
 
 1. 9/27/17 - Fixed a couple of functions, all demos now working.
 2. 10/24/17 - Added new functions for 2.0.7
