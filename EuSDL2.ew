@@ -1965,7 +1965,8 @@ public constant xSDL_BlitScaled = define_c_func(sdl2,"+SDL_BlitScaled",{C_POINTE
 				xSDL_GetYUVConversionMode = define_c_func(sdl2,"+SDL_GetYUVConversionMode",{},C_POINTER),
 				xSDL_HasColorKey = define_c_func(sdl2,"+SDL_HasColorKey",{C_POINTER},C_BOOL),
 				--xSDL_CreateRGBSurfaceFrom = define_c_func(sdl2,"+SDL_CreateRGBSurfaceFrom",{C_POINTER,C_INT,C_INT,C_INT,C_INT,C_UINT,C_UINT,C_UINT,C_UINT},C_POINTER),
-				xSDL_CreateRGBSurfaceWithFormatFrom = define_c_func(sdl2,"+SDL_CreateRGBSurfaceWithFormatFrom",{C_POINTER,C_INT,C_INT,C_INT,C_INT,C_UINT},C_POINTER)
+				xSDL_CreateRGBSurfaceWithFormatFrom = define_c_func(sdl2,"+SDL_CreateRGBSurfaceWithFormatFrom",{C_POINTER,C_INT,C_INT,C_INT,C_INT,C_UINT},C_POINTER),
+				xSDL_HasSurfaceRLE = define_c_func(sdl2,"+SDL_HasSurfaceRLE",{C_POINTER},C_BOOL)
 				
 public function SDL_BlitScaled(atom src,atom srcr,atom dst,atom dstr)
  
@@ -2200,6 +2201,12 @@ end function
 public function SDL_CreateRGBSurfaceWithFormatFrom(atom pix,atom w,atom h,atom d,atom p,atom mat)
 
  return c_func(xSDL_CreateRGBSurfaceWithFormatFrom,{pix,w,h,d,p,mat})
+	
+end function
+
+public function SDL_HasSurfaceRLE(atom surf)
+
+ return c_func(xSDL_HasSurfaceRLE,{surf})
 	
 end function
 
@@ -2967,6 +2974,51 @@ public procedure SDL_JoystickSetPlayerIndex(atom joy,atom idx)
 	
 end procedure
 
+--Virtual Joystick Functions(SDL 2.0.14)
+
+public constant xSDL_JoystickAttachVirtual = define_c_func(sdl2,"+SDL_JoystickAttachVirtual",{C_UINT,C_INT,C_INT,C_INT},C_INT),
+				xSDL_JoystickDetachVirtual = define_c_func(sdl2,"+SDL_JoystickDetachVirtual",{C_INT},C_INT),
+				xSDL_JoystickIsVirtual = define_c_func(sdl2,"+SDL_JoystickIsVirtual",{C_INT},C_BOOL),
+				xSDL_JoystickSetVirtualAxis = define_c_func(sdl2,"+SDL_JoystickSetVirtualAxis",{C_POINTER,C_INT,C_UINT},C_INT),
+				xSDL_JoystickSetVirtualButton = define_c_func(sdl2,"+SDL_JoystickSetVirtualButton",{C_POINTER,C_INT,C_UINT},C_INT),
+				xSDL_JoystickSetVirtualHat = define_c_func(sdl2,"+SDL_JoystickSetVirtualHat",{C_POINTER,C_INT,C_UINT},C_INT)
+				
+public function SDL_JoystickAttachVirtual(atom joy,atom nax,atom btns,atom hats)
+
+ return c_func(xSDL_JoystickAttachVirtual,{joy,nax,btns,hats})
+	
+end function
+
+public function SDL_JoystickDetachVirtual(atom idx)
+
+ return c_func(xSDL_JoystickDetachVirtual,{idx})
+	
+end function
+
+public function SDL_JoystickIsVirtual(atom idx)
+
+ return c_func(xSDL_JoystickIsVirtual,{idx})
+	
+end function
+
+public function SDL_JoystickSetVirtualAxis(atom joy,atom ax,atom val)
+
+ return c_func(xSDL_JoystickSetVirtualAxis,{joy,ax,val})
+	
+end function
+
+public function SDL_JoystickSetVirtualButton(atom joy,atom btn,atom val)
+
+ return c_func(xSDL_JoystickSetVirtualButton,{joy,btn,val})
+	
+end function
+
+public function SDL_JoystickSetVirtualHat(atom joy,atom hat,atom val)
+
+ return c_func(xSDL_JoystickSetVirtualHat,{joy,hat,val})
+	
+end function
+
 --SDL Gamecontroller Functions
 
 public constant xSDL_GameControllerAddMapping = define_c_func(sdl2,"+SDL_GameControllerAddMapping",{C_POINTER},C_INT),
@@ -2999,7 +3051,20 @@ public constant xSDL_GameControllerAddMapping = define_c_func(sdl2,"+SDL_GameCon
 				xSDL_GameControllerMappingForIndex = define_c_func(sdl2,"+SDL_GameControllerMappingForIndex",{C_INT},C_POINTER),
 				xSDL_GameControllerGetPlayerIndex = define_c_func(sdl2,"+SDL_GameControllerGetPlayerIndex",{C_POINTER},C_INT),
 				xSDL_GameControllerRumble = define_c_func(sdl2,"+SDL_GameControllerRumble",{C_POINTER,C_UINT,C_UINT,C_UINT},C_INT),
-				xSDL_GameControllerMappingForDeviceIndex = define_c_func(sdl2,"+SDL_GameControllerMappingForDeviceIndex",{C_INT},C_POINTER)
+				xSDL_GameControllerMappingForDeviceIndex = define_c_func(sdl2,"+SDL_GameControllerMappingForDeviceIndex",{C_INT},C_POINTER),
+				xSDL_GameControllerGetSerial = define_c_func(sdl2,"+SDL_GameControllerGetSerial",{C_POINTER},C_POINTER),
+				xSDL_GameControllerHasAxis = define_c_func(sdl2,"+SDL_GameControllerHasAxis",{C_POINTER,C_UINT},C_BOOL),
+				xSDL_GameControllerHasButton = define_c_func(sdl2,"+SDL_GameControllerHasButton",{C_POINTER,C_UINT},C_BOOL),
+				xSDL_GameControllerGetNumTouchpads = define_c_func(sdl2,"+SDL_GameControllerGetNumTouchpads",{C_POINTER},C_INT),
+				xSDL_GameControllerGetNumTouchpadFingers = define_c_func(sdl2,"+SDL_GameControllerGetNumTouchpadFingers",{C_POINTER,C_INT},C_INT),
+				xSDL_GameControllerGetTouchpadFinger = define_c_func(sdl2,"+SDL_GameControllerGetTouchpadFinger",{C_POINTER,C_INT,C_INT,C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xSDL_GameControllerHasSensor = define_c_func(sdl2,"+SDL_GameControllerHasSensor",{C_POINTER,C_UINT},C_BOOL),
+				xSDL_GameControllerSetSensorEnabled = define_c_func(sdl2,"+SDL_GameControllerSetSensorEnabled",{C_POINTER,C_UINT,C_BOOL},C_INT),
+				xSDL_GameControllerIsSensorEnabled = define_c_func(sdl2,"+SDL_GameControllerIsSensorEnabled",{C_POINTER,C_UINT},C_BOOL),
+				xSDL_GameControllerGetSensorData = define_c_func(sdl2,"+SDL_GameControllerGetSensorData",{C_POINTER,C_UINT,C_POINTER,C_INT},C_INT),
+				xSDL_GameControllerRumbleTriggers = define_c_func(sdl2,"+SDL_GameControllerRumbleTriggers",{C_POINTER,C_UINT,C_UINT,C_UINT},C_INT),
+				xSDL_GameControllerHasLED = define_c_func(sdl2,"+SDL_GameControllerHasLED",{C_POINTER},C_BOOL),
+				xSDL_GameControllerSetLED = define_c_func(sdl2,"+SDL_GameControllerSetLED",{C_POINTER,C_UINT,C_UINT,C_UINT},C_INT)
 				
 public function SDL_GameControllerAddMapping(sequence xmap)
 
@@ -3229,6 +3294,84 @@ public procedure SDL_GameControllerSetPlayerIndex(atom control,atom index)
  c_proc(xSDL_GameControllerSetPlayerIndex,{control,index})
 	
 end procedure
+
+public function SDL_GameControllerGetSerial(atom control)
+
+ return c_func(xSDL_GameControllerGetSerial,{control})
+	
+end function
+
+public function SDL_GameControllerHasAxis(atom control,atom axis)
+
+ return c_func(xSDL_GameControllerHasAxis,{control,axis})
+	
+end function
+
+public function SDL_GameControllerHasButton(atom control,atom btn)
+
+ return c_func(xSDL_GameControllerHasButton,{control,btn})
+	
+end function
+
+public function SDL_GameControllerGetNumTouchpads(atom control)
+
+ return c_func(xSDL_GameControllerGetNumTouchpads,{control})
+	
+end function
+
+public function SDL_GameControllerGetNumTouchpadFingers(atom control,atom pad)
+
+ return c_func(xSDL_GameControllerGetNumTouchpadFingers,{control,pad})
+	
+end function
+
+public function SDL_GameControllerGetTouchpadFinger(atom control,atom pad,atom fing,atom state,atom x,atom y,atom pressure)
+
+ return c_func(xSDL_GameControllerGetTouchpadFinger,{control,pad,fing,state,x,y,pressure})
+	
+end function
+
+public function SDL_GameControllerHasSensor(atom control,atom xtype)
+
+ return c_func(xSDL_GameControllerHasSensor,{control,xtype})
+	
+end function
+
+public function SDL_GameControllerSetSensorEnabled(atom control,atom xtype,atom en)
+
+ return c_func(xSDL_GameControllerSetSensorEnabled,{control,xtype,en})
+	
+end function
+
+public function SDL_GameControllerIsSensorEnabled(atom control,atom xtype)
+
+ return c_func(xSDL_GameControllerIsSensorEnabled,{control,xtype})
+	
+end function
+
+public function SDL_GameControllerGetSensorData(atom control,atom xtype,atom data,atom num)
+
+ return c_func(xSDL_GameControllerGetSensorData,{control,xtype,data,num})
+	
+end function
+
+public function SDL_GameControllerRumbleTriggers(atom control,atom left,atom right,atom dur)
+
+ return c_func(xSDL_GameControllerRumbleTriggers,{control,left,right,dur})
+	
+end function
+
+public function SDL_GameControllerHasLED(atom control)
+
+ return c_func(xSDL_GameControllerHasLED,{control})
+	
+end function
+
+public function SDL_GameControllerSetLED(atom control,atom r,atom g,atom b)
+
+ return c_func(xSDL_GameControllerSetLED,{control,r,g,b})
+	
+end function
 
 --SDL Forcefeedback Functions
 
@@ -4273,9 +4416,10 @@ end function
 
 --SDL CPU Functions New(SDL 2.0.10)
 
-public constant xSDL_SIMDGetAlignment = define_c_func(sdl2,"SDL_SIMDGetAlignment",{},C_SIZE_T),
-				xSDL_SIMDAlloc = define_c_func(sdl2,"SDL_SIMDAlloc",{C_SIZE_T},C_POINTER),
-				xSDL_SIMDFree = define_c_proc(sdl2,"SDL_SIMDFree",{C_POINTER})
+public constant xSDL_SIMDGetAlignment = define_c_func(sdl2,"+SDL_SIMDGetAlignment",{},C_SIZE_T),
+				xSDL_SIMDAlloc = define_c_func(sdl2,"+SDL_SIMDAlloc",{C_SIZE_T},C_POINTER),
+				xSDL_SIMDFree = define_c_proc(sdl2,"+SDL_SIMDFree",{C_POINTER}),
+				xSDL_SIMDRealloc = define_c_func(sdl2,"+SDL_SIMDRealloc",{C_POINTER,C_SIZE_T},C_POINTER)
 				
 public function SDL_SIMDGetAlignment()
 
@@ -4294,6 +4438,12 @@ public procedure SDL_SIMDFree(atom ptr)
  c_proc(xSDL_SIMDFree,{ptr})
 	
 end procedure
+
+public function SDL_SIMDRealloc(atom mem,atom len)
+
+ return c_func(xSDL_SIMDRealloc,{mem,len})
+	
+end function
 
 --SDL Endian Functions
 
@@ -4750,7 +4900,9 @@ public constant xSDL_NumSensors = define_c_func(sdl2,"+SDL_NumSensors",{},C_INT)
 				xSDL_SensorGetInstanceID = define_c_func(sdl2,"+SDL_SensorGetInstanceID",{C_POINTER},C_POINTER),
 				xSDL_SensorGetData = define_c_func(sdl2,"+SDL_SensorGetData",{C_POINTER,C_POINTER,C_FLOAT},C_INT),
 				xSDL_SensorClose = define_c_proc(sdl2,"+SDL_SensorClose",{C_POINTER}),
-				xSDL_SensorUpdate = define_c_proc(sdl2,"+SDL_SensorUpdate",{})
+				xSDL_SensorUpdate = define_c_proc(sdl2,"+SDL_SensorUpdate",{}),
+				xSDL_LockSensors = define_c_proc(sdl2,"+SDL_LockSensors",{}),
+				xSDL_UnlockSensors = define_c_proc(sdl2,"+SDL_UnlockSensors",{})
 				
 public function SDL_NumSensors()
 
@@ -4829,4 +4981,16 @@ public procedure SDL_SensorUpdate()
  c_proc(xSDL_SensorUpdate,{})
 	
 end procedure
-­61.31
+
+public procedure SDL_LockSensors()
+
+ c_proc(xSDL_LockSensors,{})
+	
+end procedure
+
+public procedure SDL_UnlockSensors()
+
+ c_proc(xSDL_UnlockSensors,{})
+	
+end procedure
+­4444.42
