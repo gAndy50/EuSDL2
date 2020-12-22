@@ -29,6 +29,7 @@ This wrapper has been updated for SDL 2.0.6 and has included new functions.
 4. 11-1-18 - Added new functions for 2.0.9
 5. 7-25-19 - Added new functions for 2.0.10
 6. 3-11-20 - Added new functions for 2.0.12
+7. 12-21-20 - Added new functions for 2.0.14
 ----------------------------------------
 8-2-19 - Added EuSDL2 for TrueType Fonts.
 4-19-20 - Added EuSDLGPU for Extra fraphics functions.
