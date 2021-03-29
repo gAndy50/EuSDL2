@@ -15,6 +15,7 @@ atom ren = SDL_CreateRenderer(win,-1,SDL_RENDERER_ACCELERATED)
 atom running = 1
 atom key = 0
 
+atom rr = SDL_SetRenderDrawColor(ren,0,0,0,0)
 
 atom f = TTF_Init()
 
@@ -34,8 +35,11 @@ procedure calc_rect(atom rect,integer sx,integer sy,integer tx,integer ty)
 	
 end procedure
 
+--sequence col = {255,255,0,0}
+
 atom h = TTF_RenderText_Solid(f,"Hello World",255,255,0,0)
 atom ht = SDL_CreateTextureFromSurface(ren,h)
+atom hc = SDL_SetTextureColorMod(ht,255,255,255)
 
 function renderTexture(atom tex,atom ren,atom x,atom y)
 
@@ -82,4 +86,4 @@ SDL_FreeSurface(h)
 TTF_Quit()
 
 SDL_Quit()
-­80.18
+­38.2
