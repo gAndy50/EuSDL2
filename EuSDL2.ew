@@ -2,7 +2,7 @@
 --EuSDL2						   --	
 --Wrapper of SDL2 for Euphoria     --
 --Author: Andy P.		   		   --
---SDL Version Wrapped: 2.0.12	   --
+--SDL Version Wrapped: 2.0.14	   --
 --Euphoria Version: 4.1.0 Beta 2   --
 --Date Started: 1/2/16			   --
 --Date Finished: 1/12/16           --
@@ -4993,4 +4993,93 @@ public procedure SDL_UnlockSensors()
  c_proc(xSDL_UnlockSensors,{})
 	
 end procedure
-­4444.42
+
+--SDL 2.0.16 Functions
+public constant xSDL_FlashWindow = define_c_func(sdl2,"+SDL_FlashWindow",{C_POINTER,C_UINT},C_INT)
+
+public function SDL_FlashWindow(atom win,atom op)
+
+ return c_func(xSDL_FlashWindow,{win,op})
+	
+end function
+
+public constant xSDL_GetAudioDeviceSpec = define_c_func(sdl2,"+SDL_GetAudioDeviceSpec",{C_INT,C_INT,C_POINTER},C_INT)
+
+public function SDL_GetAudioDeviceSpec(atom idx,atom iscap,atom spec)
+
+ return c_func(xSDL_GetAudioDeviceSpec,{idx,iscap,spec})
+	
+end function
+
+public constant xSDL_SetWindowAlwaysOnTop = define_c_proc(sdl2,"+SDL_SetWindowAlwaysOnTop",{C_POINTER,C_BOOL})
+
+public procedure SDL_SetWindowAlwaysOnTop(atom win,atom on)
+
+ c_proc(xSDL_SetWindowAlwaysOnTop,{win,on})
+	
+end procedure
+
+public constant xSDL_SetWindowKeyboardGrab = define_c_proc(sdl2,"+SDL_SetWindowKeyboardGrab",{C_POINTER,C_BOOL})
+
+public procedure SDL_SetWindowKeyboardGrab(atom win,atom grab)
+
+ c_proc(xSDL_SetWindowKeyboardGrab,{win,grab})
+	
+end procedure
+
+public constant xSDL_SoftStretchLinear = define_c_func(sdl2,"+SDL_SoftStretchLinear",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT)
+
+public function SDL_SoftStretchLinear(atom src,atom srcr,atom dst,atom dstr)
+
+ return c_func(xSDL_SoftStretchLinear,{src,srcr,dst,dstr})
+	
+end function
+
+public constant xSDL_UpdateNVTexture = define_c_func(sdl2,"+SDL_UpdateNVTexture",{C_POINTER,C_POINTER,C_POINTER,C_INT,C_POINTER,C_INT},C_INT)
+
+public function SDL_UpdateNVTexture(atom tex,atom rect,atom ypl,atom ypit,atom upl,atom upit)
+
+ return c_func(xSDL_UpdateNVTexture,{tex,rect,ypl,ypit,upl,upit})
+	
+end function
+
+public constant xSDL_GameControllerSendEffect = define_c_func(sdl2,"+SDL_GameControllerSendEffect",{C_POINTER,C_POINTER,C_INT},C_INT)
+
+public function SDL_GameControllerSendEffect(atom gc,atom dat,atom size)
+
+ return c_func(xSDL_GameControllerSendEffect,{gc,dat,size})
+	
+end function
+
+public constant xSDL_GameControllerGetSensorDataRate = define_c_func(sdl2,"+SDL_GameControllerGetSensorDataRate",{C_POINTER,C_UINT},C_FLOAT)
+
+public function SDL_GameControllerGetSensorDataRate(atom gc,SDL_SensorType sensor)
+
+ return c_func(xSDL_GameControllerGetSensorDataRate,{gc,sensor})
+	
+end function
+
+public constant xSDL_JoystickSendEffect = define_c_func(sdl2,"+SDL_JoystickSendEffect",{C_POINTER,C_POINTER,C_INT},C_INT)
+
+public function SDL_JoystickSendEffect(atom joy,atom dat,atom size)
+
+ return c_func(xSDL_JoystickSendEffect,{joy,dat,size})
+	
+end function
+
+--public constant xSDL_SetWindowsMessageHook = define_c_proc(sdl2,"+SDL_SetWindowsMessageHook",{C_POINTER,C_POINTER})
+
+--public procedure SDL_SetWindowsMessageHook(atom cb,atom udat)
+
+ --c_proc(xSDL_SetWindowsMessageHook,{cb,udat})
+	
+--end procedure
+
+public constant xSDL_RenderGetD3D11Device = define_c_func(sdl2,"+SDL_RenderGetD3D11Device",{C_POINTER},C_POINTER)
+
+public function SDL_RenderGetD3D11Device(atom ren)
+
+ return c_func(xSDL_RenderGetD3D11Device,{ren})
+	
+end function
+­5082.47
