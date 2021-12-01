@@ -2,7 +2,7 @@
 --EuSDL2						   --	
 --Wrapper of SDL2 for Euphoria     --
 --Author: Andy P.		   		   --
---SDL Version Wrapped: 2.0.14	   --
+--SDL Version Wrapped: 2.0.18	   --
 --Euphoria Version: 4.1.0 Beta 2   --
 --Date Started: 1/2/16			   --
 --Date Finished: 1/12/16           --
@@ -5082,4 +5082,272 @@ public function SDL_RenderGetD3D11Device(atom ren)
  return c_func(xSDL_RenderGetD3D11Device,{ren})
 	
 end function
-­5082.47
+
+--SDL 2.0.18 Functions
+public constant xSDL_RenderGeometry = define_c_func(sdl2,"+SDL_RenderGeometry",{C_POINTER,C_POINTER,C_POINTER,C_INT,C_POINTER,C_INT},C_INT)
+
+public function SDL_RenderGeometry(atom ren,atom tex,atom verts,atom num,atom indices,atom num_indices)
+
+ return c_func(xSDL_RenderGeometry,{ren,tex,verts,num,indices,num_indices})
+	
+end function
+
+public constant xSDL_RenderGeometryRaw = define_c_func(sdl2,"+SDL_RenderGeometryRaw",{C_POINTER,C_POINTER,C_POINTER,C_INT,C_POINTER,C_INT,C_POINTER,C_INT,C_INT,C_POINTER,C_INT,C_INT},C_INT)
+
+public function SDL_RenderGeometryRaw(atom ren,atom tex,atom xy,atom xy_stride,atom col,atom col_stride,atom uv,atom uv_stride,atom num_vert,atom ind,atom num_ind,atom size)
+
+ return c_func(xSDL_RenderGeometryRaw,{ren,tex,xy,xy_stride,col,col_stride,uv,uv_stride,num_vert,ind,num_ind,size})
+	
+end function
+
+public constant xSDL_SetTextureUserData = define_c_func(sdl2,"+SDL_SetTextureUserData",{C_POINTER,C_POINTER},C_INT)
+
+public function SDL_SetTextureUserData(atom tex,atom user)
+
+ return c_func(xSDL_SetTextureUserData,{tex,user})
+	
+end function
+
+public constant xSDL_GetTextureUserData = define_c_func(sdl2,"+SDL_GetTextureUserData",{C_POINTER},C_POINTER)
+
+public function SDL_GetTextureUserData(atom tex)
+
+ return c_func(xSDL_GetTextureUserData,{tex})
+	
+end function
+
+public constant xSDL_RenderWindowToLogical = define_c_proc(sdl2,"+SDL_RenderWindowToLogical",{C_POINTER,C_INT,C_INT,C_POINTER,C_POINTER})
+
+public procedure SDL_RenderWindowToLogical(atom ren,atom x,atom y,atom lx,atom ly)
+
+ c_proc(xSDL_RenderWindowToLogical,{ren,x,y,lx,ly})
+	
+end procedure
+
+public constant xSDL_RenderLogicalToWindow = define_c_proc(sdl2,"+SDL_RenderLogicalToWindow",{C_POINTER,C_FLOAT,C_FLOAT,C_POINTER,C_POINTER})
+
+public procedure SDL_RenderLogicalToWindow(atom ren,atom x,atom y,atom wx,atom wy)
+
+ c_proc(xSDL_RenderLogicalToWindow,{ren,x,y,wx,wy})
+	
+end procedure
+
+public constant xSDL_RenderSetVSync = define_c_func(sdl2,"+SDL_RenderSetVSync",{C_POINTER,C_INT},C_INT)
+
+public function SDL_RenderSetVSync(atom ren,atom vs)
+
+ return c_func(xSDL_RenderSetVSync,{ren,vs})
+	
+end function
+
+public constant xSDL_PremultiplyAlpha = define_c_func(sdl2,"+SDL_PremultiplyAlpha",{C_INT,C_INT,C_UINT,C_POINTER,C_INT,C_UINT,C_POINTER,C_INT},C_INT)
+
+public function SDL_PremultiplyAlpha(atom w,atom h,atom src_format,atom src,atom src_pitch,atom dst_format,atom dst,atom dst_pitch)
+
+ return c_func(xSDL_PremultiplyAlpha,{w,h,src_format,src,src_pitch,dst_format,dst,dst_pitch})
+	
+end function
+
+public constant xSDL_GetWindowICCProfile = define_c_func(sdl2,"+SDL_GetWindowICCProfile",{C_POINTER,C_POINTER},C_POINTER)
+
+public function SDL_GetWindowICCProfile(atom win,atom size)
+
+ return c_func(xSDL_GetWindowICCProfile,{win,size})
+	
+end function
+
+public constant xSDL_SetWindowMouseRect = define_c_func(sdl2,"+SDL_SetWindowMouseRect",{C_POINTER,C_POINTER},C_INT)
+
+public function SDL_SetWindowMouseRect(atom win,atom rect)
+
+ return c_func(xSDL_SetWindowMouseRect,{win,rect})
+	
+end function
+
+public constant xSDL_GetWindowMouseRect = define_c_func(sdl2,"+SDL_GetWindowMouseRect",{C_POINTER},C_POINTER)
+
+public function SDL_GetWindowMouseRect(atom win)
+
+ return c_func(xSDL_GetWindowMouseRect,{win})
+	
+end function
+
+public constant xSDL_GameControllerHasRumble = define_c_func(sdl2,"+SDL_GameControllerHasRumble",{C_POINTER},C_BOOL)
+
+public function SDL_GameControllerHasRumble(atom gc)
+
+ return c_func(xSDL_GameControllerHasRumble,{gc})
+	
+end function
+
+public constant xSDL_GameControllerHasRumbleTriggers = define_c_func(sdl2,"+SDL_GameControllerHasRumbleTriggers",{C_POINTER},C_BOOL)
+
+public function SDL_GameControllerHasRumbleTriggers(atom gc)
+
+ return c_func(xSDL_GameControllerHasRumbleTriggers,{gc})
+	
+end function
+
+public constant xSDL_JoystickHasRumble = define_c_func(sdl2,"+SDL_JoystickHasRumble",{C_POINTER},C_BOOL)
+
+public function SDL_JoystickHasRumble(atom joy)
+
+ return c_func(xSDL_JoystickHasRumble,{joy})
+	
+end function
+
+public constant xSDL_JoystickHasRumbleTriggers = define_c_func(sdl2,"+SDL_JoystickHasRumbleTriggers",{C_POINTER},C_BOOL)
+
+public function SDL_JoystickHasRumbleTriggers(atom joy)
+
+ return c_func(xSDL_JoystickHasRumbleTriggers,{joy})
+	
+end function
+
+--SDL HID API (SDL 2.0.18)
+public constant xSDL_hid_init = define_c_func(sdl2,"+SDL_hid_init",{},C_INT),
+				xSDL_hid_exit = define_c_func(sdl2,"+SDL_hid_exit",{},C_INT),
+				xSDL_hid_device_change_count = define_c_func(sdl2,"+SDL_hid_device_change_count",{},C_UINT),
+				xSDL_hid_enumerate = define_c_func(sdl2,"+SDL_hid_enumerate",{C_USHORT,C_USHORT},C_POINTER),
+				xSDL_hid_free_enumeration = define_c_proc(sdl2,"+SDL_hid_free_enumeration",{C_POINTER}),
+				xSDL_hid_open = define_c_func(sdl2,"+SDL_hid_open",{C_USHORT,C_USHORT,C_POINTER},C_POINTER),
+				xSDL_hid_open_path = define_c_func(sdl2,"+SDL_hid_open_path",{C_POINTER,C_INT},C_POINTER),
+				xSDL_hid_write = define_c_func(sdl2,"+SDL_hid_write",{C_POINTER,C_POINTER,C_SIZE_T},C_INT),
+				xSDL_hid_read_timeout = define_c_func(sdl2,"+SDL_hid_read_timeout",{C_POINTER,C_POINTER,C_SIZE_T,C_INT},C_INT),
+				xSDL_hid_read = define_c_func(sdl2,"+SDL_hid_read",{C_POINTER,C_POINTER,C_SIZE_T},C_INT),
+				xSDL_hid_set_nonblocking = define_c_func(sdl2,"+SDL_hid_set_nonblocking",{C_POINTER,C_INT},C_INT),
+				xSDL_hid_send_feature_report = define_c_func(sdl2,"+SDL_hid_send_feature_report",{C_POINTER,C_POINTER,C_SIZE_T},C_INT),
+				xSDL_hid_get_feature_report = define_c_func(sdl2,"+SDL_hid_get_feature_report",{C_POINTER,C_POINTER,C_SIZE_T},C_INT),
+				xSDL_hid_close = define_c_proc(sdl2,"+SDL_hid_close",{C_POINTER}),
+				xSDL_hid_get_manufacturer_string = define_c_func(sdl2,"+SDL_hid_get_manufacturer_string",{C_POINTER,C_POINTER,C_SIZE_T},C_INT),
+				xSDL_hid_get_product_string = define_c_func(sdl2,"+SDL_hid_get_product_string",{C_POINTER,C_POINTER,C_SIZE_T},C_INT),
+				xSDL_hid_get_serial_number_string = define_c_func(sdl2,"+SDL_hid_get_serial_number_string",{C_POINTER,C_POINTER,C_SIZE_T},C_INT),
+				xSDL_hid_get_indexed_string = define_c_func(sdl2,"+SDL_hid_get_indexed_string",{C_POINTER,C_INT,C_POINTER,C_SIZE_T},C_INT),
+				xSDL_hid_ble_scan = define_c_proc(sdl2,"+SDL_hid_ble_scan",{C_BOOL})
+
+public function SDL_hid_init()
+
+ return c_func(xSDL_hid_init,{})
+	
+end function
+
+public function SDL_hid_exit()
+
+ return c_func(xSDL_hid_exit,{})
+	
+end function
+
+public function SDL_hid_device_change_count()
+
+ return c_func(xSDL_hid_device_change_count,{})
+	
+end function
+
+public function SDL_hid_enumerate(atom v_id,atom p_id)
+
+ return c_func(xSDL_hid_enumerate,{v_id,p_id})
+	
+end function
+
+public procedure SDL_hid_free_enumeration(atom dev)
+
+ c_proc(xSDL_hid_free_enumeration,{dev})
+	
+end procedure
+
+public function SDL_hid_open(atom id,atom p_id,sequence ser)
+
+ atom str = allocate_string(ser,1)
+ 
+ return c_func(xSDL_hid_open,{id,p_id,str})
+	
+end function
+
+public function SDL_hid_open_path(sequence path,atom bexc)
+
+ atom str = allocate_string(path,1)
+ 
+ return c_func(xSDL_hid_open_path,{str,bexc})
+	
+end function
+
+public function SDL_hid_write(atom dev,atom data,atom len)
+
+ return c_func(xSDL_hid_write,{dev,data,len})
+	
+end function
+
+public function SDL_hid_read_timeout(atom dev,atom data,atom len,atom ms)
+
+ return c_func(xSDL_hid_read_timeout,{dev,data,len,ms})
+	
+end function
+
+public function SDL_hid_read(atom dev,atom data,atom len)
+
+ return c_func(xSDL_hid_read,{dev,data,len})
+	
+end function
+
+public function SDL_hid_set_nonblocking(atom dev,atom nb)
+
+ return c_func(xSDL_hid_set_nonblocking,{dev,nb})
+	
+end function
+
+public function SDL_hid_send_feature_report(atom dev,atom dat,atom len)
+
+ return c_func(xSDL_hid_send_feature_report,{dev,dat,len})
+	
+end function
+
+public function SDL_hid_get_feature_report(atom dev,atom dat,atom len)
+
+ return c_func(xSDL_hid_get_feature_report,{dev,dat,len})
+	
+end function
+
+public procedure SDL_hid_close(atom dev)
+
+ c_proc(xSDL_hid_close,{dev})
+	
+end procedure
+
+public function SDL_hid_get_manufacturer_string(atom dev,sequence st,atom max)
+
+ atom str = allocate_string(st,1)
+ 
+ return c_func(xSDL_hid_get_manufacturer_string,{dev,str,max})
+	
+end function
+
+public function SDL_hid_get_product_string(atom dev,sequence st,atom max)
+
+ atom str = allocate_string(st,1)
+ 
+ return c_func(xSDL_hid_get_product_string,{dev,str,max})
+	
+end function
+
+public function SDL_hid_get_serial_number_string(atom dev,sequence st,atom max)
+
+ atom str = allocate_string(st,1)
+ 
+ return c_func(xSDL_hid_get_serial_number_string,{dev,str,max})
+	
+end function
+
+public function SDL_hid_get_indexed_string(atom dev,atom idx,sequence st,atom max)
+
+ atom str = allocate_string(st,1)
+ 
+ return c_func(xSDL_hid_get_indexed_string,{dev,idx,str,max})
+	
+end function
+
+public procedure SDL_hid_ble_scan(atom act)
+
+ c_proc(xSDL_hid_ble_scan,{act})
+	
+end procedure
+­5.29
