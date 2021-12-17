@@ -21,7 +21,7 @@ NOTE: The Beta of Euphoria 4.1.0 Beta 2 is being used as of now. 7/25/19
 
 # UPDATES:
 
-This wrapper has been updated for SDL 2.0.14 and has included new functions. 
+This wrapper has been updated for SDL 2.0.18 and has included new functions. 
 
 1. 9/27/17 - Fixed a couple of functions, all demos now working.
 2. 10/24/17 - Added new functions for 2.0.7
@@ -31,6 +31,7 @@ This wrapper has been updated for SDL 2.0.14 and has included new functions.
 6. 3-11-20 - Added new functions for 2.0.12
 7. 12-21-20 - Added new functions for 2.0.14
 8. 8-14-21 - Added new functions for 2.0.16
+9. 11-30-21 - Added new functions for 2.0.18
 ----------------------------------------
 8-2-19 - Added EuSDL2 for TrueType Fonts.
 4-19-20 - Added EuSDLGPU for Extra fraphics functions.
