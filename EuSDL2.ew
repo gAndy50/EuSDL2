@@ -2,7 +2,7 @@
 --EuSDL2						   --	
 --Wrapper of SDL2 for Euphoria     --
 --Author: Andy P.		   		   --
---SDL Version Wrapped: 2.0.18	   --
+--SDL Version Wrapped: 2.0.20	   --
 --Euphoria Version: 4.1.0 Beta 2   --
 --Date Started: 1/2/16			   --
 --Date Finished: 1/12/16           --
