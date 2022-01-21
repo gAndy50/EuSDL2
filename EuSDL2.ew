@@ -5350,4 +5350,6 @@ public procedure SDL_hid_ble_scan(atom act)
  c_proc(xSDL_hid_ble_scan,{act})
 	
 end procedure
-­5.29
+
+--SDL 2.0.20 (No New Functions)
+­5354.31
