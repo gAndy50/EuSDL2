@@ -1,6 +1,6 @@
 # EuSDL2 - Wrapper of SDL2 for Euphoria Programming Language
 1. Written by: Andy P.
-2. SDL2 Version Wrapped: 2.0.20
+2. SDL2 Version Wrapped: 2.0.22
 3. Euphoria Version: 4.1.0 Beta 2
 4. Date Started: 1/2/16
 5. Date Finished: 1/12/16
@@ -32,6 +32,7 @@ This wrapper has been updated for SDL 2.0.20 and has included new functions.
 7. 12-21-20 - Added new functions for 2.0.14
 8. 8-14-21 - Added new functions for 2.0.16
 9. 11-30-21 - Added new functions for 2.0.18
+10. 4-25-22 - Added new functions for 2.0.22
 ----------------------------------------
 8-2-19 - Added EuSDL2 for TrueType Fonts.
 4-19-20 - Added EuSDLGPU for Extra fraphics functions.
