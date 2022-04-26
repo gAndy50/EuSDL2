@@ -5352,4 +5352,102 @@ public procedure SDL_hid_ble_scan(atom act)
 end procedure
 
 --SDL 2.0.20 (No New Functions)
-­5354.31
+
+--SDL 2.0.22
+
+public constant xSDL_RenderGetWindow = define_c_func(sdl2,"+SDL_RenderGetWindow",{C_POINTER},C_POINTER)
+
+public function SDL_RenderGetWindow(atom ren)
+
+ return c_func(xSDL_RenderGetWindow,{ren})
+	
+end function
+
+public constant xSDL_PointInFRect = define_c_func(sdl2,"+SDL_PointInFRect",{C_POINTER,C_POINTER},C_BOOL)
+
+public function SDL_PointInFRect(atom pt,atom r)
+
+ return c_func(xSDL_PointInFRect,{pt,r})
+	
+end function
+
+public constant xSDL_FRectEmpty = define_c_func(sdl2,"+SDL_FRectEmpty",{C_POINTER},C_BOOL)
+
+public function SDL_FRectEmpty(atom r)
+
+ return c_func(xSDL_FRectEmpty,{r})
+	
+end function
+
+public constant xSDL_FRectEqualsEpsilon = define_c_func(sdl2,"+SDL_FRectEqualsEpsilon",{C_POINTER,C_POINTER,C_FLOAT},C_BOOL)
+
+public function SDL_FRectEqualsEpsilon(atom r,atom r2,atom eps)
+
+ return c_func(xSDL_FRectEqualsEpsilon,{r,r2,eps})
+	
+end function
+
+public constant xSDL_FRectEquals = define_c_func(sdl2,"+SDL_FRectEquals",{C_POINTER,C_POINTER},C_BOOL)
+
+public function SDL_FRectEquals(atom r,atom r2)
+
+ return c_func(xSDL_FRectEquals,{r,r2})
+	
+end function
+
+public constant xSDL_HasIntersectionF = define_c_func(sdl2,"+SDL_HasIntersectionF",{C_POINTER,C_POINTER},C_BOOL)
+
+public function SDL_HasIntersectionF(atom r,atom r2)
+
+ return c_func(xSDL_HasIntersectionF,{r,r2})
+	
+end function
+
+public constant xSDL_IntersectFRect = define_c_func(sdl2,"+SDL_IntersectFRect",{C_POINTER,C_POINTER,C_POINTER},C_BOOL)
+
+public function SDL_IntersectFRect(atom r,atom r2,atom f)
+
+ return c_func(xSDL_IntersectFRect,{r,r2,f})
+	
+end function
+
+public constant xSDL_UnionFRect = define_c_proc(sdl2,"+SDL_UnionFRect",{C_POINTER,C_POINTER,C_POINTER})
+
+public procedure SDL_UnionFRect(atom r,atom r2,atom res)
+
+ c_proc(xSDL_UnionFRect,{r,r2,res})
+	
+end procedure
+
+public constant xSDL_EncloseFPoints = define_c_func(sdl2,"+SDL_EncloseFPoints",{C_POINTER,C_INT,C_POINTER,C_POINTER},C_BOOL)
+
+public function SDL_EncloseFPoints(atom pt,atom count,atom r,atom res)
+
+ return c_func(xSDL_EncloseFPoints,{pt,count,r,res})
+	
+end function
+
+public constant xSDL_IntersectFRectAndLine = define_c_func(sdl2,"+SDL_IntersectFRectAndLine",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_BOOL)
+
+public function SDL_IntersectFRectAndLine(atom r,atom x1,atom y1,atom x2,atom y2)
+
+ return c_func(xSDL_IntersectFRectAndLine,{r,x1,y1,x2,y2})
+	
+end function
+
+public constant xSDL_IsTextInputShown = define_c_func(sdl2,"+SDL_IsTextInputShown",{},C_BOOL)
+
+public function SDL_IsTextInputShown()
+
+ return c_func(xSDL_IsTextInputShown,{})
+	
+end function
+
+public constant xSDL_ClearComposition = define_c_proc(sdl2,"+SDL_ClearComposition",{})
+
+public procedure SDL_ClearComposition()
+
+ c_proc(xSDL_ClearComposition,{})
+	
+end procedure
+­5447.0
