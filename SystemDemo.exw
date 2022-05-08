@@ -20,7 +20,7 @@ printf(1,"CPUS: %d",{cpus})
 atom ram = SDL_GetSystemRAM()
 
 position(2,1)
-printf(1,"RAM: %d MB",{ram})
+printf(1,"RAM: %d GB",{ram})
 
 atom has3d = SDL_Has3DNow()
 
@@ -52,12 +52,20 @@ atom has_sse42 = SDL_HasSSE42()
 position(8,1)
 printf(1,"Has SSE42: %d",{has_sse42})
 
-position(12,1)
+position(15,1)
 puts(1,"Press ESC to close")
 
 atom has_neon = SDL_HasNEON()
 position(10,1)
 printf(1,"Has NEON: %d",{has_neon})
+
+atom cache_size = SDL_GetCPUCacheLineSize()
+position(11,1)
+printf(1,"Cache Size: %d",{cache_size})
+
+atom mmx = SDL_HasMMX()
+position(12,1)
+printf(1,"Has MMX: %d",{mmx})
 
 while run = 1 do
 
@@ -70,4 +78,4 @@ while run = 1 do
 	end if
 	
 end while
-­58.27
+­55.11
