@@ -2,7 +2,7 @@
 --EuSDL2						   --	
 --Wrapper of SDL2 for Euphoria     --
 --Author: Andy P.		   		   --
---SDL Version Wrapped: 2.0.20	   --
+--SDL Version Wrapped: 2.24.0	   --
 --Euphoria Version: 4.1.0 Beta 2   --
 --Date Started: 1/2/16			   --
 --Date Finished: 1/12/16           --
@@ -5450,4 +5450,40 @@ public procedure SDL_ClearComposition()
  c_proc(xSDL_ClearComposition,{})
 	
 end procedure
-­5447.0
+
+--SDL 2.24.0 Functions
+--Version scheme has been changed
+public constant xSDL_GetPointDisplayIndex = define_c_func(sdl2,"+SDL_GetPointDisplayIndex",{C_POINTER},C_INT)
+
+public function SDL_GetPointDisplayIndex(atom pt)
+
+ return c_func(xSDL_GetPointDisplayIndex,{pt})
+	
+end function
+
+public constant xSDL_GetRectDisplayIndex = define_c_func(sdl2,"+SDL_GetRectDisplayIndex",{C_POINTER},C_INT)
+
+public function SDL_GetRectDisplayIndex(atom rect)
+
+ return c_func(xSDL_GetRectDisplayIndex,{rect})
+	
+end function
+
+public constant xSDL_ResetHint = define_c_func(sdl2,"+SDL_ResetHint",{C_POINTER},C_BOOL)
+
+public function SDL_ResetHint(sequence name)
+
+ atom str = allocate_string(name,1)
+ 
+ return c_func(xSDL_ResetHint,{str})
+	
+end function
+
+public constant xSDL_ResetKeyboard = define_c_proc(sdl2,"+SDL_ResetKeyboard",{})
+
+public procedure SDL_ResetKeyboard()
+
+ c_proc(xSDL_ResetKeyboard,{})
+	
+end procedure
+­5455.33
