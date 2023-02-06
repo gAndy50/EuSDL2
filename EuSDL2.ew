@@ -56,7 +56,7 @@ atom sdl2
 ifdef WIN32 then
   sdl2 = open_dll("SDL2.dll")
  elsifdef LINUX or FREEBSD or OPENBSD then
-  sdl2 = open_dll("SDL2.so")
+  sdl2 = open_dll("libSDL2.so")
   elsifdef OSX then
   sdl2 = open_dll("SDL2.dylib")
 end ifdef
@@ -5486,4 +5486,4 @@ public procedure SDL_ResetKeyboard()
  c_proc(xSDL_ResetKeyboard,{})
 	
 end procedure
-­5455.33
+Â­5455.33
