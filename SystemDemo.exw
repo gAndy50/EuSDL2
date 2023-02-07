@@ -12,60 +12,54 @@ include flags.e
 integer run = 1
 integer key
 
+clear_screen()
+
 atom cpus = SDL_GetCPUCount()
 
 position(1,1)
-printf(1,"CPUS: %d",{cpus})
+printf(1,"CPUS: %d\n",{cpus})
 
 atom ram = SDL_GetSystemRAM()
 
 position(2,1)
-printf(1,"RAM: %d GB",{ram})
+printf(1,"RAM: %d MB\n",{ram})
 
 atom has3d = SDL_Has3DNow()
 
 position(3,1)
-printf(1,"Has3DNow: %d",{has3d})
+printf(1,"Has3DNow: %d \n",{has3d})
 
 atom has_sse = SDL_HasSSE()
 
 position(4,1)
-printf(1,"Has SSE: %d",{has_sse})
+printf(1,"Has SSE: %d \n",{has_sse})
 
 atom has_sse2 = SDL_HasSSE2()
 
 position(5,1)
-printf(1,"Has SSE2: %d",{has_sse2})
+printf(1,"Has SSE2: %d \n",{has_sse2})
 
 atom has_sse3 = SDL_HasSSE3()
 
 position(6,1)
-printf(1,"Has SSE3: %d",{has_sse3})
+printf(1,"Has SSE3: %d \n",{has_sse3})
 
 atom has_sse41 = SDL_HasSSE41()
 
 position(7,1)
-printf(1,"Has SSE41: %d",{has_sse41})
+printf(1,"Has SSE41: %d \n",{has_sse41})
 
 atom has_sse42 = SDL_HasSSE42()
 
 position(8,1)
-printf(1,"Has SSE42: %d",{has_sse42})
-
-position(15,1)
-puts(1,"Press ESC to close")
+printf(1,"Has SSE42: %d \n",{has_sse42})
 
 atom has_neon = SDL_HasNEON()
 position(10,1)
-printf(1,"Has NEON: %d",{has_neon})
+printf(1,"Has NEON: %d \n",{has_neon})
 
-atom cache_size = SDL_GetCPUCacheLineSize()
-position(11,1)
-printf(1,"Cache Size: %d",{cache_size})
-
-atom mmx = SDL_HasMMX()
 position(12,1)
-printf(1,"Has MMX: %d",{mmx})
+puts(1,"Press ESC to close\n")
 
 while run = 1 do
 
@@ -78,4 +72,4 @@ while run = 1 do
 	end if
 	
 end while
-­55.11
+­59.38
