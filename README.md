@@ -5,7 +5,7 @@
 4. Date Started: 1/2/16
 5. Date Finished: 1/12/16
 
-(c) EusDL2 2023
+(c) EusDL2 2026
 
 Contact/Paypal: g_andy at live.com
 
@@ -60,3 +60,4 @@ Special thanks to openEuphoria community!
 [Euphoria](https://openeuphoria.org/index.wc)
 
 [Paypal](paypal.me/IcyViking)
+
